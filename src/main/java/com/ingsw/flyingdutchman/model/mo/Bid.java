@@ -16,6 +16,7 @@ public class Bid {
     public Auction getAuction(){return auction;}
     public void setAuction(Auction auction){this.auction = auction;}
     public int getAmount_bid(){return amount_bid;}
+    public void setAmount_bid(int amount_bid){this.amount_bid = amount_bid;}
     public Timestamp getBid_timestamp(){return bid_timestamp;}
     public void setBid_timestamp(Timestamp bid_timestamp){this.bid_timestamp = bid_timestamp;}
 

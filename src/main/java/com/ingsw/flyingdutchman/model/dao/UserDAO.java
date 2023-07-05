@@ -19,7 +19,6 @@ public interface UserDAO {
             String state,
             String email,
             String cel_number,
-            // serve davvero?
             String role
     );
     public void update(User user);
@@ -27,4 +26,5 @@ public interface UserDAO {
     public User findLoggedUser();
     public User findByUserID(Long userID);
     public User findByUsername(String username);
+    public User[] findByRole(String role);
 }
