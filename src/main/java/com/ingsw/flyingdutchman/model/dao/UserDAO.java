@@ -1,0 +1,30 @@
+package com.ingsw.flyingdutchman.model.dao;
+
+import com.ingsw.flyingdutchman.model.mo.User;
+
+import java.util.Date;
+
+public interface UserDAO {
+    public User create(
+            Long userID,
+            String username,
+            String password,
+            String firstname,
+            String surname,
+            Date birthdate,
+            String address,
+            short civic_number,
+            short cap,
+            String city,
+            String state,
+            String email,
+            String cel_number,
+            // serve davvero?
+            String role
+    );
+    public void update(User user);
+    public void delete(User user);
+    public User findLoggedUser();
+    public User findByUserID(Long userID);
+    public User findByUsername(String username);
+}
