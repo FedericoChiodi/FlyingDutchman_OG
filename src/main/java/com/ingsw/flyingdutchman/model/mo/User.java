@@ -16,9 +16,9 @@ public class User {
     private String state;
     private String email;
     private String cel_number;
-    private String role; // [Guest - Registered - Premium - Admin]
-    private Order[] orders; // 1-N
-    private Bid[] bids; // 1 - N
+    private String role; // [Default - Premium - Admin - SuperAdmin]
+    private Order[] orders;
+    private Bid[] bids;
     private boolean deleted;
 
 

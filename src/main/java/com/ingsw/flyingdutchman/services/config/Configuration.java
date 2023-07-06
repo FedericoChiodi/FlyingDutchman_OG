@@ -10,7 +10,7 @@ public class Configuration {
     public static final String DAO_IMPL = DAOFactory.MYSQLJDBCIMPL;
     public static final String DATABASE_DRIVER = "com.mysql.cj.jdbc.Driver";
     public static final String SERVER_TIMEZONE = Calendar.getInstance().getTimeZone().getID();
-    public static final String DATABASE_URL = "jdbc:mysql://localhost/flyingdutchmandb?user=flyingdutchman&password=StrongPassword123@&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=" + SERVER_TIMEZONE;
+    public static final String DATABASE_URL = "jdbc:mysql://localhost/flyingdutchmandb?user=root&password=StrongPassword123@&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=" + SERVER_TIMEZONE;
 
     // Session config
     public static final String COOKIE_IMPL = DAOFactory.COOKIEIMPL;
