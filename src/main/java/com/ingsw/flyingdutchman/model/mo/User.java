@@ -1,6 +1,6 @@
 package com.ingsw.flyingdutchman.model.mo;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class User {
     private Long userID;

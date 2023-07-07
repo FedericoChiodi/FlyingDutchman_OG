@@ -46,16 +46,16 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
 
     @Override
     public void delete(Auction auction) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void update(Auction auction) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public Auction findAuctionByID(Long auctionID) {
-        return null;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

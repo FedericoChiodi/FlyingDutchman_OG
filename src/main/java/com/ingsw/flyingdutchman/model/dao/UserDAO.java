@@ -2,7 +2,7 @@ package com.ingsw.flyingdutchman.model.dao;
 
 import com.ingsw.flyingdutchman.model.mo.User;
 
-import java.util.Date;
+import java.sql.Date;
 
 public interface UserDAO {
     public User create(
