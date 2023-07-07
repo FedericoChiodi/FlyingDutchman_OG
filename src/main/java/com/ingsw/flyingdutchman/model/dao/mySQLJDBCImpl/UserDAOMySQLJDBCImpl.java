@@ -117,7 +117,7 @@ public class UserDAOMySQLJDBCImpl implements UserDAO {
             ps.setString(i++, user.getEmail());
             ps.setString(i++, user.getCel_number());
             ps.setString(i++, user.getRole());
-            ps.setString(i++, user.getUsername());
+            ps.setLong(i++, user.getUserID());
 
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -154,7 +154,7 @@ public class UserDAOMySQLJDBCImpl implements UserDAO {
         try {
             String sql =
                     "SELECT *" +
-                    "FROM user" +
+                    "FROM `USER`" +
                     "WHERE" +
                     "userID = ?";
 
@@ -185,7 +185,7 @@ public class UserDAOMySQLJDBCImpl implements UserDAO {
         try {
             String sql =
                     "SELECT *" +
-                    "FROM user" +
+                    "FROM `USER`" +
                     "WHERE" +
                     "username = ?";
 
@@ -216,7 +216,7 @@ public class UserDAOMySQLJDBCImpl implements UserDAO {
         try {
             String sql =
                     "SELECT *" +
-                    "FROM user" +
+                    "FROM `USER`" +
                     "WHERE" +
                     "role = ?";
 
