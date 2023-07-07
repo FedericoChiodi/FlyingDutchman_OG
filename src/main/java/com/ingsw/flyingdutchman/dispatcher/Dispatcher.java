@@ -15,7 +15,7 @@ import java.util.logging.Level;
 
 @WebServlet(name = "Dispatcher", urlPatterns = {"/Dispatcher"})
 public class Dispatcher extends HttpServlet {
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
@@ -23,10 +23,10 @@ public class Dispatcher extends HttpServlet {
 
             if(controllerAction==null) controllerAction="HomeManagement.view";
 
-            String[] splittedAction = controllerAction.split("\\.");
-            Class<?> controllerClass = Class.forName("com.ingsw.flyingdutchman.controller."+splittedAction[0]);
-            Method controllerMethod = controllerClass.getMethod(splittedAction[1], HttpServletRequest.class, HttpServletResponse.class);
-            LogService.getApplicationLogger().log(Level.INFO, splittedAction[0]+" "+splittedAction[1]);
+            String[] splitAction = controllerAction.split("\\.");
+            Class<?> controllerClass = Class.forName("com.ingsw.flyingdutchman.controller."+splitAction[0]);
+            Method controllerMethod = controllerClass.getMethod(splitAction[1], HttpServletRequest.class, HttpServletResponse.class);
+            LogService.getApplicationLogger().log(Level.INFO, splitAction[0]+" "+splitAction[1]);
             controllerMethod.invoke(null,request,response);
         }
         catch (Exception e){
