@@ -8,15 +8,12 @@ import java.sql.Timestamp;
 
 public interface BidDAO {
     public Bid create(
-            Long bidID,
-            User bidder,
-            Auction auction,
             int amount_bid,
-            Timestamp timestamp
+            Timestamp bid_time,
+            User bidder,
+            Auction auction
     );
     public void delete(Bid bid);
     public void update(Bid bid);
     public Bid findByBidID(Long bidID);
-    public Bid[] findByAuction(Auction auction);
-    public Bid[] findByBidder(User bidder);
 }

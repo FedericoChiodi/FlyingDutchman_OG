@@ -19,9 +19,10 @@ public class UserDAOCookieImpl implements UserDAO {
     }
 
     @Override
-    public User create(Long userID, String username, String password, String firstname, String surname, Date birthdate, String address, short civic_number, short cap, String city, String state, String email, String cel_number, String role) {
+    public User create(String username, String password, String firstname, String surname, Date birthdate, String address, short civic_number, short cap, String city, String state, String email, String cel_number, String role) {
         User loggedUser = new User();
-        loggedUser.setUserID(userID);
+
+        loggedUser.setUsername(username);
         loggedUser.setFirstname(firstname);
         loggedUser.setSurname(surname);
 
@@ -67,14 +68,14 @@ public class UserDAOCookieImpl implements UserDAO {
     }
 
     @Override
-    public User findByUserID(Long userID) {
+    public User findByUsername(String username) {
         Cookie[] cookies = request.getCookies();
         User loggedUser = null;
 
         if(cookies != null){
             for(int i = 0; i < cookies.length && loggedUser == null; i++){
                 String[] values = cookies[i].getValue().split("#");
-                if(values[0].equals(userID.toString())){
+                if(values[0].equals(username)){
                     loggedUser = decode(cookies[i].getValue());
                 }
             }
@@ -83,19 +84,9 @@ public class UserDAOCookieImpl implements UserDAO {
         return loggedUser;
     }
 
-    @Override
-    public User findByUsername(String username) {
-        throw new UnsupportedOperationException("ToDO");
-    }
-
-    @Override
-    public User[] findByRole(String role) {
-        throw new UnsupportedOperationException("ToDO");
-    }
-
     private String encode(User loggedUser){
         String encodedUser;
-        encodedUser = loggedUser.getUserID() + "#" + loggedUser.getFirstname() + "#" + loggedUser.getSurname();
+        encodedUser = loggedUser.getUsername() + "#" + loggedUser.getFirstname() + "#" + loggedUser.getSurname();
         return encodedUser;
     }
 
@@ -104,10 +95,18 @@ public class UserDAOCookieImpl implements UserDAO {
 
         String[] values = encodedUser.split("#");
 
-        loggedUser.setUserID(Long.parseLong(values[0]));
+        loggedUser.setUsername(values[0]);
         loggedUser.setFirstname(values[1]);
         loggedUser.setSurname(values[2]);
 
         return loggedUser;
+    }
+    @Override
+    public User[] findByRole(String role) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+    @Override
+    public User findByUserID(Long userID) {
+        throw new UnsupportedOperationException("Not supported.");
     }
 }

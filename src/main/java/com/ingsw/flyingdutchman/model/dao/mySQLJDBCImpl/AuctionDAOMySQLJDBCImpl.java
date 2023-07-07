@@ -6,11 +6,13 @@ import com.ingsw.flyingdutchman.model.mo.Product;
 
 import java.sql.*;
 
+import static java.sql.Types.NULL;
+
 public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
     Connection conn;
 
     @Override
-    public Auction create(Long auctionID, Product product, Timestamp openingTimestamp) {
+    public Auction create(Timestamp openingTimestamp, Product product) {
         PreparedStatement ps;
         String sql;
         Auction auction = new Auction();
@@ -19,16 +21,19 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
 
         try{
             sql
-                    = "INSERT INTO auction"
-                    + "(productId,"
-                    + "openingTimestamp,"
-                    + "productSold)"
-                    + "VALUES (?,?,'N')";
+                    = "INSERT INTO `AUCTION`"
+                    + "(opening_timestamp,"
+                    + "closing_timestamp,"
+                    + "is_product_sold,"
+                    + "productID)"
+                    + "VALUES (?,?,?,?)";
             ps = conn.prepareStatement(sql);
 
             int i = 1;
-            ps.setLong(i++,product.getProductID());
             ps.setTimestamp(i++,openingTimestamp);
+            ps.setNull(i++,NULL);
+            ps.setString(i++,"N");
+            ps.setLong(i++,product.getProductID());
 
             ps.executeUpdate();
         }
@@ -46,7 +51,7 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
 
     @Override
     public void update(Auction auction) {
-        // ricordarsi di passare un'asta con le bids già inserite
+
     }
 
     @Override

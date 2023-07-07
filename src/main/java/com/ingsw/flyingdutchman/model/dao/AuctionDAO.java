@@ -9,9 +9,8 @@ import java.sql.Timestamp;
 
 public interface AuctionDAO {
     public Auction create(
-            Long auctionID,
-            Product product,
-            Timestamp timestamp
+            Timestamp Opening_timestamp,
+            Product product
     );
     public void delete(Auction auction);
     public void update(Auction auction);

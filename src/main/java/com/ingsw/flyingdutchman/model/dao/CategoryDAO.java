@@ -4,7 +4,6 @@ import com.ingsw.flyingdutchman.model.mo.Category;
 
 public interface CategoryDAO {
     public Category create(
-            Long categoryID,
             String Name
     );
     public void update(Category category);

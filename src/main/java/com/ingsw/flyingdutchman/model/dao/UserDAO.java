@@ -6,7 +6,6 @@ import java.util.Date;
 
 public interface UserDAO {
     public User create(
-            Long userID,
             String username,
             String password,
             String firstname,
@@ -27,4 +26,5 @@ public interface UserDAO {
     public User findByUserID(Long userID);
     public User findByUsername(String username);
     public User[] findByRole(String role);
+
 }

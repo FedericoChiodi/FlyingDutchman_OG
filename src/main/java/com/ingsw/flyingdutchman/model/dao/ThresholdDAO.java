@@ -8,15 +8,12 @@ import java.sql.Timestamp;
 
 public interface ThresholdDAO {
     public Threshold create(
-            Long thresholdID,
-            User buyer,
-            Auction auction,
             int price,
-            Timestamp timestamp
+            Timestamp reservation_date,
+            User buyer,
+            Auction auction
     );
     public void delete(Threshold threshold);
     public void update(Threshold threshold);
     public Threshold findByID(Long thresholdID);
-    public Threshold[] findByBuyer(User buyer);
-    public Threshold[] findByAuction(Auction auction);
 }

@@ -39,7 +39,7 @@ public class CookieDAOFactory extends DAOFactory {
         return new UserDAOCookieImpl(request,response);
     }
 
-    // ...
+    // ... altre cose per cui servono cookies? ci penserò poi...
 
 
 }

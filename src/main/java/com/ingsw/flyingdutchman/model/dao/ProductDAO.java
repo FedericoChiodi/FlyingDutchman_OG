@@ -4,18 +4,14 @@ import com.ingsw.flyingdutchman.model.mo.*;
 
 public interface ProductDAO {
     public Product create(
-            Long productID,
             String description,
             int min_price,
             int starting_price,
             Category category,
-            Auction[] auctions,
-            Order order
-
+            User owner
     );
     public void update(Product product);
     public void delete(Product product);
     public Product findByProductID(Long productID);
-    public Product[] findByCategory(Category category);
-
+    public Product[] findByOwner(User owner);
 }

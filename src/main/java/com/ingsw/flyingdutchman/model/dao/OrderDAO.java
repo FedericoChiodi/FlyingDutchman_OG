@@ -8,17 +8,13 @@ import java.sql.Timestamp;
 
 public interface OrderDAO {
     public Order create(
-            Long OrderID,
-            User seller,
-            User buyer,
-            Product product,
+            Timestamp order_time,
             int selling_price,
-            Timestamp timestamp
+            User buyer,
+            Product product
     );
     public void delete(Order order);
     public void update(Order order);
     public Order findByOrderID(Long orderID);
-    public Order[] findBySeller(User seller);
-    public Order[] findByBuyer(User buyer);
     public Order findByProduct(Product product);
 }

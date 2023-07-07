@@ -19,7 +19,7 @@ public class UserDAOMySQLJDBCImpl implements UserDAO {
     public UserDAOMySQLJDBCImpl(Connection conn){this.conn = conn;}
 
     @Override
-    public User create(Long userID, String username, String password, String firstname, String surname, Date birthdate, String address, short civic_number, short cap, String city, String state, String email, String cel_number, String role) {
+    public User create(String username, String password, String firstname, String surname, Date birthdate, String address, short civic_number, short cap, String city, String state, String email, String cel_number, String role) {
         throw new UnsupportedOperationException("ToDo");
     }
 
