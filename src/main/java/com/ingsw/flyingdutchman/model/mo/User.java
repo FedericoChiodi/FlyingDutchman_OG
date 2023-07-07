@@ -17,8 +17,6 @@ public class User {
     private String email;
     private String cel_number;
     private String role; // [Default - Premium - Admin - SuperAdmin]
-    private Order[] orders;
-    private Bid[] bids;
     private boolean deleted;
 
 
@@ -50,10 +48,6 @@ public class User {
     public void setCel_number(String celNumber){this.cel_number = celNumber;}
     public String getRole(){return role;}
     public void setRole(String role){this.role = role;}
-    public Order[] getOrders(){return orders;}
-    public void setOrders(Order[] orders){this.orders = orders;}
-    public Bid[] getBids(){return bids;}
-    public void setBids(Bid[] bids){this.bids = bids;}
     public boolean isDeleted(){return deleted;}
     public void setDeleted(boolean deleted){this.deleted = deleted;}
 }

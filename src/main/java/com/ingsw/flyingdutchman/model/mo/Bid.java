@@ -4,10 +4,10 @@ import java.sql.Timestamp;
 
 public class Bid {
     private Long bidID;
-    private User bidder;
-    private Auction auction;
     private int amount_bid;
     private Timestamp bid_timestamp;
+    private User bidder;
+    private Auction auction;
 
     public Long getBidID(){return bidID;}
     public void setBidID(Long bidID){this.bidID = bidID;}

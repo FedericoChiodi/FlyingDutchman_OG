@@ -4,16 +4,13 @@ import java.sql.Timestamp;
 
 public class Order {
     private Long orderID;
-    private User seller;
-    private User buyer;
-    private Product product;
     private int selling_price;
     private Timestamp order_time;
+    private User buyer;
+    private Product product;
 
     public Long getOrderID(){return orderID;}
     public void setOrderID(Long orderID){this.orderID = orderID;}
-    public User getSeller(){return seller;}
-    public void setSeller(User seller){this.seller = seller;}
     public User getBuyer(){return buyer;}
     public void setBuyer(User buyer){this.buyer = buyer;}
     public Product getProduct(){return product;}

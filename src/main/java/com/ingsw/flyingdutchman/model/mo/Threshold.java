@@ -4,15 +4,12 @@ import java.sql.Timestamp;
 
 public class Threshold {
     private Long ThresholdID;
-    private User buyer;
-    private Auction auction;
     private int price;
     private Timestamp reservation_date;
+    private Auction auction;
 
     public Long getThresholdID(){return ThresholdID;}
     public void setThresholdID(Long ThresholdID){this.ThresholdID = ThresholdID;}
-    public User getBuyer(){return buyer;}
-    public void setBuyer(User buyer){this.buyer = buyer;}
     public Auction getAuction(){return auction;}
     public void setAuction(Auction auction){this.auction = auction;}
     public int getPrice(){return price;}
