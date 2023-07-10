@@ -83,13 +83,20 @@ public class HomeManagement {
             UserDAO userDAO = daoFactory.getUserDAO();
             User user = userDAO.findByUsername(username);
 
-            if (user == null || !user.getPassword().equals(password)){
+            try {
+                if (user == null || !user.getPassword().equals(password)){
+                    sessionUserDAO.delete(null);
+                    applicationMessage = "Username o Password errati!";
+                    loggedUser = null;
+                }
+                else{
+                    loggedUser = sessionUserDAO.create(user.getUsername(),null, user.getFirstname(),user.getSurname(),null,null,null,null,null,null,null,null,null);
+                }
+            }
+            catch (NullPointerException e){
                 sessionUserDAO.delete(null);
                 applicationMessage = "Username o Password errati!";
                 loggedUser = null;
-            }
-            else{
-                loggedUser = sessionUserDAO.create(user.getUsername(),null, user.getFirstname(),user.getSurname(),null,null,null,null,null,null,null,null,null);
             }
 
             daoFactory.commitTransaction();

@@ -23,11 +23,11 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
 
         try{
             sql
-                    = "INSERT INTO `AUCTION`"
+                    = "INSERT INTO `AUCTION` "
                     + "(opening_timestamp,"
                     + "closing_timestamp,"
                     + "is_product_sold,"
-                    + "productID)"
+                    + "productID) "
                     + "VALUES (?,?,?,?)";
             ps = conn.prepareStatement(sql);
 
@@ -57,11 +57,11 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
         String sql;
         try {
             sql
-                    = "UPDATE `AUCTION` SET"
-                    + "opening_timestamp = ?"
-                    + "closing_timestamp = ?"
-                    + "is_product_sold = ?"
-                    + "productID = ?"
+                    = "UPDATE `AUCTION` SET "
+                    + "opening_timestamp = ?, "
+                    + "closing_timestamp = ?, "
+                    + "is_product_sold = ?, "
+                    + "productID = ? "
                     + "WHERE auctionID = ?";
             ps = conn.prepareStatement(sql);
 
@@ -92,9 +92,9 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
 
         try {
             sql
-                    = "SELECT *"
-                    + "FROM `AUCTION`"
-                    + "WHERE"
+                    = "SELECT * "
+                    + "FROM `AUCTION` "
+                    + "WHERE "
                     + "auctionID = ?";
             ps = conn.prepareStatement(sql);
             ps.setLong(1,auction.getAuctionID());

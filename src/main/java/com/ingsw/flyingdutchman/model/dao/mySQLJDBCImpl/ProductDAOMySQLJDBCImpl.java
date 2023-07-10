@@ -34,9 +34,9 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
 
         try {
             String sql
-                    = "SELECT *" +
-                    "FROM `PRODUCT`" +
-                    "WHERE" +
+                    = "SELECT * " +
+                    "FROM `PRODUCT` " +
+                    "WHERE " +
                     "productID = ?";
 
             ps = conn.prepareStatement(sql);

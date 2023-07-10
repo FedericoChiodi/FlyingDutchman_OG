@@ -19,8 +19,8 @@ public class CategoryDAOMySQLJDBCImpl implements CategoryDAO {
         Category category = new Category();
         try {
             String sql
-                    = "INSERT INTO `CATEGORY`"
-                    + "(name)"
+                    = "INSERT INTO `CATEGORY` "
+                    + "(name) "
                     + "VALUES (?)";
             ps = conn.prepareStatement(sql);
 
@@ -40,10 +40,10 @@ public class CategoryDAOMySQLJDBCImpl implements CategoryDAO {
         PreparedStatement ps;
         try {
             String sql
-                    = "UPDATE `CATEGORY`"
-                    + "SET"
-                    + "name = ?"
-                    + "WHERE"
+                    = "UPDATE `CATEGORY` "
+                    + "SET "
+                    + "name = ? "
+                    + "WHERE "
                     + "categoryID = ?";
             ps = conn.prepareStatement(sql);
 
@@ -68,9 +68,9 @@ public class CategoryDAOMySQLJDBCImpl implements CategoryDAO {
         Category category = new Category();
         try {
             String sql
-                    = "SELECT *" +
-                    "FROM `CATEGORY`" +
-                    "WHERE" +
+                    = "SELECT * " +
+                    "FROM `CATEGORY` " +
+                    "WHERE " +
                     "categoryID = ?";
 
             ps = conn.prepareStatement(sql);
@@ -97,9 +97,9 @@ public class CategoryDAOMySQLJDBCImpl implements CategoryDAO {
         Category category = new Category();
         try {
             String sql
-                    = "SELECT *" +
-                    "FROM `CATEGORY`" +
-                    "WHERE" +
+                    = "SELECT * " +
+                    "FROM `CATEGORY` " +
+                    "WHERE " +
                     "name = ?";
 
             ps = conn.prepareStatement(sql);

@@ -204,7 +204,10 @@ public class UserDAOMySQLJDBCImpl implements UserDAO {
             throw new RuntimeException(e);
         }
 
-        return user;
+        if(user != null)
+            return user;
+        else
+            return null;
     }
 
     @Override
