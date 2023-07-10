@@ -59,7 +59,22 @@ public class CategoryDAOMySQLJDBCImpl implements CategoryDAO {
 
     @Override
     public void delete(Category category) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        PreparedStatement ps;
+        String sql;
+
+        try {
+            sql
+                    ="DELETE FROM `CATEGORY` "
+                    +"WHERE "
+                    +"categoryID = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1,category.getCategoryID());
+
+            ps.executeUpdate();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

@@ -48,7 +48,22 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
 
     @Override
     public void delete(Auction auction) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        PreparedStatement ps;
+        String sql;
+
+        try {
+            sql
+                    ="DELETE FROM `AUCTION` "
+                    +"WHERE "
+                    +"auctionID = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1, auction.getAuctionID());
+
+            ps.executeUpdate();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
