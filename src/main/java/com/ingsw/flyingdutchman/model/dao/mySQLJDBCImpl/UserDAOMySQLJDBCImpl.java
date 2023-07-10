@@ -38,7 +38,7 @@ public class UserDAOMySQLJDBCImpl implements UserDAO {
 
         try{
             sql
-                    = "INSERT INTO `USER`"
+                    = "INSERT INTO `USER` "
                     + "(username,"
                     + "password,"
                     + "firstname,"
@@ -52,7 +52,7 @@ public class UserDAOMySQLJDBCImpl implements UserDAO {
                     + "email,"
                     + "cel_number,"
                     + "role,"
-                    + "deleted)"
+                    + "deleted) "
                     + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             ps = conn.prepareStatement(sql);
 
@@ -133,7 +133,7 @@ public class UserDAOMySQLJDBCImpl implements UserDAO {
         try {
             sql
                     = "UPDATE `USER` SET "
-                    + "deleted = ?"
+                    + "deleted = ? "
                     + "WHERE userID = ?";
             ps = conn.prepareStatement(sql);
 
@@ -153,9 +153,9 @@ public class UserDAOMySQLJDBCImpl implements UserDAO {
 
         try {
             String sql =
-                    "SELECT *" +
-                    "FROM `USER`" +
-                    "WHERE" +
+                    "SELECT * " +
+                    "FROM `USER` " +
+                    "WHERE " +
                     "userID = ?";
 
             ps = conn.prepareStatement(sql);
@@ -184,9 +184,9 @@ public class UserDAOMySQLJDBCImpl implements UserDAO {
 
         try {
             String sql =
-                    "SELECT *" +
-                    "FROM `USER`" +
-                    "WHERE" +
+                    "SELECT * " +
+                    "FROM `USER` " +
+                    "WHERE " +
                     "username = ?";
 
             ps = conn.prepareStatement(sql);
@@ -215,9 +215,9 @@ public class UserDAOMySQLJDBCImpl implements UserDAO {
 
         try {
             String sql =
-                    "SELECT *" +
-                    "FROM `USER`" +
-                    "WHERE" +
+                    "SELECT * " +
+                    "FROM `USER` " +
+                    "WHERE " +
                     "role = ?";
 
             ps = conn.prepareStatement(sql);

@@ -89,7 +89,7 @@ public class HomeManagement {
                 loggedUser = null;
             }
             else{
-                loggedUser = sessionUserDAO.create(null,null, user.getFirstname(),user.getSurname(),null,null,null,null,null,null,null,null,null);
+                loggedUser = sessionUserDAO.create(user.getUsername(),null, user.getFirstname(),user.getSurname(),null,null,null,null,null,null,null,null,null);
             }
 
             daoFactory.commitTransaction();

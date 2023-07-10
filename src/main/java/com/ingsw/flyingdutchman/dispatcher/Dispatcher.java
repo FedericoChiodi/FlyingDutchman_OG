@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.RequestDispatcher;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,7 +16,7 @@ import java.util.logging.Level;
 
 @WebServlet(name = "Dispatcher", urlPatterns = {"/Dispatcher"})
 public class Dispatcher extends HttpServlet {
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException,IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
@@ -28,6 +29,10 @@ public class Dispatcher extends HttpServlet {
             Method controllerMethod = controllerClass.getMethod(splitAction[1], HttpServletRequest.class, HttpServletResponse.class);
             LogService.getApplicationLogger().log(Level.INFO, splitAction[0]+" "+splitAction[1]);
             controllerMethod.invoke(null,request,response);
+
+            String viewUrl = (String) request.getAttribute("viewUrl");
+            RequestDispatcher view = request.getRequestDispatcher("jsp/"+ viewUrl + ".jsp");
+            view.forward(request,response);
         }
         catch (Exception e){
             e.printStackTrace(out);

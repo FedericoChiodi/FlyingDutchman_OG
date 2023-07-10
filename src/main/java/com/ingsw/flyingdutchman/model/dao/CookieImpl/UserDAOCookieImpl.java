@@ -69,7 +69,7 @@ public class UserDAOCookieImpl implements UserDAO {
 
     @Override
     public User findByUsername(String username) {
-        Cookie[] cookies = request.getCookies();
+        /*Cookie[] cookies = request.getCookies();
         User loggedUser = null;
 
         if(cookies != null){
@@ -81,7 +81,8 @@ public class UserDAOCookieImpl implements UserDAO {
             }
         }
 
-        return loggedUser;
+        return loggedUser;*/
+        throw new UnsupportedOperationException("Not supported. DEBUG");
     }
 
     private String encode(User loggedUser){

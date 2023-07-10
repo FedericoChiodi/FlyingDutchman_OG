@@ -5,10 +5,7 @@ import com.ingsw.flyingdutchman.model.mo.Category;
 import com.ingsw.flyingdutchman.model.mo.Product;
 import com.ingsw.flyingdutchman.model.mo.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class ProductDAOMySQLJDBCImpl implements ProductDAO {
     Connection conn;
@@ -16,7 +13,7 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
     public ProductDAOMySQLJDBCImpl(Connection conn){this.conn = conn;}
 
     @Override
-    public Product create(String description, Integer min_price, Integer starting_price, Category category, User owner) {
+    public Product create(String description, Integer min_price, Integer starting_price, Blob image, Category category, User owner) {
         return null;
     }
 

@@ -35,7 +35,7 @@
       </li>
       <%if (loggedOn) {%>
         <li <%=menuActiveLink.equals("FlyingDutchman")?"class=\"active\"":""%>>
-          <a href="Dispatcher?controllerAction=AddressBookManagement.view">FlyingDutchman</a>
+          <a href="Dispatcher?controllerAction=HomeManagement.view">FlyingDutchman</a>
         </li>
         <li><a href="javascript:logoutForm.submit()">Logout</a></li>
       <%}%>
