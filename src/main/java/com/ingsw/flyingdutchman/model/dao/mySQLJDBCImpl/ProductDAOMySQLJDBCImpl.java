@@ -16,7 +16,7 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
     public ProductDAOMySQLJDBCImpl(Connection conn){this.conn = conn;}
 
     @Override
-    public Product create(String description, int min_price, int starting_price, Category category, User owner) {
+    public Product create(String description, Integer min_price, Integer starting_price, Category category, User owner) {
         return null;
     }
 

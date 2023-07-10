@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 
 public interface BidDAO {
     public Bid create(
-            int amount_bid,
+            Integer amount_bid,
             Timestamp bid_time,
             User bidder,
             Auction auction

@@ -13,7 +13,7 @@ public class BidDAOMySQLJDBCImpl implements BidDAO {
     public BidDAOMySQLJDBCImpl(Connection conn){this.conn = conn;}
 
     @Override
-    public Bid create(int amount_bid, Timestamp bid_time, User bidder, Auction auction) {
+    public Bid create(Integer amount_bid, Timestamp bid_time, User bidder, Auction auction) {
         return null;
     }
 

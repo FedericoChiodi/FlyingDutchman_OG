@@ -6,7 +6,7 @@ public class Auction {
     private Long auctionID;
     private Timestamp opening_timestamp;
     private Timestamp closing_timestamp;
-    private boolean product_sold;
+    private Boolean product_sold;
     private Product product_auctioned;
 
     public Long getAuctionID(){return auctionID;}
@@ -17,6 +17,6 @@ public class Auction {
     public void setOpening_timestamp(Timestamp opening_timestamp){this.opening_timestamp = opening_timestamp;}
     public Timestamp getClosing_timestamp(){return closing_timestamp;}
     public void setClosing_timestamp(Timestamp closing_timestamp){this.closing_timestamp = closing_timestamp;}
-    public boolean isProduct_sold(){return product_sold;}
+    public Boolean isProduct_sold(){return product_sold;}
     public void setProduct_sold(boolean product_sold){this.product_sold = product_sold;}
 }

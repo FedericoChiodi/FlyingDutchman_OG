@@ -5,8 +5,8 @@ import com.ingsw.flyingdutchman.model.mo.*;
 public interface ProductDAO {
     public Product create(
             String description,
-            int min_price,
-            int starting_price,
+            Integer min_price,
+            Integer starting_price,
             Category category,
             User owner
     );

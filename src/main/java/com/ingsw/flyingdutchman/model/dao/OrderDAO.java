@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 public interface OrderDAO {
     public Order create(
             Timestamp order_time,
-            int selling_price,
+            Integer selling_price,
             User buyer,
             Product product
     );

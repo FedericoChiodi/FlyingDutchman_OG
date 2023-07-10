@@ -10,8 +10,8 @@ public class User {
     private String surname;
     private Date birthdate;
     private String address;
-    private short civic_number;
-    private short cap;
+    private Short civic_number;
+    private Short cap;
     private String city;
     private String state;
     private String email;
@@ -34,9 +34,9 @@ public class User {
     public void setBirthdate(Date birthdate){this.birthdate = birthdate;}
     public String getAddress(){return address;}
     public void setAddress(String address){this.address = address;}
-    public short getCivic_number(){return civic_number;}
+    public Short getCivic_number(){return civic_number;}
     public void setCivic_number(short civic_number){this.civic_number = civic_number;}
-    public short getCap(){return cap;}
+    public Short getCap(){return cap;}
     public void setCap(short cap){this.cap = cap;}
     public String getCity(){return city;}
     public void setCity(String city){this.city = city;}
