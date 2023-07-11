@@ -15,13 +15,14 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
     public ProductDAOMySQLJDBCImpl(Connection conn){this.conn = conn;}
 
     @Override
-    public Product create(String description, Integer min_price, Integer starting_price, Blob image, Category category, User owner) {
+    public Product create(String description, Integer min_price, Integer starting_price,Integer current_price, Blob image, Category category, User owner) {
         PreparedStatement ps;
         String sql;
         Product product = new Product();
         product.setDescription(description);
         product.setMin_price(min_price);
         product.setStarting_price(starting_price);
+        product.setCurrent_price(current_price);
         product.setImage(image);
         product.setCategory(category);
         product.setOwner(owner);
@@ -32,16 +33,18 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
                     +"(description,"
                     +"min_price,"
                     +"starting_price,"
+                    +"current_price,"
                     +"image,"
                     +"categoryID,"
                     +"ownerID) "
-                    +"VALUES (?,?,?,?,?,?)";
+                    +"VALUES (?,?,?,?,?,?,?)";
             ps = conn.prepareStatement(sql);
 
             int i = 1;
             ps.setString(i++,description);
             ps.setInt(i++,min_price);
             ps.setInt(i++,starting_price);
+            ps.setInt(i++,current_price);
             ps.setBlob(i++,image);
             ps.setLong(i++,category.getCategoryID());
             ps.setLong(i++,owner.getUserID());
@@ -64,6 +67,7 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
                     +"description = ?,"
                     +"min_price = ?,"
                     +"starting_price = ?,"
+                    +"current_price = ?,"
                     +"image = ?,"
                     +"categoryID = ?,"
                     +"ownerID = ? "
@@ -74,6 +78,7 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
             ps.setString(i++, product.getDescription());
             ps.setInt(i++,product.getMin_price());
             ps.setInt(i++,product.getStarting_price());
+            ps.setInt(i++,product.getCurrent_price());
             ps.setBlob(i++,product.getImage());
             ps.setLong(i++,product.getCategory().getCategoryID());
             ps.setLong(i++,product.getOwner().getUserID());
@@ -172,6 +177,7 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
             product.setDescription(rs.getString("description"));
             product.setMin_price(rs.getInt("min_price"));
             product.setStarting_price(rs.getInt("starting_price"));
+            product.setCurrent_price(rs.getInt("current_price"));
             product.getCategory().setCategoryID(rs.getLong("categoryID"));
             product.getOwner().setUserID(rs.getLong("userID"));
         }

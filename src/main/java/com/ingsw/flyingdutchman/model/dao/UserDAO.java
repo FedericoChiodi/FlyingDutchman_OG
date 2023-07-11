@@ -18,7 +18,8 @@ public interface UserDAO {
             String state,
             String email,
             String cel_number,
-            String role
+            String role,
+            String deleted
     );
     public void update(User user);
     public void delete(User user);

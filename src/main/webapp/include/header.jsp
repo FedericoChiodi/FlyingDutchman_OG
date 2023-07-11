@@ -33,10 +33,34 @@
       <li <%=menuActiveLink.equals("Home")?"class=\"active\"":""%>>
         <a href="Dispatcher?controllerAction=HomeManagement.view">Home</a>
       </li>
-      <%if (loggedOn) {%>
-        <li <%=menuActiveLink.equals("FlyingDutchman")?"class=\"active\"":""%>>
-          <a href="Dispatcher?controllerAction=HomeManagement.view">FlyingDutchman</a>
+      <%if (!loggedOn) {%>
+        <li <%=menuActiveLink.equals("Registrati")?"class=\"active\"":""%>>
+          <a href="Dispatcher?controllerAction=UserManagement.insert">Registrati</a>
         </li>
+      <%}%>
+      <%if (loggedOn){%>
+        <li <%=menuActiveLink.equals("Catalogo")?"class=\"active\"":""%>>
+          <a href="Dispatcher?controllerAction=AuctionManagement.view">Catalogo</a>
+        </li>
+        <li <%=menuActiveLink.equals("Ordini")?"class=\"active\"":""%>>
+          <a href="Dispatcher?controllerAction=OrderManagement.view">Ordini</a>
+        </li>
+        <%String role = loggedUser.getRole();%>
+        <%if(role.equals("Premium") || role.equals("Admin") || role.equals("SuperAdmin")){%>
+          <li <%=menuActiveLink.equals("Prenotazioni")?"class=\"active\"":""%>>
+            <a href="Dispatcher?controllerAction=ThresholdManagement.view">Prenotazioni</a>
+          </li>
+        <%}%>
+        <%if(role.equals("Admin") || role.equals("SuperAdmin")){%>
+        <li <%=menuActiveLink.equals("Banna")?"class=\"active\"":""%>>
+          <a href="Dispatcher?controllerAction=UserManagement.view">Banna</a>
+        </li>
+        <%}%>
+        <%if(role.equals("SuperAdmin")){%>
+        <li <%=menuActiveLink.equals("Abbassa!")?"class=\"active\"":""%>>
+          <a href="Dispatcher?controllerAction=ProductManagement.view">Abbassa!</a>
+        </li>
+        <%}%>
         <li><a href="javascript:logoutForm.submit()">Logout</a></li>
       <%}%>
     </ul>

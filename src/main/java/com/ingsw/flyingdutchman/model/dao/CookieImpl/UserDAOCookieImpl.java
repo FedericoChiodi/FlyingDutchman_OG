@@ -19,12 +19,13 @@ public class UserDAOCookieImpl implements UserDAO {
     }
 
     @Override
-    public User create(String username, String password, String firstname, String surname, Date birthdate, String address, Short civic_number, Short cap, String city, String state, String email, String cel_number, String role) {
+    public User create(String username, String password, String firstname, String surname, Date birthdate, String address, Short civic_number, Short cap, String city, String state, String email, String cel_number, String role, String deleted) {
         User loggedUser = new User();
 
         loggedUser.setUsername(username);
         loggedUser.setFirstname(firstname);
         loggedUser.setSurname(surname);
+        loggedUser.setRole(role);
 
         Cookie cookie;
         cookie = new Cookie("loggedUser", encode(loggedUser));
@@ -87,7 +88,7 @@ public class UserDAOCookieImpl implements UserDAO {
 
     private String encode(User loggedUser){
         String encodedUser;
-        encodedUser = loggedUser.getUsername() + "#" + loggedUser.getFirstname() + "#" + loggedUser.getSurname();
+        encodedUser = loggedUser.getUsername() + "#" + loggedUser.getFirstname() + "#" + loggedUser.getSurname() + "#" + loggedUser.getRole();
         return encodedUser;
     }
 
@@ -99,6 +100,7 @@ public class UserDAOCookieImpl implements UserDAO {
         loggedUser.setUsername(values[0]);
         loggedUser.setFirstname(values[1]);
         loggedUser.setSurname(values[2]);
+        loggedUser.setRole(values[3]);
 
         return loggedUser;
     }

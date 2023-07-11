@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Chela+One&display=swap');
+
 /* Base Styles */
 * {
     margin: 0;
@@ -21,27 +23,38 @@ a:link, a:active, a:visited {
 }
 
 body {
-    background: wheat;
-    color: #666666;
-    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+    background: #3b3b37;
+    color: #3b3b37;
+    font-family: "Lato",Arial,sans-serif;
     font-size: 1em;
-    width:980px;
+    width:1024px;
     margin:0 auto;
     box-shadow:0 0 0 2px #222222;
 }
 
 /* Header Section */
 header {
-    background: #a32900;
+    background: #369c2b;
     padding-top: 10px;
 }
 
 .logo {
     padding-top: 20px;
     padding-left: 14px;
-    font-size: 2.2em;
+    font-size: 5.5em;
     font-weight: 900;
-    color: white;
+    color: #4cf63b;
+    font-family: 'Chela One', cursive, sans-serif;
+    text-shadow: 1px 1px 1px #336a2d,
+    1px 2px 1px #336a2d,
+    1px 3px 1px #336a2d,
+    1px 4px 1px #336a2d,
+    1px 5px 1px #336a2d,
+    1px 6px 1px #336a2d,
+    1px 10px 5px rgba(16, 16, 16, 0.5),
+    1px 15px 10px rgba(16, 16, 16, 0.4),
+    1px 20px 30px rgba(16, 16, 16, 0.3),
+    1px 25px 50px rgba(16, 16, 16, 0.2);
 }
 
 /* Navigation Menu */
@@ -56,8 +69,8 @@ header nav ul {
 
 header nav ul > li {
     float:left;
-    border-top:solid 1px #daa999;
-    background: linear-gradient(#daa999, #EDD4CC);
+    border-top:solid 1px #39ce29;
+    background: linear-gradient(#38b52a, #336a2d);
 }
 
 header nav ul > li > a {
@@ -72,11 +85,11 @@ header nav ul > li > a {
 }
 
 header nav ul > li:hover, nav ul > li.active {
-    border-top:solid 1px #210800;
-    background: linear-gradient(#621900, #822100);
+    border-top:solid 1px #3b3b37;
+    background: linear-gradient(#3b3b37, #336a2d);
 }
 header nav ul > li:hover > a {
-    color:#f9dcb4;
+    color:#38b52a;
 }
 
 /* Login Section */
@@ -97,7 +110,7 @@ header nav ul > li:hover > a {
     float:left;
     height:18px;
     width:125px;
-    border: 1px solid #A32900;
+    border: 1px solid #369c2b;
     border-radius: 4px;
     margin-top: 2px;
     font-size: 11px;
@@ -109,7 +122,7 @@ header nav ul > li:hover > a {
 
 
 #login form input[type="submit"] {
-    background-color:#A32900;
+    background-color:#38b52a;
     color: #FFFFFF;
     border: 0;
     cursor:pointer;
@@ -138,7 +151,7 @@ main {
 
 .button {
     padding: 5px 10px;
-    background-color: #a3271f;
+    background-color: #369c2b;
     color: #ffffff;
     border-radius: 8px;
     cursor: pointer;

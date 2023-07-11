@@ -9,6 +9,7 @@ public interface ProductDAO {
             String description,
             Integer min_price,
             Integer starting_price,
+            Integer current_price,
             Blob image,
             Category category,
             User owner

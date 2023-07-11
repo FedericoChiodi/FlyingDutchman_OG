@@ -8,6 +8,7 @@ public class Product {
     private String description;
     private Integer min_price;
     private Integer starting_price;
+    private Integer current_price;
     private Blob image;
     private Category category;
     private User owner;
@@ -20,6 +21,8 @@ public class Product {
     public void setMin_price(int min_price){this.min_price = min_price;}
     public Integer getStarting_price(){return starting_price;}
     public void setStarting_price(int starting_price){this.starting_price = starting_price;}
+    public Integer getCurrent_price(){return current_price;}
+    public void setCurrent_price(Integer current_price){this.current_price = current_price;}
     public Blob getImage(){return image;}
     public void setImage(Blob image){this.image = image;}
     public Category getCategory() {return category;}

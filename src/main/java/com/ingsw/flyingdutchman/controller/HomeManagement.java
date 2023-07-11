@@ -90,7 +90,7 @@ public class HomeManagement {
                     loggedUser = null;
                 }
                 else{
-                    loggedUser = sessionUserDAO.create(user.getUsername(),null, user.getFirstname(),user.getSurname(),null,null,null,null,null,null,null,null,null);
+                    loggedUser = sessionUserDAO.create(user.getUsername(),null, user.getFirstname(),user.getSurname(),null,null,null,null,null,null,null,null,user.getRole(),null);
                 }
             }
             catch (NullPointerException e){
