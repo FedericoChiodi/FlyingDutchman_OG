@@ -5,6 +5,7 @@
   boolean loggedOn = (Boolean) request.getAttribute("loggedOn");
   User loggedUser = (User) request.getAttribute("loggedUser");
   String applicationMessage = (String) request.getAttribute("applicationMessage");
+  User user = (User) request.getAttribute("user");
   String menuActiveLink = "Home";
 %>
 
@@ -21,6 +22,7 @@
     <%} else {%>
       Benvenuto. Loggati.
     <%}%>
+    
   </main>
   <%@include file="/include/footer.inc"%>
 </body>

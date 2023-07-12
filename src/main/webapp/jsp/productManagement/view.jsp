@@ -1,0 +1,95 @@
+<%@ page session="false"%>
+<%@page import="com.ingsw.flyingdutchman.model.mo.User"%>
+<%@page import="com.ingsw.flyingdutchman.model.mo.Product"%>
+
+<%
+    int i = 0;
+    boolean loggedOn = (Boolean) request.getAttribute("loggedOn");
+    User loggedUser = (User) request.getAttribute("loggedUser");
+    String applicationMessage = (String) request.getAttribute("applicationMessage");
+    String menuActiveLink = "Prodotti";
+    Product[] products = (Product[]) request.getAttribute("products");
+%>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <%@include file="/include/htmlHead.jsp"%>
+        <script>
+            function insertProduct(){
+                document.insertForm.submit();
+            }
+            function mainOnLoadHandler(){
+                document.querySelector("#newProductButton").addEventListener("click",insertProduct);
+            }
+            function deleteProduct(productID){
+                document.deleteForm.productID.value = productID;
+                if(confirm("Attenzione! Questa azione è irreversibile. Vuoi procedere?")){
+                    document.deleteForm.submit();
+                }
+            }
+        </script>
+        <style>
+            #insertProductButtonSelection{
+                margin: 12px 0;
+            }
+            #products{
+                margin: 12px 0;
+            }
+            #products article{
+                float: left;
+                width: 250px;
+                border-width: 1px;
+                border-style: solid;
+                border-radius: 10px;
+                border-color: #1f9233;
+                padding: 10px 8px 10px 20px;
+                margin: 0 18px 16px 0;
+                background: linear-gradient(to right, #28a745, #39ce29);
+                box-shadow: 0 3px 2px #777;
+            }
+            #products article a{
+                color: #28a745;
+            }
+            #trashcan{
+                float: right;
+            }
+        </style>
+    </head>
+    <body>
+        <%@include file="/include/header.jsp"%>
+    <main>
+        <section id="pageTitle">
+            <h1>Centro Gestione dei Prodotti</h1>
+        </section>
+
+        <section id="insertProductButtonSelection">
+            <input type="button" id="insertProductButton" name="insertProductButton"
+                   class="button" value="Metti in vendita un Prodotto" onclick="insertProduct()"/>
+        </section>
+
+        <section id="products" class="clearfix">
+            <%for (i = 0; i < products.length; i++){%>
+                <article>
+                    <a href="javascript:deleteProduct(<%=products[i].getProductID()%>)">
+                        <img id="trashcan" src="images/trashcan.png" width="22" height="22" alt="Elimina Prodotto">
+                    </a>
+                    <span class="description"><%=products[i].getDescription()%></span>
+                    <br/>
+                    <span class="current_price">Attualmente costa: &euro;<%=products[i].getCurrent_price()%></span>
+                </article>
+            <%}%>
+        </section>
+
+        <form name="insertForm" method="post" action="Dispatcher">
+            <input type="hidden" name="controllerAction" value="ProductManagement.insertView"/>
+        </form>
+
+        <form name="deleteForm" method="post" action="Dispatcher">
+            <input type="hidden" name="productID"/>
+            <input type="hidden" name="controllerAction" value="ProductManagement.delete"/>
+        </form>
+    </main>
+        <%@include file="/include/footer.inc"%>
+    </body>
+</html>

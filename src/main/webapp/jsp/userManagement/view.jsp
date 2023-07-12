@@ -1,13 +1,12 @@
 <%@ page session="false"%>
 <%@ page import="com.ingsw.flyingdutchman.model.mo.User" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%
     int i = 0;
     boolean loggedOn = (Boolean) request.getAttribute("loggedOn");
     User loggedUser = (User) request.getAttribute("loggedUser");
     String applicationMessage = (String) request.getAttribute("applicationMessage");
-    String menuActiveLink = "Registrati";
+    String menuActiveLink = "Utente";
     User user = (User) request.getAttribute("user");
     String action = (user!=null) ? "modify" : "insert";
 %>
@@ -16,14 +15,45 @@
     <head>
         <%@include file="/include/htmlHead.jsp"%>
         <style>
-            #newUserButtonSelection{
-                margin: 12px 0;
+            main {
+                display: flex;
+                justify-content: space-between;
+                flex-direction: column;
             }
-            #deleteUserButtonSelection{
-                margin: 12px 0;
+            /* Stile dei pulsanti */
+            .button {
+                padding: 12px 24px;
+                font-size: 16px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                margin-bottom: 12px;
             }
-            #modifyUserButtonSelection{
-                margin: 12px 0;
+
+            /* Stile specifico per il pulsante "Registrati" */
+            #insertUserButton {
+                background-color: #28a745;
+            }
+
+            #insertUserButton:hover {
+                background-color: #1f9233;
+            }
+
+            /* Stile specifico per il pulsante "Modifica i miei dati" */
+            #modifyUserButton {
+                background-color: #28a745;
+            }
+
+            #modifyUserButton:hover {
+                background-color: #1f9233;
+            }
+
+            /* Stile specifico per il pulsante "Cancella il mio Account" */
+            #deleteUserButton {
+                background-color: #28a745;
+            }
+
+            #deleteUserButton:hover {
+                background-color: #1f9233;
             }
         </style>
         <script>
@@ -39,7 +69,9 @@
             }
             function deleteUser(userID){
                 document.deleteForm.userID.value = userID;
-                document.deleteForm.submit();
+                if(confirm("Attenzione! Questa azione è irreversibile. Vuoi procedere?")){
+                    document.deleteForm.submit();
+                }
             }
         </script>
     </head>
@@ -50,10 +82,12 @@
             <h1>Centro Gestione degli Utenti</h1>
         </section>
 
-        <section id="insertUserButtonSelection">
-            <input type="button" id="insertUserButton" name="insertUserButton"
-                   class="button" value="Registrati" onclick="insertUser()"/>
-        </section>
+        <%if (!loggedOn){%>
+            <section id="insertUserButtonSelection">
+                <input type="button" id="insertUserButton" name="insertUserButton"
+                       class="button" value="Registrati" onclick="insertUser()"/>
+            </section>
+        <%}%>
 
         <%if (loggedOn){%>
             <section id="modifyUserButtonSelection">

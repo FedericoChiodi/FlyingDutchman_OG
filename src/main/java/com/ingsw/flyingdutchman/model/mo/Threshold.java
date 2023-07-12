@@ -6,12 +6,15 @@ public class Threshold {
     private Long ThresholdID;
     private Integer price;
     private Timestamp reservation_date;
+    private User user;
     private Auction auction;
 
     public Long getThresholdID(){return ThresholdID;}
     public void setThresholdID(Long ThresholdID){this.ThresholdID = ThresholdID;}
     public Auction getAuction(){return auction;}
     public void setAuction(Auction auction){this.auction = auction;}
+    public User getUser(){return user;}
+    public void setUser(User user){this.user = user;}
     public Integer getPrice(){return price;}
     public void setPrice(int price){this.price = price;}
     public Timestamp getReservation_date(){return reservation_date;}

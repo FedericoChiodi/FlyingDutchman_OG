@@ -1,7 +1,6 @@
 package com.ingsw.flyingdutchman.model.dao.mySQLJDBCImpl;
 
-import com.ingsw.flyingdutchman.model.dao.DAOFactory;
-import com.ingsw.flyingdutchman.model.dao.UserDAO;
+import com.ingsw.flyingdutchman.model.dao.*;
 import com.ingsw.flyingdutchman.services.config.Configuration;
 
 import java.sql.Connection;
@@ -64,5 +63,35 @@ public class MySQLJDBCDAOFactory extends DAOFactory {
     @Override
     public UserDAO getUserDAO() {
         return new UserDAOMySQLJDBCImpl(connection);
+    }
+
+    @Override
+    public ProductDAO getProductDAO() {
+        return new ProductDAOMySQLJDBCImpl(connection);
+    }
+
+    @Override
+    public AuctionDAO getAuctionDAO() {
+        return new AuctionDAOMySQLJDBCImpl(connection);
+    }
+
+    @Override
+    public BidDAO getBidDAO() {
+        return new BidDAOMySQLJDBCImpl(connection);
+    }
+
+    @Override
+    public CategoryDAO getCategoryDAO() {
+        return new CategoryDAOMySQLJDBCImpl(connection);
+    }
+
+    @Override
+    public OrderDAO getOrderDAO() {
+        return new OrderDAOMySQLJDBCImpl(connection);
+    }
+
+    @Override
+    public ThresholdDAO getThresholdDAO() {
+        return new ThresholdDAOMySQLJDBCImpl(connection);
     }
 }

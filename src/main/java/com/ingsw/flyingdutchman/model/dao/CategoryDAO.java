@@ -10,4 +10,5 @@ public interface CategoryDAO {
     public void delete(Category category);
     public Category findByCategoryID(Long categoryID);
     public Category findByName(String name);
+    public Category[] getAllCategories();
 }

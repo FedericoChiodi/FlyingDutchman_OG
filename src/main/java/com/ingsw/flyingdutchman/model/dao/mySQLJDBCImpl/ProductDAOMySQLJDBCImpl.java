@@ -151,7 +151,7 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
                     ="SELECT * "
                     +"FROM `PRODUCT` "
                     +"WHERE "
-                    +"userID = ?";
+                    +"ownerID = ?";
             ps = conn.prepareStatement(sql);
             ps.setString(1, owner.getUserID().toString());
 
@@ -170,19 +170,50 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
         return products.toArray(new Product[0]);
     }
 
+    @Override
+    public Product[] findAllProducts() {
+        PreparedStatement ps;
+        List<Product> products = new ArrayList<>();
+
+        try {
+            String sql
+                    ="SELECT * "
+                    +"FROM `PRODUCT`";
+            ps = conn.prepareStatement(sql);
+
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()){
+                Product product = read(resultSet);
+                products.add(product);
+            }
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return products.toArray(new Product[0]);
+    }
+
     public Product read(ResultSet rs){
-        Product product = new Product();
+        Product product = new Product(); //TODO: ricordarsi di fare sta cosa!!!
+        Category category = new Category();
+        User owner = new User();
+        product.setCategory(category);
+        product.setOwner(owner);
         try{
             product.setProductID(rs.getLong("productID"));
             product.setDescription(rs.getString("description"));
             product.setMin_price(rs.getInt("min_price"));
             product.setStarting_price(rs.getInt("starting_price"));
             product.setCurrent_price(rs.getInt("current_price"));
+            product.setImage(rs.getBlob("image"));
             product.getCategory().setCategoryID(rs.getLong("categoryID"));
-            product.getOwner().setUserID(rs.getLong("userID"));
+            product.getOwner().setUserID(rs.getLong("ownerID"));
         }
         catch (SQLException e){
-            System.err.println("Error. During read rs - Auction");
+            System.err.println("Error. During read rs - Product");
         }
 
         return product;

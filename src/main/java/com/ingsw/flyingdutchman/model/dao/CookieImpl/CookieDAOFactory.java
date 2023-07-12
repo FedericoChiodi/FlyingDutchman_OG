@@ -1,7 +1,6 @@
 package com.ingsw.flyingdutchman.model.dao.CookieImpl;
 
-import com.ingsw.flyingdutchman.model.dao.DAOFactory;
-import com.ingsw.flyingdutchman.model.dao.UserDAO;
+import com.ingsw.flyingdutchman.model.dao.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -37,6 +36,36 @@ public class CookieDAOFactory extends DAOFactory {
     @Override
     public UserDAO getUserDAO(){
         return new UserDAOCookieImpl(request,response);
+    }
+
+    @Override
+    public ProductDAO getProductDAO() {
+        return null;
+    }
+
+    @Override
+    public AuctionDAO getAuctionDAO() {
+        return null;
+    }
+
+    @Override
+    public BidDAO getBidDAO() {
+        return null;
+    }
+
+    @Override
+    public CategoryDAO getCategoryDAO() {
+        return null;
+    }
+
+    @Override
+    public OrderDAO getOrderDAO() {
+        return null;
+    }
+
+    @Override
+    public ThresholdDAO getThresholdDAO() {
+        return null;
     }
 
     // ... altre cose per cui servono cookies? ci penserò poi...

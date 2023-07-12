@@ -2,6 +2,8 @@ package com.ingsw.flyingdutchman.model.dao;
 
 import com.ingsw.flyingdutchman.model.dao.CookieImpl.CookieDAOFactory;
 import com.ingsw.flyingdutchman.model.dao.mySQLJDBCImpl.MySQLJDBCDAOFactory;
+import com.ingsw.flyingdutchman.model.mo.Auction;
+import com.ingsw.flyingdutchman.model.mo.Product;
 
 import java.util.Map;
 
@@ -15,7 +17,12 @@ public abstract class DAOFactory {
     public abstract void closeTransaction();
 
     public abstract UserDAO getUserDAO();
-    // all other daos??
+    public abstract ProductDAO getProductDAO();
+    public abstract AuctionDAO getAuctionDAO();
+    public abstract BidDAO getBidDAO();
+    public abstract CategoryDAO getCategoryDAO();
+    public abstract OrderDAO getOrderDAO();
+    public abstract ThresholdDAO getThresholdDAO();
 
     public static DAOFactory getDAOFactory(String whichFactory, Map factoryParameters){
         if(whichFactory.equals(MYSQLJDBCIMPL)){
