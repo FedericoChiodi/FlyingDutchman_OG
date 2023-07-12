@@ -35,10 +35,13 @@
       </li>
       <%if (!loggedOn) {%>
         <li <%=menuActiveLink.equals("Registrati")?"class=\"active\"":""%>>
-          <a href="Dispatcher?controllerAction=UserManagement.insert">Registrati</a>
+          <a href="Dispatcher?controllerAction=UserManagement.insertView">Registrati</a>
         </li>
       <%}%>
       <%if (loggedOn){%>
+        <li <%=menuActiveLink.equals("Utente")?"class=\"active\"":""%>>
+          <a href="Dispatcher?controllerAction=UserManagement.view">Utente</a>
+        </li>
         <li <%=menuActiveLink.equals("Catalogo")?"class=\"active\"":""%>>
           <a href="Dispatcher?controllerAction=AuctionManagement.view">Catalogo</a>
         </li>

@@ -84,7 +84,7 @@ public class HomeManagement {
             User user = userDAO.findByUsername(username);
 
             try {
-                if (user == null || !user.getPassword().equals(password)){
+                if (user == null || !user.getPassword().equals(password) || user.isDeleted()){
                     sessionUserDAO.delete(null);
                     applicationMessage = "Username o Password errati!";
                     loggedUser = null;
