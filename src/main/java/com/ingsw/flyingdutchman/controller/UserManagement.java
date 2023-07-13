@@ -294,7 +294,6 @@ public class UserManagement {
             UserDAO userDAO = daoFactory.getUserDAO();
             User user = userDAO.findByUsername(loggedUser.getUsername());
 
-
             user.setUsername(request.getParameter("username"));
             user.setPassword(request.getParameter("password"));
             user.setFirstname(request.getParameter("firstname"));

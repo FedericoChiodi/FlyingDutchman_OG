@@ -1,29 +1,27 @@
 <%@ page session="false"%>
+<%@page import="com.ingsw.flyingdutchman.model.mo.Auction"%>
 <%@page import="com.ingsw.flyingdutchman.model.mo.User"%>
-<%@page import="com.ingsw.flyingdutchman.model.mo.Product"%>
-
 <%
     int i = 0;
     boolean loggedOn = (Boolean) request.getAttribute("loggedOn");
     User loggedUser = (User) request.getAttribute("loggedUser");
     String applicationMessage = (String) request.getAttribute("applicationMessage");
-    String menuActiveLink = "Prodotti";
-    Product[] products = (Product[]) request.getAttribute("products");
+    String menuActiveLink = "Aste";
+    Auction[] auctions = (Auction[]) request.getAttribute("auctions");
 %>
-
 <!DOCTYPE html>
 <html>
     <head>
         <%@include file="/include/htmlHead.jsp"%>
         <script>
-            function insertProduct(){
+            function insertAuction(){
                 document.insertForm.submit();
             }
             function mainOnLoadHandler(){
-                document.querySelector("#newProductButton").addEventListener("click",insertProduct);
+                document.querySelector("#newAuctionButton").addEventListener("click",insertAuction);
             }
-            function deleteProduct(productID){
-                document.deleteForm.productID.value = productID;
+            function deleteAuction(auctionID){
+                document.deleteForm.auctionID.value = auctionID;
                 if(confirm("Attenzione! Questa azione e' irreversibile. Vuoi procedere?")){
                     document.deleteForm.submit();
                 }
@@ -38,10 +36,10 @@
                 transition: background-color 0.3s ease;
                 background-color: #28a745;
             }
-            #insertProductButtonSelection{
+            #insertAuctionButtonSelection{
                 margin: 12px 0;
             }
-            #products{
+            #auctions{
                 margin: 12px 0;
             }
             #products article{
@@ -73,40 +71,39 @@
         <%@include file="/include/header.jsp"%>
     <main>
         <section id="pageTitle">
-            <h1>Centro Gestione dei Prodotti</h1>
+            <h1>Aste in Corso</h1>
         </section>
 
-        <section id="insertProductButtonSelection">
-            <input type="button" id="insertProductButton" name="insertProductButton"
-                   class="button" value="Metti in vendita un Prodotto" onclick="insertProduct()"/>
+        <section id="insertAuctionButtonSelection">
+            <input type="button" id="insertAuction" name="insertAuctionButton"
+                   class="button" value="Inizia una nuova Asta" onclick="insertAuction()"/>
         </section>
 
-        <section id="productListBreak">
+        <section id="auctionListBreak">
             <hr>
         </section>
 
-        <%if(products != null){%>
-            <section id="products" class="clearfix">
-                <%for (i = 0; i < products.length; i++){%>
-                <article>
-                    <a href="javascript:deleteProduct(<%=products[i].getProductID()%>)">
-                        <img id="trashcan" src="images/trashcan.png" width="24" height="24" alt="X">
-                    </a>
-                    <b><span class="description"><%=products[i].getDescription()%></span></b>
-                    <br/>
-                    <span class="current_price">Attualmente costa: &euro;<%=products[i].getCurrent_price()%></span>
-                </article>
+        <%if(auctions.length > 0){%>
+            <section id="auctions" class="clearfix">
+                <%for (i = 0; i < auctions.length; i++){%>
+                    <%if(!auctions[i].isProduct_sold() && !auctions[i].getProduct_auctioned().getOwner().equals(loggedUser))%>
+                        <article>
+                            <b><span class="description"><%=auctions[i].getProduct_auctioned().getDescription()%></span></b>
+                            <br/>
+                            <span class="current_price">&euro;<%=auctions[i].getProduct_auctioned().getCurrent_price()%></span>
+                        </article>
+                    <%%>
                 <%}%>
             </section>
         <%}%>
 
         <form name="insertForm" method="post" action="Dispatcher">
-            <input type="hidden" name="controllerAction" value="ProductManagement.insertView"/>
+            <input type="hidden" name="controllerAction" value="AuctionManagement.insertView"/>
         </form>
 
         <form name="deleteForm" method="post" action="Dispatcher">
-            <input type="hidden" name="productID"/>
-            <input type="hidden" name="controllerAction" value="ProductManagement.delete"/>
+            <input type="hidden" name="auctionID"/>
+            <input type="hidden" name="controllerAction" value="AuctionManagement.delete"/>
         </form>
     </main>
         <%@include file="/include/footer.inc"%>

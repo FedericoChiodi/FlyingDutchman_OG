@@ -44,8 +44,8 @@
       <li <%=menuActiveLink.equals("Prodotti")?"class=\"active\"":""%>>
         <a href="Dispatcher?controllerAction=ProductManagement.view">Prodotti</a>
       </li>
-      <li <%=menuActiveLink.equals("Catalogo")?"class=\"active\"":""%>>
-        <a href="Dispatcher?controllerAction=AuctionManagement.view">Catalogo</a>
+      <li <%=menuActiveLink.equals("Aste")?"class=\"active\"":""%>>
+        <a href="Dispatcher?controllerAction=AuctionManagement.view">Aste</a>
       </li>
       <li <%=menuActiveLink.equals("Ordini")?"class=\"active\"":""%>>
         <a href="Dispatcher?controllerAction=OrderManagement.view">Ordini</a>

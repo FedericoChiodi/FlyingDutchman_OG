@@ -3,8 +3,11 @@ package com.ingsw.flyingdutchman.model.dao.mySQLJDBCImpl;
 import com.ingsw.flyingdutchman.model.dao.AuctionDAO;
 import com.ingsw.flyingdutchman.model.mo.Auction;
 import com.ingsw.flyingdutchman.model.mo.Product;
+import com.ingsw.flyingdutchman.model.mo.User;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.sql.Types.NULL;
 
@@ -129,8 +132,103 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
         return auction;
     }
 
+    @Override
+    public Auction[] findByProductOwner(Product product) {
+        PreparedStatement ps;
+        List<Auction> auctions = new ArrayList<>();
+        String sql;
+
+        try {
+            sql
+                    = "SELECT auctionID, opening_timestamp, closing_timestamp, is_product_sold, productID "
+                    + "FROM `AUCTION` NATURAl JOIN `PRODUCT` "
+                    + "WHERE "
+                    + "ownerID = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1,product.getOwner().getUserID());
+
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()){
+                Auction auction = read(resultSet);
+                auctions.add(auction);
+            }
+
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return auctions.toArray(new Auction[0]);
+    }
+
+    @Override
+    public Auction[] findByOwner(User user) {
+        PreparedStatement ps;
+        List<Auction> auctions = new ArrayList<>();
+        String sql;
+
+        try {
+            sql
+                    = "SELECT auctionID, opening_timestamp, closing_timestamp, is_product_sold, productID "
+                    + "FROM `AUCTION` NATURAl JOIN `PRODUCT` "
+                    + "WHERE "
+                    + "ownerID = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1,user.getUserID());
+
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()){
+                Auction auction = read(resultSet);
+                auctions.add(auction);
+            }
+
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return auctions.toArray(new Auction[0]);
+    }
+
+    @Override
+    public Auction[] findAllAuctions() {
+        PreparedStatement ps;
+        List<Auction> auctions = new ArrayList<>();
+        String sql;
+
+        try {
+            sql
+                    = "SELECT * "
+                    + "FROM `AUCTION`";
+            ps = conn.prepareStatement(sql);
+
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()){
+                Auction auction = read(resultSet);
+                auctions.add(auction);
+            }
+
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return auctions.toArray(new Auction[0]);
+    }
+
     Auction read(ResultSet rs){
         Auction auction = new Auction();
+        Product product = new Product();
+        auction.setProduct_auctioned(product);
         try{
             auction.setAuctionID(rs.getLong("auctionID"));
             auction.setOpening_timestamp(rs.getTimestamp("opening_timestamp"));

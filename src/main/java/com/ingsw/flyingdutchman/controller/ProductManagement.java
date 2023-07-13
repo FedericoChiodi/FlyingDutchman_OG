@@ -9,11 +9,9 @@ import com.ingsw.flyingdutchman.model.mo.Product;
 import com.ingsw.flyingdutchman.model.mo.User;
 import com.ingsw.flyingdutchman.services.config.Configuration;
 import com.ingsw.flyingdutchman.services.logservice.LogService;
-import com.mysql.cj.jdbc.Blob;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -43,15 +41,7 @@ public class ProductManagement {
             daoFactory.beginTransaction();
 
             loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
-
             Product[] products = daoFactory.getProductDAO().findByOwner(loggedUser);
-
-            if (products.length != 0){
-                for (int i = 0; i < products.length; i++){
-                    products[i].setCategory(daoFactory.getCategoryDAO().findByCategoryID(products[i].getCategory().getCategoryID()));
-                    products[i].setOwner(daoFactory.getUserDAO().findByUserID(products[i].getOwner().getUserID()));
-                }
-            }
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
@@ -145,8 +135,9 @@ public class ProductManagement {
             daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
             daoFactory.beginTransaction();
 
-            ProductDAO productDAO = daoFactory.getProductDAO();
+            User user = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
 
+            ProductDAO productDAO = daoFactory.getProductDAO();
             CategoryDAO categoryDAO = daoFactory.getCategoryDAO();
             try {
                 productDAO.create(
@@ -156,23 +147,80 @@ public class ProductManagement {
                         Integer.parseInt(request.getParameter("current_price")),
                         null, // TODO: se ho tempo implementare lettura immagini
                         categoryDAO.findByCategoryID(Long.parseLong(request.getParameter("categoryID"))),
-                        loggedUser
+                        user
                 );
             }catch (Exception e){
                 applicationMessage = "Errore nella creazione del prodotto.";
                 logger.log(Level.SEVERE, "Errore nella creazione del prodotto: " + e);
             }
 
+            Product[] products = daoFactory.getProductDAO().findByOwner(user);
+
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
 
             request.setAttribute("loggedOn",loggedUser!=null);
-            request.setAttribute("loggedUser",loggedUser);
+            request.setAttribute("loggedUser", loggedUser);
+            request.setAttribute("products", products);
             request.setAttribute("applicationMessage",applicationMessage);
             request.setAttribute("viewUrl","productManagement/view");
         }
         catch (Exception e){
             logger.log(Level.SEVERE, "Product Controller Error / insert" + e);
+            try {
+                if(daoFactory != null) daoFactory.rollbackTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();
+            }
+            catch (Throwable t){}
+            throw new RuntimeException(e);
+        }
+        finally {
+            try {
+                if(daoFactory != null) daoFactory.closeTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.closeTransaction();
+            }
+            catch (Throwable t){}
+        }
+    }
+
+    public static void delete(HttpServletRequest request, HttpServletResponse response){
+        DAOFactory sessionDAOFactory = null;
+        DAOFactory daoFactory = null;
+        User loggedUser;
+        String applicationMessage = null;
+        Logger logger = LogService.getApplicationLogger();
+
+        try {
+            Map sessionFactoryParameters = new HashMap<String, Object>();
+            sessionFactoryParameters.put("request",request);
+            sessionFactoryParameters.put("response",response);
+            sessionDAOFactory = DAOFactory.getDAOFactory(Configuration.COOKIE_IMPL, sessionFactoryParameters);
+            sessionDAOFactory.beginTransaction();
+
+            UserDAO sessionUserDAO = sessionDAOFactory.getUserDAO();
+            loggedUser = sessionUserDAO.findLoggedUser();
+
+            daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
+            daoFactory.beginTransaction();
+
+            ProductDAO productDAO = daoFactory.getProductDAO();
+            Product product = productDAO.findByProductID(Long.parseLong(request.getParameter("productID")));
+            productDAO.delete(product);
+
+            loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
+            Product[] products = productDAO.findByOwner(loggedUser);
+
+            daoFactory.commitTransaction();
+            sessionDAOFactory.commitTransaction();
+
+            request.setAttribute("loggedOn",loggedUser!=null);
+            request.setAttribute("loggedUser",loggedUser);
+            request.setAttribute("products", products);
+            request.setAttribute("applicationMessage",applicationMessage);
+            request.setAttribute("viewUrl","productManagement/view");
+        }
+        catch (Exception e){
+            logger.log(Level.SEVERE, "User Controller Error / delete", e);
             try {
                 if(daoFactory != null) daoFactory.rollbackTransaction();
                 if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();

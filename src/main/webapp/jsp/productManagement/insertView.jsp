@@ -22,12 +22,7 @@
     .field {
         display: flex;
         flex-direction: column;
-        margin-bottom: 10px;
-    }
-
-    /* Aggiusta lo stile delle etichette dei campi */
-    .field label {
-        font-weight: bold;
+        margin-bottom: 15px;
     }
 
     /* Stile degli input */
@@ -70,9 +65,18 @@
         margin-top: 0;
         font-size: 24px;
     }
+    #preview{
+        width: 250px;
+        height: 250px;
+    }
+    #insertForm div{
+        margin-bottom: 12px;
+    }
 </style>
 <script>
     function submitProduct(){
+        document.insertForm.current_price.value = document.insertForm.starting_price.value;
+
         var f;
         f = document.insertForm;
         f.controllerAction.value = "ProductManagement.insert";
@@ -109,31 +113,31 @@
     </section>
 
     <section id="insertFormSection">
-        <form name="insertForm" action="Dispatcher" method="post">
+        <form id="insertForm" name="insertForm" action="Dispatcher" method="post">
 
             <div class="field clearfix">
                 <label for="description">Descrizione</label>
                 <input type="text" id="description" name="description"
-                       required size="20" maxlength="200"/>
+                       required size="20" maxlength="200" placeholder="Inserisci una breve descrizione..."/>
             </div>
 
             <div class="field clearfix">
-                <label for="min_price">Prezzo Minimo</label>
+                <label for="min_price">Prezzo Minimo (&euro;)</label>
                 <input type="number" id="min_price" name="min_price"
-                       required size="20"/>
+                       required size="20" value="0"/>
             </div>
 
             <div class="field clearfix">
-                <label for="starting_price">Prezzo di Partenza</label>
+                <label for="starting_price">Prezzo di Partenza (&euro;)</label>
                 <input type="number" id="starting_price" name="starting_price"
-                       required size="20"/>
+                       required size="20" value="0"/>
             </div>
 
             <div>
-                <label for="category">Categoria</label>
-                <select id="category" name="category">
+                <label for="categoryID">Categoria: </label>
+                <select id="categoryID" name="categoryID">
                     <%for(i = 0; i < categories.length ; i++){%>
-                        <option value="<%=categories[i].getCategoryID().toString()%>"><%=categories[i].getName()%></option>
+                        <option value="<%=categories[i].getCategoryID()%>"><%=categories[i].getName()%></option>
                     <%}%>
                 </select>
             </div>
@@ -141,7 +145,7 @@
             <div class="field clearfix">
                 <label for="image">Immagine del prodotto (facoltativa)</label>
                 <input type="file" id="image" name="image" onchange="previewFile()"/>
-                <img src="" height="150">
+                <img id="preview" src="">
             </div>
 
             <div class="field clearfix">

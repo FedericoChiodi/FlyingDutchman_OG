@@ -69,7 +69,7 @@
             }
             function deleteUser(userID){
                 document.deleteForm.userID.value = userID;
-                if(confirm("Attenzione! Questa azione è irreversibile. Vuoi procedere?")){
+                if(confirm("Attenzione! Questa azione e' irreversibile. Vuoi procedere?")){
                     document.deleteForm.submit();
                 }
             }
