@@ -2,6 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.ingsw.flyingdutchman.model.mo.User" %>
 <%@ page import="com.ingsw.flyingdutchman.model.mo.Product" %>
+<%@ page import="com.ingsw.flyingdutchman.model.mo.Auction" %>
 
 
 <%
@@ -107,7 +108,7 @@
                 <div id="productsList">
                     <select id="productID" name="productID">
                         <%for(i = 0; i < products.length ; i++){%>
-                        <option value="<%=products[i].getProductID()%>"><%=products[i].getDescription()%></option>
+                            <option value="<%=products[i].getProductID()%>"><%=products[i].getDescription()%></option>
                         <%}%>
                     </select>
                 </div>

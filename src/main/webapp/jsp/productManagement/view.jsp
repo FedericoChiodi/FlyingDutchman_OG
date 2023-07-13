@@ -85,7 +85,7 @@
             <hr>
         </section>
 
-        <%if(products != null){%>
+        <%if(products.length > 0){%>
             <section id="products" class="clearfix">
                 <%for (i = 0; i < products.length; i++){%>
                 <article>

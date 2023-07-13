@@ -13,7 +13,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -100,14 +102,53 @@ public class AuctionManagement {
             daoFactory.beginTransaction();
 
             loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
+
+            // Prendo tutte le aste con prodotti dell'utente e le riempio
+            Auction[] auctions = daoFactory.getAuctionDAO().findByOwner(loggedUser);
+            for(int i = 0; i < auctions.length ; i++){
+                Product product = daoFactory.getProductDAO().findByProductID(auctions[i].getProduct_auctioned().getProductID());
+                auctions[i].setProduct_auctioned(product);
+            }
+
+            // Creo una nuova lista di prodotti
+            List<Product> productsList = new ArrayList<>();
+
+            // Per ogni asta controllo se il prodotto è venduto o meno e lo aggiungo alla lista se lo è
+            for (int i = 0; i < auctions.length ; i++){
+                if(auctions[i].isProduct_sold()){
+                    productsList.add(auctions[i].getProduct_auctioned());
+                }
+            }
+
+            // Trovo tutti i prodotti dell'utente
             Product[] products = daoFactory.getProductDAO().findByOwner(loggedUser);
+
+            // Rimuovo dai prodotti totali quelli in comune con i prodotti venduti all'asta
+            boolean contains = false;
+            List<Product> results = new ArrayList<>();
+            // O(n^2)...sigh...
+            Product[] products1 = productsList.toArray(new Product[productsList.size()]);
+            for(int i=0; i<products.length; i++) {
+                for(int j=0; j<products1.length; j++) {
+                    if(products[i].getProductID().equals(products1[j].getProductID())) {
+                        contains = true;
+                        break;
+                    }
+                }
+                if(!contains) {
+                    results.add(products[i]);
+                }
+                else{
+                    contains = false;
+                }
+            }
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
 
             request.setAttribute("loggedOn",loggedUser!=null);
             request.setAttribute("loggedUser",loggedUser);
-            request.setAttribute("products",products);
+            request.setAttribute("products",results.toArray(new Product[results.size()]));
             request.setAttribute("viewUrl","auctionManagement/insertView");
         }
         catch (Exception e){

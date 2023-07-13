@@ -4,6 +4,7 @@ import com.ingsw.flyingdutchman.model.dao.CategoryDAO;
 import com.ingsw.flyingdutchman.model.dao.DAOFactory;
 import com.ingsw.flyingdutchman.model.dao.ProductDAO;
 import com.ingsw.flyingdutchman.model.dao.UserDAO;
+import com.ingsw.flyingdutchman.model.mo.Auction;
 import com.ingsw.flyingdutchman.model.mo.Category;
 import com.ingsw.flyingdutchman.model.mo.Product;
 import com.ingsw.flyingdutchman.model.mo.User;
@@ -12,10 +13,9 @@ import com.ingsw.flyingdutchman.services.logservice.LogService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
+import java.util.*;
 import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class ProductManagement {
     private ProductManagement(){}
@@ -41,7 +41,46 @@ public class ProductManagement {
             daoFactory.beginTransaction();
 
             loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
+
+            // Prendo tutte le aste con prodotti dell'utente e le riempio
+            Auction[] auctions = daoFactory.getAuctionDAO().findByOwner(loggedUser);
+            for(int i = 0; i < auctions.length ; i++){
+                Product product = daoFactory.getProductDAO().findByProductID(auctions[i].getProduct_auctioned().getProductID());
+                auctions[i].setProduct_auctioned(product);
+            }
+
+            // Creo una nuova lista di prodotti
+            List<Product> productsList = new ArrayList<>();
+
+            // Per ogni asta controllo se il prodotto è venduto o meno e lo aggiungo alla lista se lo è
+            for (int i = 0; i < auctions.length ; i++){
+                if(auctions[i].isProduct_sold()){
+                    productsList.add(auctions[i].getProduct_auctioned());
+                }
+            }
+
+            // Trovo tutti i prodotti dell'utente
             Product[] products = daoFactory.getProductDAO().findByOwner(loggedUser);
+
+            // Rimuovo dai prodotti totali quelli in comune con i prodotti venduti all'asta
+            boolean contains = false;
+            List<Product> results = new ArrayList<>();
+            // O(n^2)...sigh...
+            Product[] products1 = productsList.toArray(new Product[productsList.size()]);
+            for(int i=0; i<products.length; i++) {
+                for(int j=0; j<products1.length; j++) {
+                    if(products[i].getProductID().equals(products1[j].getProductID())) {
+                        contains = true;
+                        break;
+                    }
+                }
+                if(!contains) {
+                    results.add(products[i]);
+                }
+                else{
+                    contains = false;
+                }
+            }
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
@@ -49,7 +88,7 @@ public class ProductManagement {
             request.setAttribute("loggedOn",loggedUser!=null);
             request.setAttribute("loggedUser",loggedUser);
             request.setAttribute("applicationMessage",applicationMessage);
-            request.setAttribute("products", products);
+            request.setAttribute("products", results.toArray(new Product[results.size()]));
             request.setAttribute("viewUrl","productManagement/view");
         }
         catch (Exception e){
@@ -155,14 +194,54 @@ public class ProductManagement {
                 logger.log(Level.SEVERE, "Errore nella creazione del prodotto: " + e);
             }
 
-            Product[] products = daoFactory.getProductDAO().findByOwner(user);
+            loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
+
+            // Prendo tutte le aste con prodotti dell'utente e le riempio
+            Auction[] auctions = daoFactory.getAuctionDAO().findByOwner(loggedUser);
+            for(int i = 0; i < auctions.length ; i++){
+                Product product = daoFactory.getProductDAO().findByProductID(auctions[i].getProduct_auctioned().getProductID());
+                auctions[i].setProduct_auctioned(product);
+            }
+
+            // Creo una nuova lista di prodotti
+            List<Product> productsList = new ArrayList<>();
+
+            // Per ogni asta controllo se il prodotto è venduto o meno e lo aggiungo alla lista se lo è
+            for (int i = 0; i < auctions.length ; i++){
+                if(auctions[i].isProduct_sold()){
+                    productsList.add(auctions[i].getProduct_auctioned());
+                }
+            }
+
+            // Trovo tutti i prodotti dell'utente
+            Product[] products = daoFactory.getProductDAO().findByOwner(loggedUser);
+
+            // Rimuovo dai prodotti totali quelli in comune con i prodotti venduti all'asta
+            boolean contains = false;
+            List<Product> results = new ArrayList<>();
+            // O(n^2)...sigh...
+            Product[] products1 = productsList.toArray(new Product[productsList.size()]);
+            for(int i=0; i<products.length; i++) {
+                for(int j=0; j<products1.length; j++) {
+                    if(products[i].getProductID().equals(products1[j].getProductID())) {
+                        contains = true;
+                        break;
+                    }
+                }
+                if(!contains) {
+                    results.add(products[i]);
+                }
+                else{
+                    contains = false;
+                }
+            }
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
 
             request.setAttribute("loggedOn",loggedUser!=null);
             request.setAttribute("loggedUser", loggedUser);
-            request.setAttribute("products", products);
+            request.setAttribute("products", results.toArray(new Product[results.size()]));
             request.setAttribute("applicationMessage",applicationMessage);
             request.setAttribute("viewUrl","productManagement/view");
         }
@@ -205,18 +284,57 @@ public class ProductManagement {
             daoFactory.beginTransaction();
 
             ProductDAO productDAO = daoFactory.getProductDAO();
-            Product product = productDAO.findByProductID(Long.parseLong(request.getParameter("productID")));
-            productDAO.delete(product);
+            Product product1 = productDAO.findByProductID(Long.parseLong(request.getParameter("productID")));
+            productDAO.delete(product1);
 
             loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
-            Product[] products = productDAO.findByOwner(loggedUser);
+
+            // Prendo tutte le aste con prodotti dell'utente e le riempio
+            Auction[] auctions = daoFactory.getAuctionDAO().findByOwner(loggedUser);
+            for(int i = 0; i < auctions.length ; i++){
+                Product product = daoFactory.getProductDAO().findByProductID(auctions[i].getProduct_auctioned().getProductID());
+                auctions[i].setProduct_auctioned(product);
+            }
+
+            // Creo una nuova lista di prodotti
+            List<Product> productsList = new ArrayList<>();
+
+            // Per ogni asta controllo se il prodotto è venduto o meno e lo aggiungo alla lista se lo è
+            for (int i = 0; i < auctions.length ; i++){
+                if(auctions[i].isProduct_sold()){
+                    productsList.add(auctions[i].getProduct_auctioned());
+                }
+            }
+
+            // Trovo tutti i prodotti dell'utente
+            Product[] products = daoFactory.getProductDAO().findByOwner(loggedUser);
+
+            // Rimuovo dai prodotti totali quelli in comune con i prodotti venduti all'asta
+            boolean contains = false;
+            List<Product> results = new ArrayList<>();
+            // O(n^2)...sigh...
+            Product[] products1 = productsList.toArray(new Product[productsList.size()]);
+            for(int i=0; i<products.length; i++) {
+                for(int j=0; j<products1.length; j++) {
+                    if(products[i].getProductID().equals(products1[j].getProductID())) {
+                        contains = true;
+                        break;
+                    }
+                }
+                if(!contains) {
+                    results.add(products[i]);
+                }
+                else{
+                    contains = false;
+                }
+            }
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
 
             request.setAttribute("loggedOn",loggedUser!=null);
             request.setAttribute("loggedUser",loggedUser);
-            request.setAttribute("products", products);
+            request.setAttribute("products", results.toArray(new Product[results.size()]));
             request.setAttribute("applicationMessage",applicationMessage);
             request.setAttribute("viewUrl","productManagement/view");
         }
