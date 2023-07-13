@@ -37,8 +37,6 @@ public class UserManagement {
             daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
             daoFactory.beginTransaction();
 
-            commonView(daoFactory, sessionDAOFactory, request);
-
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
 
@@ -83,15 +81,11 @@ public class UserManagement {
             daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
             daoFactory.beginTransaction();
 
-            //Long userID = parseLong(request.getParameter("userID"));
-
             UserDAO userDAO = daoFactory.getUserDAO();
             User user = userDAO.findByUsername(loggedUser.getUsername());
 
             sessionUserDAO.delete(user);
             userDAO.delete(user);
-
-            commonView(daoFactory, sessionDAOFactory, request);
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
@@ -156,11 +150,9 @@ public class UserManagement {
                         request.getParameter("deleted")
                 );
             }catch (Exception e){
-                applicationMessage = "Errore nella creazione dell'utente.";
+                applicationMessage = "Utente non creato, username gia' in uso!";
                 logger.log(Level.SEVERE, "Errore nella creazione dell'utente: " + e);
             }
-
-            commonView(daoFactory, sessionDAOFactory, request);
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
@@ -311,8 +303,6 @@ public class UserManagement {
 
             userDAO.update(user);
 
-            commonView(daoFactory, sessionDAOFactory, request);
-
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
 
@@ -338,7 +328,5 @@ public class UserManagement {
             catch (Throwable t){}
         }
     }
-    private static void commonView(DAOFactory daoFactory, DAOFactory sessionDAOFactory, HttpServletRequest request){
 
-    }
 }

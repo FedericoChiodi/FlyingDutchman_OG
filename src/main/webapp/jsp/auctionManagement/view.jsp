@@ -18,7 +18,7 @@
                 document.insertForm.submit();
             }
             function mainOnLoadHandler(){
-                document.querySelector("#newAuctionButton").addEventListener("click",insertAuction);
+                document.querySelector("#insertAuctionButton").addEventListener("click",insertAuction);
             }
             function deleteAuction(auctionID){
                 document.deleteForm.auctionID.value = auctionID;
@@ -26,6 +26,11 @@
                     document.deleteForm.submit();
                 }
             }
+            function inspectAuction(auctionID){
+                document.inspectForm.auctionID.value = auctionID;
+                document.inspectForm.submit();
+            }
+
         </script>
         <style>
             /* Stile dei pulsanti */
@@ -42,28 +47,41 @@
             #auctions{
                 margin: 12px 0;
             }
-            #products article{
+            #auctions button{
                 float: left;
                 width: 250px;
                 border-width: 1px;
                 border-style: solid;
                 border-radius: 10px;
                 border-color: #1f9233;
-                padding: 10px 8px 10px 20px;
+                padding: 10px 10px 10px 10px;
                 margin: 0 18px 16px 0;
-                background: linear-gradient(to right, #28a745, #39ce29);
+                background: linear-gradient(to top, #4cf63b, #39ce29);
                 box-shadow: 0 3px 2px #777;
             }
-            #products article a{
-                color: #28a745;
+            #auctionButton:hover{
+                background: #38b52a;
+                cursor: pointer;
             }
-            #trashcan{
-                float: right;
+            #auctionButton:active{
+                background: #28a745;
+                cursor: pointer;
             }
-            #productListBreak hr{
+            #auctionListBreak hr{
                 width: auto;
                 color: #39ce29;
                 height: auto;
+            }
+            #productImg{
+                width: 70%;
+                height: 70%;
+                object-fit: contain;
+            }
+            #productDescription{
+                font-size: large;
+            }
+            #productPrice{
+                font-size: x-large;
             }
         </style>
     </head>
@@ -75,8 +93,8 @@
         </section>
 
         <section id="insertAuctionButtonSelection">
-            <input type="button" id="insertAuction" name="insertAuctionButton"
-                   class="button" value="Inizia una nuova Asta" onclick="insertAuction()"/>
+            <input type="button" id="insertAuctionButton" name="insertAuctionButton"
+                   class="button" value="Metti in asta un Prodotto" onclick="insertAuction()"/>
         </section>
 
         <section id="auctionListBreak">
@@ -86,19 +104,25 @@
         <%if(auctions.length > 0){%>
             <section id="auctions" class="clearfix">
                 <%for (i = 0; i < auctions.length; i++){%>
-                    <%if(!auctions[i].isProduct_sold() && !auctions[i].getProduct_auctioned().getOwner().equals(loggedUser))%>
-                        <article>
-                            <b><span class="description"><%=auctions[i].getProduct_auctioned().getDescription()%></span></b>
+                    <%if(!auctions[i].isProduct_sold() && !auctions[i].getProduct_auctioned().getOwner().getUserID().equals(loggedUser.getUserID())){%>
+                        <button id="auctionButton" onclick="inspectAuction(<%=auctions[i].getAuctionID()%>)">
+                            <b><span id="productDescription" class="description"><%=auctions[i].getProduct_auctioned().getDescription()%></span></b>
+                            <span id="productPrice" class="current_price">&euro;<%=auctions[i].getProduct_auctioned().getCurrent_price()%></span>
                             <br/>
-                            <span class="current_price">&euro;<%=auctions[i].getProduct_auctioned().getCurrent_price()%></span>
-                        </article>
-                    <%%>
+                            <img id="productImg" src="images/trashcan.png" alt="Immagine del Prodotto">
+                        </button>
+                    <%}%>
                 <%}%>
             </section>
         <%}%>
 
         <form name="insertForm" method="post" action="Dispatcher">
             <input type="hidden" name="controllerAction" value="AuctionManagement.insertView"/>
+        </form>
+
+        <form name="inspectForm" method="post" action="Dispatcher">
+            <input type="hidden" name="auctionID"/>
+            <input type="hidden" name="controllerAction" value="AuctionManagement.inspectAuction"/>
         </form>
 
         <form name="deleteForm" method="post" action="Dispatcher">

@@ -53,7 +53,7 @@
                 border-color: #1f9233;
                 padding: 10px 8px 10px 20px;
                 margin: 0 18px 16px 0;
-                background: linear-gradient(to right, #28a745, #39ce29);
+                background: linear-gradient(to right, #39ce29, #4cf63b);
                 box-shadow: 0 3px 2px #777;
             }
             #products article a{
@@ -78,7 +78,7 @@
 
         <section id="insertProductButtonSelection">
             <input type="button" id="insertProductButton" name="insertProductButton"
-                   class="button" value="Metti in vendita un Prodotto" onclick="insertProduct()"/>
+                   class="button" value="Inserisci un Prodotto nel tuo Account" onclick="insertProduct()"/>
         </section>
 
         <section id="productListBreak">

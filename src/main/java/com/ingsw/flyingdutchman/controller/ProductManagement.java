@@ -90,6 +90,7 @@ public class ProductManagement {
             daoFactory.beginTransaction();
 
             Category[] categories = daoFactory.getCategoryDAO().getAllCategories();
+            loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();

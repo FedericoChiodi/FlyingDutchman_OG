@@ -115,7 +115,7 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
                     + "WHERE "
                     + "auctionID = ?";
             ps = conn.prepareStatement(sql);
-            ps.setLong(1,auction.getAuctionID());
+            ps.setLong(1,auctionID);
 
             ResultSet resultSet = ps.executeQuery();
 
