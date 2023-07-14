@@ -5,6 +5,7 @@ import com.ingsw.flyingdutchman.model.dao.OrderDAO;
 import com.ingsw.flyingdutchman.model.dao.UserDAO;
 import com.ingsw.flyingdutchman.model.mo.Auction;
 import com.ingsw.flyingdutchman.model.mo.Order;
+import com.ingsw.flyingdutchman.model.mo.Product;
 import com.ingsw.flyingdutchman.model.mo.User;
 import com.ingsw.flyingdutchman.services.config.Configuration;
 import com.ingsw.flyingdutchman.services.logservice.LogService;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,12 +50,15 @@ public class OrderManagement {
             //Trovo l'asta che ho chiuso
             Auction auction = daoFactory.getAuctionDAO().findAuctionByID(Long.parseLong(request.getParameter("auctionID")));
 
-            //Creo un nuovo formato data nel formato che vuole mysql
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            //Riempio i dati del prodotto
+            Product product = daoFactory.getProductDAO().findByProductID(auction.getProduct_auctioned().getProductID());
+
+            //Ottenere il timestamp corrente
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            Timestamp timestamp = Timestamp.valueOf(currentDateTime);
 
             //Setto il timestamp di chiusura
-            auction.setClosing_timestamp(Timestamp.valueOf(sdf.format(timestamp)));
+            auction.setClosing_timestamp(timestamp);
 
             //Setto prodotto venduto = true
             auction.setProduct_sold(true);
@@ -69,18 +74,18 @@ public class OrderManagement {
 
             //Creo un nuovo ordine e inserisco i dati
             Order order = new Order();
-            order.setOrder_time(Timestamp.valueOf(sdf.format(timestamp)));
-            order.setSelling_price(auction.getProduct_auctioned().getCurrent_price());
+            order.setOrder_time(timestamp);
+            order.setSelling_price(product.getCurrent_price());
             order.setBuyer(loggedUser);
-            order.setProduct(auction.getProduct_auctioned());
+            order.setProduct(product);
 
             //Inserisco l'ordine sul db
             try {
                 daoFactory.getOrderDAO().create(
-                        Timestamp.valueOf(sdf.format(timestamp)),
-                        auction.getProduct_auctioned().getCurrent_price(), //TODO potrebbe essere null? qua il fatto
+                        timestamp,
+                        product.getCurrent_price(),
                         loggedUser,
-                        auction.getProduct_auctioned()
+                        product
                 );
             }
             catch (Exception e){
@@ -102,7 +107,7 @@ public class OrderManagement {
             request.setAttribute("viewUrl","orderManagement/view");
         }
         catch (Exception e){
-            logger.log(Level.SEVERE, "Auction Controller Error / view -- " + e);
+            logger.log(Level.SEVERE, "Order Controller Error / pay -- " + e);
             try {
                 if(daoFactory != null) daoFactory.rollbackTransaction();
                 if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();
