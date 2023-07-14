@@ -9,11 +9,104 @@
     String menuActiveLink = "Aste";
     Auction auction = (Auction) request.getAttribute("auction");
 %>
+<!DOCTYPE html>
 <html>
-<head>
-    <title>Title</title>
-</head>
-<body>
-    <%=auction.getProduct_auctioned().getDescription()%>
-</body>
+    <head>
+        <%@include file="/include/htmlHead.jsp"%>
+        <script>
+            function buyProduct(auctionID){
+                document.buyForm.auctionID.value = auctionID;
+                document.buyForm.submit();
+            }
+            function goBack(){
+                document.backForm.submit();
+            }
+            function mainOnLoadHandler(){
+                document.querySelector("#buyProductButton").addEventListener("click",buyProduct);
+                document.querySelector("#backButton").addEventListener("click",goBack);
+            }
+        </script>
+        <style>
+            #productContainer {
+                display: flex;
+                align-items: center;
+                flex-direction: row;
+            }
+            #productInfoContainer{
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                margin-bottom: 15px;
+                margin-top: 25px;
+            }
+            #productDescription, #productPrice{
+                display: block;
+                margin-top: 15px;
+                font-size: xx-large;
+            }
+            #productSeller{
+                font-size: medium;
+            }
+            #productInfoContainer button{
+                font-size: large;
+                margin-bottom: 10px;
+            }
+            #productImage {
+                width: 200px;
+                height: 200px;
+                margin-right: 20px;
+                margin-top: 25px;
+            }
+            #buyProductButton{
+                padding: 10px 20px;
+                background-color: #337ab7;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-right: 10px;
+                margin-top: 10px;
+            }
+            #backButton{
+                padding: 10px 20px;
+                background-color: #dc3545;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-right: 10px;
+            }
+
+        </style>
+    </head>
+    <body>
+        <%@include file="/include/header.jsp"%>
+        <main>
+            <section id="productContainer">
+                <article id="productImageContainer">
+                    <img id="productImage" src="images/trashcan.png" alt="Product_Image">
+                </article>
+                <article id="productInfoContainer">
+                    <span id="productDescription"><%=auction.getProduct_auctioned().getDescription()%></span>
+                    <br/>
+                    <span id="productSeller">Venduto da: <%=auction.getProduct_auctioned().getOwner().getUsername()%></span>
+                    <br/><br/>
+                    <span id="productPrice">&euro;<%=auction.getProduct_auctioned().getCurrent_price()%></span>
+                    <br/>
+                    <button id="buyProductButton" onclick="buyProduct(<%=auction.getAuctionID()%>)">Compra questo Prodotto</button>
+                    <button id="backButton" onclick="goBack()">Torna Indietro</button>
+                </article>
+            </section>
+
+            <form name="buyForm" method="post" action="Dispatcher">
+                <input type="hidden" name="auctionID" id="auctionID"/>
+                <input type="hidden" name="controllerAction" value="AuctionManagement.buyProductAuctioned"/>
+            </form>
+
+            <form name="backForm" method="post" action="Dispatcher">
+                <input type="hidden" name="controllerAction" value="AuctionManagement.view">
+            </form>
+        </main>
+        <%@include file="/include/footer.inc"%>
+    </body>
 </html>

@@ -15,7 +15,7 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
     public ProductDAOMySQLJDBCImpl(Connection conn){this.conn = conn;}
 
     @Override
-    public Product create(String description, Integer min_price, Integer starting_price,Integer current_price, Blob image, Category category, User owner) {
+    public Product create(String description, Integer min_price, Integer starting_price, Integer current_price, Blob image, Boolean deleted, Category category, User owner) {
         PreparedStatement ps;
         String sql;
         Product product = new Product();
@@ -35,9 +35,10 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
                     +"starting_price,"
                     +"current_price,"
                     +"image,"
+                    +"deleted,"
                     +"categoryID,"
                     +"ownerID) "
-                    +"VALUES (?,?,?,?,?,?,?)";
+                    +"VALUES (?,?,?,?,?,?,?,?)";
             ps = conn.prepareStatement(sql);
 
             int i = 1;
@@ -46,6 +47,7 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
             ps.setInt(i++,starting_price);
             ps.setInt(i++,current_price);
             ps.setBlob(i++,image);
+            ps.setString(i++,"N");
             ps.setLong(i++,category.getCategoryID());
             ps.setLong(i++,owner.getUserID());
 
@@ -98,11 +100,12 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
 
         try {
             sql
-                    ="DELETE FROM `PRODUCT` "
-                    +"WHERE "
-                    +"productID = ?";
+                    ="UPDATE `PRODUCT` SET "
+                    +"deleted = ? "
+                    +"WHERE productID = ?";
             ps = conn.prepareStatement(sql);
-            ps.setLong(1,product.getProductID());
+            ps.setString(1, "Y");
+            ps.setLong(2,product.getProductID());
 
             ps.executeUpdate();
         }

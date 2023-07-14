@@ -1,14 +1,14 @@
 package com.ingsw.flyingdutchman.model.dao.mySQLJDBCImpl;
 
 import com.ingsw.flyingdutchman.model.dao.OrderDAO;
+import com.ingsw.flyingdutchman.model.mo.Category;
 import com.ingsw.flyingdutchman.model.mo.Order;
 import com.ingsw.flyingdutchman.model.mo.Product;
 import com.ingsw.flyingdutchman.model.mo.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderDAOMySQLJDBCImpl implements OrderDAO {
     Connection conn;
@@ -66,5 +66,55 @@ public class OrderDAOMySQLJDBCImpl implements OrderDAO {
     @Override
     public Order findByProduct(Product product) {
         return null;
+    }
+
+    @Override
+    public Order[] findByUser(User user) {
+        PreparedStatement ps;
+        List<Order> orders = new ArrayList<>();
+
+        try {
+            String sql
+                    ="SELECT * "
+                    +"FROM `ORDER` "
+                    +"WHERE "
+                    +"userID = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1, user.getUserID());
+
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()){
+                Order order = read(resultSet);
+                orders.add(order);
+            }
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return orders.toArray(new Order[0]);
+    }
+
+    public Order read(ResultSet rs){
+        Order order = new Order();
+        Product product = new Product();
+        User user = new User();
+
+        order.setBuyer(user);
+        order.setProduct(product);
+        try{
+            order.setOrderID(rs.getLong("orderID"));
+            order.setOrder_time(rs.getTimestamp("order_time"));
+            order.setSelling_price(rs.getInt("selling_price"));
+            order.getBuyer().setUserID(rs.getLong("userID"));
+            order.getProduct().setProductID(rs.getLong("productID"));
+        }
+        catch (SQLException e){
+            System.err.println("Error. During read rs - Order");
+        }
+
+        return order;
     }
 }

@@ -10,6 +10,7 @@ public class Product {
     private Integer starting_price;
     private Integer current_price;
     private Blob image;
+    private Boolean deleted;
     private Category category;
     private User owner;
 
@@ -29,4 +30,6 @@ public class Product {
     public void setCategory(Category category){this.category = category;}
     public User getOwner(){return owner;}
     public void setOwner(User owner){this.owner = owner;}
+    public Boolean isDeleted(){return deleted;}
+    public void setDeleted(Boolean deleted){this.deleted = deleted;}
 }

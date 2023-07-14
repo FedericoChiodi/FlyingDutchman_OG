@@ -17,4 +17,5 @@ public interface OrderDAO {
     public void update(Order order);
     public Order findByOrderID(Long orderID);
     public Order findByProduct(Product product);
+    public Order[] findByUser(User user);
 }

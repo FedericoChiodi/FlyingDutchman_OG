@@ -264,7 +264,10 @@ public class AuctionManagement {
             //Setto il prodotto
             auction.setProduct_auctioned(product);
 
-
+            //Trovo l'utente associato al prodotto in asta
+            User owner = daoFactory.getUserDAO().findByUserID(product.getOwner().getUserID());
+            //Setto l'owner con tutti i suoi campi nel prodotto
+            auction.getProduct_auctioned().setOwner(owner);
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
@@ -290,4 +293,64 @@ public class AuctionManagement {
         }
     }
 
+    public static void buyProductAuctioned(HttpServletRequest request, HttpServletResponse response){
+        DAOFactory sessionDAOFactory = null;
+        DAOFactory daoFactory = null;
+        User loggedUser;
+
+        Logger logger = LogService.getApplicationLogger();
+        try {
+            Map sessionFactoryParameters = new HashMap<String, Object>();
+            sessionFactoryParameters.put("request",request);
+            sessionFactoryParameters.put("response",response);
+
+            sessionDAOFactory = DAOFactory.getDAOFactory(Configuration.COOKIE_IMPL, sessionFactoryParameters);
+            sessionDAOFactory.beginTransaction();
+
+            UserDAO sessionUserDAO = sessionDAOFactory.getUserDAO();
+            loggedUser = sessionUserDAO.findLoggedUser();
+
+            daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
+            daoFactory.beginTransaction();
+
+            loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
+
+            //Trovo l'asta che voglio comprare
+            Auction auction = daoFactory.getAuctionDAO().findAuctionByID(Long.parseLong(request.getParameter("auctionID")));
+            //Associo il prodotto all'asta
+            Product product = daoFactory.getProductDAO().findByProductID(auction.getProduct_auctioned().getProductID());
+            //Setto il prodotto con tutti i suoi campi
+            auction.setProduct_auctioned(product);
+
+            //Trovo l'utente associato al prodotto in asta
+            User owner = daoFactory.getUserDAO().findByUserID(product.getOwner().getUserID());
+            //Setto l'owner con tutti i suoi campi nel prodotto
+            auction.getProduct_auctioned().setOwner(owner);
+
+            //Passo tutto al controller degli ordini per piazzare un nuovo ordine.
+            //Non chiudo ancora niente perchè può succedere che l'ordine venga annullato.
+
+            daoFactory.commitTransaction();
+            sessionDAOFactory.commitTransaction();
+
+            request.setAttribute("loggedOn",loggedUser!=null);
+            request.setAttribute("loggedUser",loggedUser);
+            request.setAttribute("auction",auction);
+            request.setAttribute("viewUrl","orderManagement/insertView");
+        }
+        catch (Exception e){
+            logger.log(Level.SEVERE, "Auction Controller Error / buyProductAuctioned --" + e);
+            try {
+                if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();
+            }
+            catch (Throwable t){}
+            throw new RuntimeException(e);
+        }
+        finally {
+            try {
+                if(sessionDAOFactory != null) sessionDAOFactory.closeTransaction();
+            }
+            catch (Throwable t){}
+        }
+    }
 }

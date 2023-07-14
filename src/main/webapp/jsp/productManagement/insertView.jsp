@@ -8,7 +8,7 @@
     boolean loggedOn = (Boolean) request.getAttribute("loggedOn");
     User loggedUser = (User) request.getAttribute("loggedUser");
     String applicationMessage = (String) request.getAttribute("applicationMessage");
-    String menuActiveLink = "Inserisci Prodotto";
+    String menuActiveLink = "Prodotti";
     User user = (User) request.getAttribute("user");
     Category[] categories = (Category[]) request.getAttribute("categories");
 %>

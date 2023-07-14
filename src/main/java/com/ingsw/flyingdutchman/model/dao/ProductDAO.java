@@ -11,6 +11,7 @@ public interface ProductDAO {
             Integer starting_price,
             Integer current_price,
             Blob image,
+            Boolean deleted,
             Category category,
             User owner
     );

@@ -2,15 +2,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.ingsw.flyingdutchman.model.mo.User" %>
 <%@ page import="com.ingsw.flyingdutchman.model.mo.Product" %>
-<%@ page import="com.ingsw.flyingdutchman.model.mo.Auction" %>
-
 
 <%
     int i = 0;
     boolean loggedOn = (Boolean) request.getAttribute("loggedOn");
     User loggedUser = (User) request.getAttribute("loggedUser");
     String applicationMessage = (String) request.getAttribute("applicationMessage");
-    String menuActiveLink = "Inserisci Prodotto";
+    String menuActiveLink = "Aste";
     Product[] products = (Product []) request.getAttribute("products");
 %>
 <!DOCTYPE html>
@@ -70,7 +68,6 @@
             = currentDate.getFullYear() + "-"
             + (currentDate.getMonth()+1)  + "-"
             + currentDate.getDate() + " "
-
             + currentDate.getHours() + ":"
             + currentDate.getMinutes() + ":"
             + currentDate.getSeconds();

@@ -149,6 +149,7 @@ public class UserManagement {
                         request.getParameter("role"),
                         request.getParameter("deleted")
                 );
+                applicationMessage = "Account creato correttamente! Loggati per iniziare";
             }catch (Exception e){
                 applicationMessage = "Utente non creato, username gia' in uso!";
                 logger.log(Level.SEVERE, "Errore nella creazione dell'utente: " + e);
@@ -160,7 +161,7 @@ public class UserManagement {
             request.setAttribute("loggedOn",loggedUser!=null);
             request.setAttribute("loggedUser",loggedUser);
             request.setAttribute("applicationMessage",applicationMessage);
-            request.setAttribute("viewUrl","userManagement/view");
+            request.setAttribute("viewUrl","homeManagement/view");
         }
         catch (Exception e){
             logger.log(Level.SEVERE, "User Controller Error / insert", e);
