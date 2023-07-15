@@ -138,13 +138,13 @@
         </div>
         <div class="field clearfix">
           <label for="civic_number">Numero Civico</label>
-          <input type="text" id="civic_number" name="civic_number"
+          <input type="number" id="civic_number" name="civic_number"
                  value="<%=(action.equals("modify")) ? user.getCivic_number() : ""%>"
                  required size="20" maxlength="40"/>
         </div>
         <div class="field clearfix">
           <label for="cap">CAP</label>
-          <input type="text" id="cap" name="cap"
+          <input type="number" id="cap" name="cap"
                  value="<%=(action.equals("modify")) ? user.getCap() : ""%>"
                  required size="20" maxlength="40"/>
         </div>

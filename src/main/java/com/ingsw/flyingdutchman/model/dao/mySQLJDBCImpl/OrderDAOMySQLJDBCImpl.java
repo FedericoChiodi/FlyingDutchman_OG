@@ -1,10 +1,7 @@
 package com.ingsw.flyingdutchman.model.dao.mySQLJDBCImpl;
 
 import com.ingsw.flyingdutchman.model.dao.OrderDAO;
-import com.ingsw.flyingdutchman.model.mo.Category;
-import com.ingsw.flyingdutchman.model.mo.Order;
-import com.ingsw.flyingdutchman.model.mo.Product;
-import com.ingsw.flyingdutchman.model.mo.User;
+import com.ingsw.flyingdutchman.model.mo.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -60,12 +57,62 @@ public class OrderDAOMySQLJDBCImpl implements OrderDAO {
 
     @Override
     public Order findByOrderID(Long orderID) {
-        return null;
+        PreparedStatement ps;
+        Order order = new Order();
+        String sql;
+
+        try {
+            sql
+                    = "SELECT * "
+                    + "FROM `ORDER` "
+                    + "WHERE "
+                    + "orderID = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1,orderID);
+
+            ResultSet resultSet = ps.executeQuery();
+
+            if(resultSet.next()){
+                order = read(resultSet);
+            }
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return order;
     }
 
     @Override
     public Order findByProduct(Product product) {
-        return null;
+        PreparedStatement ps;
+        Order order = new Order();
+        String sql;
+
+        try {
+            sql
+                    = "SELECT orderID, order_time, selling_price, userID, productID "
+                    + "FROM `ORDER` NATURAL JOIN `PRODUCT` "
+                    + "WHERE "
+                    + "productID = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1,product.getProductID());
+
+            ResultSet resultSet = ps.executeQuery();
+
+            if(resultSet.next()){
+                order = read(resultSet);
+            }
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return order;
     }
 
     @Override

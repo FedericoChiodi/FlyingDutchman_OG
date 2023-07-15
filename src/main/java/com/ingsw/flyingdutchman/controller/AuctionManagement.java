@@ -55,6 +55,8 @@ public class AuctionManagement {
                 auctions[i].setProduct_auctioned(product);
             }
 
+            // Tolgo le aste dell'utente
+
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
 
@@ -189,24 +191,39 @@ public class AuctionManagement {
 
             AuctionDAO auctionDAO = daoFactory.getAuctionDAO();
             ProductDAO productDAO = daoFactory.getProductDAO();
-            try {
-                auctionDAO.create(
-                        Timestamp.valueOf(request.getParameter("opening_timestamp")),
-                        productDAO.findByProductID(Long.parseLong(request.getParameter("productID")))
-                );
-                applicationMessage = "Asta creata correttamente!";
-            }catch (Exception e){
-                applicationMessage = "Errore nella creazione dell'asta!";
-                logger.log(Level.SEVERE, "Errore nella creazione dell'asta: " + e);
-            }
 
             loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
+
+            Auction[] auctions1 = auctionDAO.findByOwner(loggedUser);
+
+            boolean alreadyAuctioned = false;
+            Product product = productDAO.findByProductID(Long.parseLong(request.getParameter("productID")));
+            for (int i = 0; i < auctions1.length; i++){
+                if(auctions1[i].getProduct_auctioned().getProductID().equals(product.getProductID())){
+                    alreadyAuctioned = true;
+                    applicationMessage = "Questo prodotto e' gia' all'asta! Prima di iniziarne una nuova concludi quella";
+                }
+            }
+
+            if(!alreadyAuctioned){
+                try {
+                    auctionDAO.create(
+                            Timestamp.valueOf(request.getParameter("opening_timestamp")),
+                            productDAO.findByProductID(Long.parseLong(request.getParameter("productID")))
+                    );
+                    applicationMessage = "Asta creata correttamente!";
+                }catch (Exception e){
+                    applicationMessage = "Errore nella creazione dell'asta!";
+                    logger.log(Level.SEVERE, "Errore nella creazione dell'asta: " + e);
+                }
+            }
+
             Auction[] auctions = daoFactory.getAuctionDAO().findAllAuctions();
 
             // Riempimento dei campi delle varie auctions
             for(int i = 0; i < auctions.length; i++){
-                Product product = productDAO.findByProductID(auctions[i].getProduct_auctioned().getProductID());
-                auctions[i].setProduct_auctioned(product);
+                Product productToFill = productDAO.findByProductID(auctions[i].getProduct_auctioned().getProductID());
+                auctions[i].setProduct_auctioned(productToFill);
             }
 
             daoFactory.commitTransaction();

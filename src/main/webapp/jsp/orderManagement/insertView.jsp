@@ -1,7 +1,5 @@
 <%@ page session="false"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.ingsw.flyingdutchman.model.mo.Order" %>
-<%@ page import="com.ingsw.flyingdutchman.model.mo.Product" %>
 <%@ page import="com.ingsw.flyingdutchman.model.mo.User" %>
 <%@ page import="com.ingsw.flyingdutchman.model.mo.Auction" %>
 <%
@@ -25,6 +23,7 @@
             f.auctionID.value = <%=auction.getAuctionID()%>;
         }
         function goBack(){
+            document.backForm.auctionID.value = <%=auction.getAuctionID()%>;
             document.backForm.submit();
         }
         function modify(){
@@ -111,7 +110,8 @@
             </form>
 
             <form name="backForm" method="post" action="Dispatcher">
-                <input type="hidden" name="controllerAction" value="AuctionManagement.view">
+                <input type="hidden" name="auctionID"/>
+                <input type="hidden" name="controllerAction" value="AuctionManagement.inspectAuction">
             </form>
 
             <form name="modifyForm" method="post" action="Dispatcher">

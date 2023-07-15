@@ -89,6 +89,7 @@ public class ProductManagement {
             request.setAttribute("loggedUser",loggedUser);
             request.setAttribute("applicationMessage",applicationMessage);
             request.setAttribute("products", results.toArray(new Product[results.size()]));
+            request.setAttribute("soldProductsAction", Boolean.FALSE);
             request.setAttribute("viewUrl","productManagement/view");
         }
         catch (Exception e){
@@ -357,6 +358,72 @@ public class ProductManagement {
         }
         catch (Exception e){
             logger.log(Level.SEVERE, "User Controller Error / delete", e);
+            try {
+                if(daoFactory != null) daoFactory.rollbackTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();
+            }
+            catch (Throwable t){}
+            throw new RuntimeException(e);
+        }
+        finally {
+            try {
+                if(daoFactory != null) daoFactory.closeTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.closeTransaction();
+            }
+            catch (Throwable t){}
+        }
+    }
+    public static void viewSoldProducts(HttpServletRequest request, HttpServletResponse response){
+        DAOFactory sessionDAOFactory = null;
+        DAOFactory daoFactory = null;
+        User loggedUser;
+        String applicationMessage = null;
+        Logger logger = LogService.getApplicationLogger();
+
+        try {
+            Map sessionFactoryParameters = new HashMap<String, Object>();
+            sessionFactoryParameters.put("request",request);
+            sessionFactoryParameters.put("response",response);
+            sessionDAOFactory = DAOFactory.getDAOFactory(Configuration.COOKIE_IMPL, sessionFactoryParameters);
+            sessionDAOFactory.beginTransaction();
+
+            UserDAO sessionUserDAO = sessionDAOFactory.getUserDAO();
+            loggedUser = sessionUserDAO.findLoggedUser();
+
+            daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
+            daoFactory.beginTransaction();
+
+            loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
+
+            // Prendo tutte le aste con prodotti dell'utente e le riempio
+            Auction[] auctions = daoFactory.getAuctionDAO().findByOwner(loggedUser);
+            for(int i = 0; i < auctions.length ; i++){
+                Product product = daoFactory.getProductDAO().findByProductID(auctions[i].getProduct_auctioned().getProductID());
+                auctions[i].setProduct_auctioned(product);
+            }
+
+            // Creo una nuova lista di prodotti
+            List<Product> productsList = new ArrayList<>();
+
+            // Per ogni asta controllo se il prodotto è venduto o meno e lo aggiungo alla lista se lo è
+            for (int i = 0; i < auctions.length ; i++){
+                if(auctions[i].isProduct_sold()){
+                    productsList.add(auctions[i].getProduct_auctioned());
+                }
+            }
+
+            daoFactory.commitTransaction();
+            sessionDAOFactory.commitTransaction();
+
+            request.setAttribute("loggedOn",loggedUser!=null);
+            request.setAttribute("loggedUser",loggedUser);
+            request.setAttribute("applicationMessage",applicationMessage);
+            request.setAttribute("products", productsList.toArray(new Product[productsList.size()]));
+            request.setAttribute("soldProductsAction", Boolean.TRUE);
+            request.setAttribute("viewUrl","productManagement/view");
+        }
+        catch (Exception e){
+            logger.log(Level.SEVERE, "Product Controller Error / view -- " + e);
             try {
                 if(daoFactory != null) daoFactory.rollbackTransaction();
                 if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();

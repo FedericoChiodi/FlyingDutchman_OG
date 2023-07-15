@@ -30,13 +30,15 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
                     + "(opening_timestamp,"
                     + "closing_timestamp,"
                     + "is_product_sold,"
+                    + "deleted,"
                     + "productID) "
-                    + "VALUES (?,?,?,?)";
+                    + "VALUES (?,?,?,?,?)";
             ps = conn.prepareStatement(sql);
 
             int i = 1;
             ps.setTimestamp(i++,openingTimestamp);
             ps.setNull(i++,NULL);
+            ps.setString(i++,"N");
             ps.setString(i++,"N");
             ps.setLong(i++,product.getProductID());
 
@@ -56,11 +58,12 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
 
         try {
             sql
-                    ="DELETE FROM `AUCTION` "
-                    +"WHERE "
-                    +"auctionID = ?";
+                    = "UPDATE `AUCTION` SET "
+                    + "deleted = ? "
+                    + "WHERE auctionID = ?";
             ps = conn.prepareStatement(sql);
-            ps.setLong(1, auction.getAuctionID());
+            ps.setString(1, "Y");
+            ps.setLong(2, auction.getAuctionID());
 
             ps.executeUpdate();
         }

@@ -1,7 +1,6 @@
 package com.ingsw.flyingdutchman.controller;
 
 import com.ingsw.flyingdutchman.model.dao.DAOFactory;
-import com.ingsw.flyingdutchman.model.dao.OrderDAO;
 import com.ingsw.flyingdutchman.model.dao.UserDAO;
 import com.ingsw.flyingdutchman.model.mo.Auction;
 import com.ingsw.flyingdutchman.model.mo.Order;
@@ -12,12 +11,11 @@ import com.ingsw.flyingdutchman.services.logservice.LogService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,6 +23,62 @@ import java.util.logging.Logger;
 public class OrderManagement {
     private OrderManagement(){}
 
+    public static void view(HttpServletRequest request, HttpServletResponse response){
+        DAOFactory sessionDAOFactory = null;
+        DAOFactory daoFactory = null;
+        User loggedUser;
+        String applicationMessage = null;
+        Logger logger = LogService.getApplicationLogger();
+
+        try {
+            Map sessionFactoryParameters = new HashMap<String, Object>();
+            sessionFactoryParameters.put("request",request);
+            sessionFactoryParameters.put("response",response);
+            sessionDAOFactory = DAOFactory.getDAOFactory(Configuration.COOKIE_IMPL, sessionFactoryParameters);
+            sessionDAOFactory.beginTransaction();
+
+            UserDAO sessionUserDAO = sessionDAOFactory.getUserDAO();
+            loggedUser = sessionUserDAO.findLoggedUser();
+
+            daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
+            daoFactory.beginTransaction();
+
+            loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
+
+            Order[] orders = daoFactory.getOrderDAO().findByUser(loggedUser);
+            for(int i = 0; i < orders.length; i++){
+                Product product = daoFactory.getProductDAO().findByProductID(orders[i].getProduct().getProductID());
+                User user = daoFactory.getUserDAO().findByUserID(orders[i].getBuyer().getUserID());
+                orders[i].setProduct(product);
+                orders[i].setBuyer(user);
+            }
+
+            daoFactory.commitTransaction();
+            sessionDAOFactory.commitTransaction();
+
+            request.setAttribute("loggedOn",loggedUser!=null);
+            request.setAttribute("loggedUser",loggedUser);
+            request.setAttribute("applicationMessage",applicationMessage);
+            request.setAttribute("orders",orders);
+            request.setAttribute("viewUrl","orderManagement/view");
+        }
+        catch (Exception e){
+            logger.log(Level.SEVERE, "Product Controller Error / view -- " + e);
+            try {
+                if(daoFactory != null) daoFactory.rollbackTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();
+            }
+            catch (Throwable t){}
+            throw new RuntimeException(e);
+        }
+        finally {
+            try {
+                if(daoFactory != null) daoFactory.closeTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.closeTransaction();
+            }
+            catch (Throwable t){}
+        }
+    }
     public static void pay(HttpServletRequest request, HttpServletResponse response){
         DAOFactory sessionDAOFactory = null;
         DAOFactory daoFactory = null;
@@ -105,6 +159,58 @@ public class OrderManagement {
             request.setAttribute("orders",orders);
             request.setAttribute("applicationMessage",applicationMessage);
             request.setAttribute("viewUrl","orderManagement/view");
+        }
+        catch (Exception e){
+            logger.log(Level.SEVERE, "Order Controller Error / pay -- " + e);
+            try {
+                if(daoFactory != null) daoFactory.rollbackTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();
+            }
+            catch (Throwable t){}
+            throw new RuntimeException(e);
+        }
+        finally {
+            try {
+                if(daoFactory != null) daoFactory.closeTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.closeTransaction();
+            }
+            catch (Throwable t){}
+        }
+    }
+    public static void buyPremium(HttpServletRequest request, HttpServletResponse response){
+        DAOFactory sessionDAOFactory = null;
+        DAOFactory daoFactory = null;
+        User loggedUser;
+        String applicationMessage = null;
+        Logger logger = LogService.getApplicationLogger();
+
+        try {
+            Map sessionFactoryParameters = new HashMap<String, Object>();
+            sessionFactoryParameters.put("request",request);
+            sessionFactoryParameters.put("response",response);
+            sessionDAOFactory = DAOFactory.getDAOFactory(Configuration.COOKIE_IMPL, sessionFactoryParameters);
+            sessionDAOFactory.beginTransaction();
+
+            UserDAO sessionUserDAO = sessionDAOFactory.getUserDAO();
+            loggedUser = sessionUserDAO.findLoggedUser();
+
+            daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
+            daoFactory.beginTransaction();
+
+            loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
+
+            Order premiumOrder = new Order();
+            premiumOrder.setBuyer(loggedUser);
+            premiumOrder.set
+
+            daoFactory.commitTransaction();
+            sessionDAOFactory.commitTransaction();
+
+            request.setAttribute("loggedOn",loggedUser!=null);
+            request.setAttribute("loggedUser",loggedUser);
+            request.setAttribute("orders",orders);
+            request.setAttribute("applicationMessage",applicationMessage);
+            request.setAttribute("viewUrl","orderManagement/premium");
         }
         catch (Exception e){
             logger.log(Level.SEVERE, "Order Controller Error / pay -- " + e);

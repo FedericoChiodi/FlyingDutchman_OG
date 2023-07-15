@@ -49,11 +49,11 @@
 
             /* Stile specifico per il pulsante "Cancella il mio Account" */
             #deleteUserButton {
-                background-color: #28a745;
+                background-color: #dc3545;
             }
 
             #deleteUserButton:hover {
-                background-color: #1f9233;
+                background-color: #b72230;
             }
         </style>
         <script>

@@ -71,6 +71,7 @@
                 width: auto;
                 color: #39ce29;
                 height: auto;
+                margin-bottom: 10px;
             }
             #productImg{
                 width: 70%;
@@ -98,7 +99,7 @@
         </section>
 
         <section id="auctionListBreak">
-            <hr>
+            <hr/>
         </section>
 
         <%if(auctions.length > 0){%>
@@ -113,6 +114,13 @@
                         </button>
                     <%}%>
                 <%}%>
+            </section>
+        <%}%>
+        <%if(auctions.length == 0){%>
+            <section id="noAuctions">
+                <h2>
+                    Al momento non sono presenti aste in corso! :((
+                </h2>
             </section>
         <%}%>
 
