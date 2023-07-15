@@ -59,8 +59,8 @@ public class ProductManagement {
                 }
             }
 
-            // Trovo tutti i prodotti dell'utente
-            Product[] products = daoFactory.getProductDAO().findByOwner(loggedUser);
+            // Trovo tutti i prodotti dell'utente non cancellati
+            Product[] products = daoFactory.getProductDAO().findByOwnerNotDeleted(loggedUser);
 
             // Rimuovo dai prodotti totali quelli in comune con i prodotti venduti all'asta
             boolean contains = false;

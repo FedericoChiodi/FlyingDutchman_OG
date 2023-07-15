@@ -1,12 +1,11 @@
 package com.ingsw.flyingdutchman.model.dao.mySQLJDBCImpl;
 
 import com.ingsw.flyingdutchman.model.dao.ThresholdDAO;
-import com.ingsw.flyingdutchman.model.mo.Auction;
-import com.ingsw.flyingdutchman.model.mo.Category;
-import com.ingsw.flyingdutchman.model.mo.Threshold;
-import com.ingsw.flyingdutchman.model.mo.User;
+import com.ingsw.flyingdutchman.model.mo.*;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ThresholdDAOMySQLJDBCImpl implements ThresholdDAO {
     Connection conn;
@@ -117,8 +116,41 @@ public class ThresholdDAOMySQLJDBCImpl implements ThresholdDAO {
         return threshold;
     }
 
+    @Override
+    public Threshold[] findByUser(User user) {
+        PreparedStatement ps;
+        List<Threshold> thresholds = new ArrayList<>();
+
+        try {
+            String sql
+                    ="SELECT * "
+                    +"FROM `THRESHOLD` "
+                    +"WHERE "
+                    +"userID = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1, user.getUserID());
+
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()){
+                Threshold threshold = read(resultSet);
+                thresholds.add(threshold);
+            }
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return thresholds.toArray(new Threshold[0]);
+    }
+
     private Threshold read(ResultSet rs){
         Threshold threshold = new Threshold();
+        User user = new User();
+        Auction auction = new Auction();
+        threshold.setUser(user);
+        threshold.setAuction(auction);
         try {
             threshold.setThresholdID(rs.getLong("thresholdID"));
             threshold.setPrice(rs.getInt("price"));

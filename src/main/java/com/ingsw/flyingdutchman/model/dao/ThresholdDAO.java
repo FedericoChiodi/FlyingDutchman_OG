@@ -16,4 +16,5 @@ public interface ThresholdDAO {
     public void delete(Threshold threshold);
     public void update(Threshold threshold);
     public Threshold findByID(Long thresholdID);
+    public Threshold[] findByUser(User user);
 }

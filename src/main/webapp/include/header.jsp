@@ -52,8 +52,8 @@
       </li>
       <%String role = loggedUser.getRole();%>
       <%if(role.equals("Premium") || role.equals("Admin") || role.equals("SuperAdmin")){%>
-      <li <%=menuActiveLink.equals("Prenotazioni")?"class=\"active\"":""%>>
-        <a href="Dispatcher?controllerAction=ThresholdManagement.view">Prenotazioni</a>
+      <li <%=menuActiveLink.equals("Prenota")?"class=\"active\"":""%>>
+        <a href="Dispatcher?controllerAction=ThresholdManagement.view">Prenota</a>
       </li>
       <%}%>
       <%if(role.equals("Admin") || role.equals("SuperAdmin")){%>

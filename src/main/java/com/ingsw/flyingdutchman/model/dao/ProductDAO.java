@@ -20,4 +20,5 @@ public interface ProductDAO {
     public Product findByProductID(Long productID);
     public Product[] findByOwner(User owner);
     public Product[] findAllProducts();
+    public Product[] findByOwnerNotDeleted(User user);
 }

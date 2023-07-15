@@ -199,6 +199,36 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
         return products.toArray(new Product[0]);
     }
 
+    @Override
+    public Product[] findByOwnerNotDeleted(User user) {
+        PreparedStatement ps;
+        List<Product> products = new ArrayList<>();
+
+        try {
+            String sql
+                    ="SELECT * "
+                    +"FROM `PRODUCT` "
+                    +"WHERE "
+                    +"ownerID = ? AND deleted = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1, user.getUserID());
+            ps.setString(2, "N");
+
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()){
+                Product product = read(resultSet);
+                products.add(product);
+            }
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return products.toArray(new Product[0]);
+    }
+
     public Product read(ResultSet rs){
         Product product = new Product(); //TODO: ricordarsi di fare sta cosa!!!
         Category category = new Category();

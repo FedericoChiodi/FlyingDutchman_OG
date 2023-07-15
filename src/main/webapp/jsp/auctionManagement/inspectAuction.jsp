@@ -21,9 +21,9 @@
             function goBack(){
                 document.backForm.submit();
             }
-            function mainOnLoadHandler(){
-                document.querySelector("#buyProductButton").addEventListener("click",buyProduct);
-                document.querySelector("#backButton").addEventListener("click",goBack);
+            function insertThreshold(auctionID){
+                document.insertThresholdForm.auctionID.value = auctionID;
+                document.insertThresholdForm.submit();
             }
         </script>
         <style>
@@ -76,6 +76,15 @@
                 cursor: pointer;
                 margin-right: 10px;
             }
+            #thresholdButton{
+                padding: 10px 20px;
+                background-color: darkorange;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-right: 10px;
+            }
 
         </style>
     </head>
@@ -94,13 +103,21 @@
                     <span id="productPrice">&euro;<%=auction.getProduct_auctioned().getCurrent_price()%></span>
                     <br/>
                     <button id="buyProductButton" onclick="buyProduct(<%=auction.getAuctionID()%>)">Compra questo Prodotto</button>
+                    <%if(!loggedUser.getRole().equals("Default")){%>
+                        <button id="thresholdButton" onclick="insertThreshold(<%=auction.getAuctionID()%>)">Prenota</button>
+                    <%}%>
                     <button id="backButton" onclick="goBack()">Torna Indietro</button>
                 </article>
             </section>
 
             <form name="buyForm" method="post" action="Dispatcher">
-                <input type="hidden" name="auctionID" id="auctionID"/>
+                <input type="hidden" name="auctionID"/> <!-- TODO: qua ho tolto l'id, se qualcosa si rompe nelle aste guarda qua -->
                 <input type="hidden" name="controllerAction" value="AuctionManagement.buyProductAuctioned"/>
+            </form>
+
+            <form name="insertThresholdForm" method="post" action="Dispatcher">
+                <input type="hidden" name="auctionID"/>
+                <input type="hidden" name="controllerAction" value="ThresholdManagement.insertView"/>
             </form>
 
             <form name="backForm" method="post" action="Dispatcher">

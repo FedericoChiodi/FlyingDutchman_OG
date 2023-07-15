@@ -122,21 +122,21 @@
         <%if(products.length > 0){%>
             <section id="products" class="clearfix">
                 <%for (i = 0; i < products.length; i++){%>
-                <article>
-                    <%if(!soldProductsAction){%>
-                        <a href="javascript:deleteProduct(<%=products[i].getProductID()%>)">
-                            <img id="trashcan" src="images/trashcan.png" width="24" height="24" alt="X">
-                        </a>
-                    <%}%>
-                    <b><span class="description"><%=products[i].getDescription()%></span></b>
-                    <br/>
-                    <%if(soldProductsAction){%>
-                        <span class="current_price">Venduto a: &euro;<%=products[i].getCurrent_price()%></span>
-                    <%}%>
-                    <%if(!soldProductsAction){%>
-                        <span class="current_price">Attualmente costa: &euro;<%=products[i].getCurrent_price()%></span>
-                    <%}%>
-                </article>
+                    <article>
+                        <%if(!soldProductsAction){%>
+                            <a href="javascript:deleteProduct(<%=products[i].getProductID()%>)">
+                                <img id="trashcan" src="images/trashcan.png" width="24" height="24" alt="X">
+                            </a>
+                        <%}%>
+                        <b><span class="description"><%=products[i].getDescription()%></span></b>
+                        <br/>
+                        <%if(soldProductsAction){%>
+                            <span class="current_price">Venduto a: &euro;<%=products[i].getCurrent_price()%></span>
+                        <%}%>
+                        <%if(!soldProductsAction){%>
+                            <span class="current_price">Attualmente costa: &euro;<%=products[i].getCurrent_price()%></span>
+                        <%}%>
+                    </article>
                 <%}%>
             </section>
         <%}%>

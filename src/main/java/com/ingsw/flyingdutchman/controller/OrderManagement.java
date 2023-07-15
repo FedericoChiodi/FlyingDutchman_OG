@@ -13,9 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -199,16 +197,45 @@ public class OrderManagement {
 
             loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
 
+            //Creazione prodotto premium membership - ID SEMPRE 1
+            Product premium = daoFactory.getProductDAO().findByProductID(Long.parseLong("1"));
+
+            //Ottenere il timestamp corrente
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            Timestamp timestamp = Timestamp.valueOf(currentDateTime);
+
+            //Settare il prodotto e altri dati nell'ordine
             Order premiumOrder = new Order();
             premiumOrder.setBuyer(loggedUser);
-            premiumOrder.set
+            premiumOrder.setProduct(premium);
+            premiumOrder.setSelling_price(premium.getCurrent_price());
+            premiumOrder.setOrder_time(timestamp);
+
+            //Inserire l'ordine sul db
+            try {
+                daoFactory.getOrderDAO().create(
+                        timestamp,
+                        premium.getCurrent_price(),
+                        loggedUser,
+                        premium
+                );
+            }
+            catch (Exception e){
+                logger.log(Level.SEVERE, "Creazione ordine fallita - Premium Ordine." + e);
+                throw new RuntimeException(e);
+            }
+
+            applicationMessage = "Iscrizione a Premium confermata! Da ora puoi usufruire di nuovi benefici!";
+
+            //Settare il nuovo role dell'utente loggato e aggiornare il db
+            loggedUser.setRole("Premium");
+            daoFactory.getUserDAO().update(loggedUser);
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
 
             request.setAttribute("loggedOn",loggedUser!=null);
             request.setAttribute("loggedUser",loggedUser);
-            request.setAttribute("orders",orders);
             request.setAttribute("applicationMessage",applicationMessage);
             request.setAttribute("viewUrl","orderManagement/premium");
         }
