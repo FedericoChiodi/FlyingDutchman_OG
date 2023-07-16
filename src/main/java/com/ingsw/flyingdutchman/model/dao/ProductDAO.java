@@ -21,4 +21,5 @@ public interface ProductDAO {
     public Product[] findByOwner(User owner);
     public Product[] findAllProducts();
     public Product[] findByOwnerNotDeleted(User user);
+    public Product findByAuction(Auction auction);
 }

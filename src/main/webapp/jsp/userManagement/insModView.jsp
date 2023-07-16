@@ -5,11 +5,11 @@
 <%
   int i = 0;
   boolean loggedOn = (Boolean) request.getAttribute("loggedOn");
-  User loggedUser = (User) request.getAttribute("loggedUser");
   String applicationMessage = (String) request.getAttribute("applicationMessage");
   String menuActiveLink = "Utente";
-  User user = (User) request.getAttribute("user");
-  String action = (user!=null) ? "modify" : "insert";
+  User loggedUser = (User) request.getAttribute("loggedUser");
+  String auctionID = (String) request.getAttribute("auctionID");
+  String action = (loggedUser !=null) ? "modify" : "insert";
 %>
 <!DOCTYPE html>
 <html>
@@ -81,7 +81,15 @@
       f.controllerAction.value = "UserManagement."+status;
     }
     function goBack(){
-      document.backForm.submit();
+      let auctionID = <%=auctionID%>;
+      if (auctionID == null){
+        document.backForm.submit();
+      }
+      else {
+        document.backForm.controllerAction.value = "AuctionManagement.inspectAuction";
+        document.backForm.auctionID.value = auctionID;
+        document.backForm.submit();
+      }
     }
     function mainOnLoadHandler(){
       document.insModForm.addEventListener("submit",submitUser);
@@ -103,73 +111,73 @@
         <div class="field clearfix">
           <label for="username">Username</label>
           <input type="text" id="username" name="username"
-                 value="<%=(action.equals("modify")) ? user.getUsername() : ""%>"
+                 value="<%=(action.equals("modify")) ? loggedUser.getUsername() : ""%>"
                  required size="20" maxlength="40"/>
         </div>
         <div class="field clearfix">
           <label for="password">Password</label>
           <input type="password" id="password" name="password"
-                 value="<%=(action.equals("modify")) ? user.getPassword() : ""%>"
+                 value="<%=(action.equals("modify")) ? loggedUser.getPassword() : ""%>"
                  required size="20" maxlength="40"/>
         </div>
         <div class="field clearfix">
           <label for="firstname">Nome</label>
           <input type="text" id="firstname" name="firstname"
-            value="<%=(action.equals("modify")) ? user.getFirstname() : ""%>"
+            value="<%=(action.equals("modify")) ? loggedUser.getFirstname() : ""%>"
             required size="20" maxlength="40"/>
         </div>
         <div class="field clearfix">
           <label for="surname">Cognome</label>
           <input type="text" id="surname" name="surname"
-                 value="<%=(action.equals("modify")) ? user.getSurname() : ""%>"
+                 value="<%=(action.equals("modify")) ? loggedUser.getSurname() : ""%>"
                  required size="20" maxlength="40"/>
         </div>
         <div class="field clearfix">
           <label for="birthdate">Data di Nascita</label>
           <input type="date" id="birthdate" name="birthdate"
-                 value="<%=(action.equals("modify")) ? user.getBirthdate() : ""%>"
+                 value="<%=(action.equals("modify")) ? loggedUser.getBirthdate() : ""%>"
                  required size="20" maxlength="40"/>
         </div>
         <div class="field clearfix">
           <label for="address">Indirizzo</label>
           <input type="text" id="address" name="address"
-                 value="<%=(action.equals("modify")) ? user.getAddress() : ""%>"
+                 value="<%=(action.equals("modify")) ? loggedUser.getAddress() : ""%>"
                  required size="20" maxlength="40"/>
         </div>
         <div class="field clearfix">
           <label for="civic_number">Numero Civico</label>
           <input type="number" id="civic_number" name="civic_number"
-                 value="<%=(action.equals("modify")) ? user.getCivic_number() : ""%>"
-                 required size="20" maxlength="40"/>
+                 value="<%=(action.equals("modify")) ? loggedUser.getCivic_number() : ""%>"
+                 required size="20" maxlength="40" min="0" step="1"/>
         </div>
         <div class="field clearfix">
           <label for="cap">CAP</label>
           <input type="number" id="cap" name="cap"
-                 value="<%=(action.equals("modify")) ? user.getCap() : ""%>"
-                 required size="20" maxlength="40"/>
+                 value="<%=(action.equals("modify")) ? loggedUser.getCap() : ""%>"
+                 required size="20" maxlength="40" min="0" max="98169" step="1"/>
         </div>
         <div class="field clearfix">
           <label for="city">Città</label>
           <input type="text" id="city" name="city"
-                 value="<%=(action.equals("modify")) ? user.getCity() : ""%>"
+                 value="<%=(action.equals("modify")) ? loggedUser.getCity() : ""%>"
                  required size="20" maxlength="40"/>
         </div>
         <div class="field clearfix">
           <label for="state">Stato</label>
           <input type="text" id="state" name="state"
-                 value="<%=(action.equals("modify")) ? user.getState() : ""%>"
+                 value="<%=(action.equals("modify")) ? loggedUser.getState() : ""%>"
                  required size="20" maxlength="40"/>
         </div>
         <div class="field clearfix">
           <label for="email">Email</label>
           <input type="email" id="email" name="email"
-                 value="<%=(action.equals("modify")) ? user.getEmail() : ""%>"
+                 value="<%=(action.equals("modify")) ? loggedUser.getEmail() : ""%>"
                  required size="20" maxlength="40"/>
         </div>
         <div class="field clearfix">
           <label for="cel_number">Numero di Telefono</label>
           <input type="tel" id="cel_number" name="cel_number"
-                 value="<%=(action.equals("modify")) ? user.getCel_number() : ""%>"
+                 value="<%=(action.equals("modify")) ? loggedUser.getCel_number() : ""%>"
                  required size="20" maxlength="40"/>
         </div>
         <div class="field clearfix">
@@ -192,7 +200,8 @@
     </section>
     
     <form name="backForm" method="post" action="Dispatcher">
-      <input type="hidden" name="controllerAction" value="HomeManagement.view">
+      <input type="hidden" name="controllerAction" value="UserManagement.view">
+      <input type="hidden" name="auctionID">
     </form>
     
   </main>

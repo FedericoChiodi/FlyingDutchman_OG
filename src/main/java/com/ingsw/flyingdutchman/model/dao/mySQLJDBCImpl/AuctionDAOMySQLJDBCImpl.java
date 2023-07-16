@@ -237,6 +237,7 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
             auction.setOpening_timestamp(rs.getTimestamp("opening_timestamp"));
             auction.setClosing_timestamp(rs.getTimestamp("closing_timestamp"));
             auction.setProduct_sold(rs.getString("is_product_sold").equals("Y"));
+            auction.setDeleted(rs.getString("deleted").equals("Y"));
             auction.getProduct_auctioned().setProductID(rs.getLong("productID"));
         }
         catch (SQLException e){

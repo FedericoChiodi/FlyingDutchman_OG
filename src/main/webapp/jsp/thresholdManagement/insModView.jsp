@@ -117,16 +117,23 @@
         <form name="insModForm" action="Dispatcher" method="post">
 
             <div class="field clearfix">
-                <label for="price">Prezzo(&euro;)</label>
+                <span>Prezzo corrente del Prodotto: </span>
+                <span class="float-value"><%=(action.equals("modify")) ? threshold.getAuction().getProduct_auctioned().getCurrent_price() : auction.getProduct_auctioned().getCurrent_price()%></span><br/>
+
+                <%if(action.equals("modify")){%>
+                    <span>Prezzo corrente della Prenotazione: </span>
+                    <span class="float-value"><%=threshold.getPrice()%></span><br/>
+                <%}%>
+
+                <label for="price"><%=(action.equals("modify")) ? "Nuovo Prezzo da fissare" : "Prezzo da fissare"%>(&euro;)</label>
                 <input type="number" id="price" name="price"
-                       value="<%=(action.equals("modify")) ? threshold.getPrice() : ""%>"
-                       required size="20" maxlength="40" max="<%=(action.equals("modify")) ? threshold.getAuction().getProduct_auctioned().getCurrent_price() : auction.getProduct_auctioned().getCurrent_price()%>"
-                       min="0" oninvalid="this.setCustomValidity('Il prezzo deve essere valido e minore-uguale del prezzo corrente!')" step="0.01"/>
+                       required size="20" maxlength="40" max="<%=(action.equals("modify")) ? threshold.getAuction().getProduct_auctioned().getCurrent_price()-0.01 : auction.getProduct_auctioned().getCurrent_price()-0.01%>"
+                       min="0" step="0.01"/>
             </div>
 
             <div class="field clearfix">
                 <label>&#160;</label>
-                <input type="submit" class="button" value="Invia"/>
+                <input type="submit" class="button" value="Prenota"/>
                 <input type="button" name="backButton" class="button" value="Annulla"/>
             </div>
 

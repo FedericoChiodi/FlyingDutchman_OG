@@ -116,6 +116,7 @@
 
             <form name="modifyForm" method="post" action="Dispatcher">
                 <input type="hidden" name="controllerAction" value="UserManagement.modifyView">
+                <input type="hidden" name="auctionID" value="<%=auction.getAuctionID()%>">
             </form>
 
         </main>

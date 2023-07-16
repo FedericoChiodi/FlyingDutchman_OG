@@ -233,20 +233,17 @@ public class UserManagement {
             daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
             daoFactory.beginTransaction();
 
-            //logger.log(Level.INFO, "req: " + request.getParameter("userID"));
-            //Long userID = Long.parseLong(request.getParameter("userID"));
-            //Long userID = loggedUser.getUserID();
-
-            //logger.log(Level.INFO, "user: " + loggedUser.getUsername());
             UserDAO userDAO = daoFactory.getUserDAO();
-            User user = userDAO.findByUsername(loggedUser.getUsername());
+            loggedUser = userDAO.findByUsername(loggedUser.getUsername());
+
+            loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
 
             request.setAttribute("loggedOn",loggedUser!=null);
             request.setAttribute("loggedUser",loggedUser);
-            request.setAttribute("user",user);
+            request.setAttribute("auctionID",request.getParameter("auctionID"));
             request.setAttribute("viewUrl","userManagement/insModView");
         }
         catch (Exception e){
@@ -308,7 +305,7 @@ public class UserManagement {
             sessionDAOFactory.commitTransaction();
 
             request.setAttribute("loggedOn", loggedUser!=null);
-            request.setAttribute("loggedUser",loggedUser);
+            request.setAttribute("loggedUser",user);
             request.setAttribute("applicationMessage",applicationMessage);
             request.setAttribute("viewUrl","userManagement/view");
         }

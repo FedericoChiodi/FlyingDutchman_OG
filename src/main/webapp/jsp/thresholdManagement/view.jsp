@@ -62,6 +62,7 @@
         }
         #pencil{
             float: right;
+            margin-right: 7px;
         }
         #thresholdListBreak hr{
             width: auto;
@@ -87,21 +88,23 @@
     </section>
 
     <%if(thresholds.length > 0){%>
-    <section id="thresholds" class="clearfix">
-        <%for (i = 0; i < thresholds.length; i++){%>
-        <article>
-            <a href="javascript:deleteThreshold(<%=thresholds[i].getThresholdID()%>)">
-                <img id="trashcan" src="images/trashcan.png" width="24" height="24" alt="X">
-            </a>
-            <a href="javascript:editThreshold(<%=thresholds[i].getThresholdID()%>)">
-                <img id="pencil" src="images/pencil.png" width="24" height="24" alt="E">
-            </a>
-            <b><span class="description"><%=thresholds[i].getAuction().getProduct_auctioned().getDescription()%></span></b>
-            <br/>
-            <span class="float-value"><%=thresholds[i].getPrice()%></span>
-        </article>
-        <%}%>
-    </section>
+        <section id="thresholds" class="clearfix">
+            <%for (i = 0; i < thresholds.length; i++){%>
+                <%if(!thresholds[i].getAuction().isDeleted()){%>
+                    <article>
+                        <a href="javascript:deleteThreshold(<%=thresholds[i].getThresholdID()%>)">
+                            <img id="trashcan" src="images/trashcan.png" width="24" height="24" alt="X">
+                        </a>
+                        <a href="javascript:editThreshold(<%=thresholds[i].getThresholdID()%>)">
+                            <img id="pencil" src="images/pencil.png" width="24" height="24" alt="E">
+                        </a>
+                        <b><span class="description"><%=thresholds[i].getAuction().getProduct_auctioned().getDescription()%></span></b>
+                        <br/>
+                        <span class="float-value"><%=thresholds[i].getPrice()%></span>
+                    </article>
+                <%}%>
+            <%}%>
+        </section>
     <%}%>
     <%if(thresholds.length == 0){%>
         <h1 id ="noThresholds">
@@ -119,7 +122,7 @@
 
     <form name="editForm" method="post" action="Dispatcher">
         <input type="hidden" name="thresholdID"/>
-        <input type="hidden" name="controllerAction" value="ThresholdManagement.insModView"/>
+        <input type="hidden" name="controllerAction" value="ThresholdManagement.modifyView"/>
     </form>
 
     <form name="goToAuctionsForm" method="post" action="Dispatcher">

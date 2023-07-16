@@ -124,13 +124,13 @@
             <div class="field clearfix">
                 <label for="min_price">Prezzo Minimo (&euro;)</label>
                 <input type="number" id="min_price" name="min_price"
-                       required size="20" value="0" min="0" step="0.01"/>
+                       required size="20" min="0" step="0.01"/>
             </div>
 
             <div class="field clearfix">
                 <label for="starting_price">Prezzo di Partenza (&euro;)</label>
                 <input type="number" id="starting_price" name="starting_price"
-                       required size="20" value="0" min="0" step="0.01"/>
+                       required size="20" min="0" step="0.01"/>
             </div>
 
             <div>

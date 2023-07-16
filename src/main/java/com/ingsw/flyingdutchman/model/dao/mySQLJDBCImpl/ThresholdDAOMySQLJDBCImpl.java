@@ -71,7 +71,7 @@ public class ThresholdDAOMySQLJDBCImpl implements ThresholdDAO {
                     + "price = ?, "
                     + "reservation_date = ?, "
                     + "userID = ?, "
-                    + "auctionID = ?, "
+                    + "auctionID = ? "
                     + "WHERE "
                     + "thresholdID = ?";
             ps = conn.prepareStatement(sql);

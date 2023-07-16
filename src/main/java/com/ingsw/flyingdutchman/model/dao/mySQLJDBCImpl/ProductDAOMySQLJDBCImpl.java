@@ -1,6 +1,7 @@
 package com.ingsw.flyingdutchman.model.dao.mySQLJDBCImpl;
 
 import com.ingsw.flyingdutchman.model.dao.ProductDAO;
+import com.ingsw.flyingdutchman.model.mo.Auction;
 import com.ingsw.flyingdutchman.model.mo.Category;
 import com.ingsw.flyingdutchman.model.mo.Product;
 import com.ingsw.flyingdutchman.model.mo.User;
@@ -234,6 +235,36 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
         return products.toArray(new Product[0]);
     }
 
+    @Override
+    public Product findByAuction(Auction auction) {
+        PreparedStatement ps;
+        Product product  = new Product();
+
+        try {
+            String sql
+                    = "SELECT productID, description, min_price, starting_price, current_price, image, deleted, categoryID, ownerID " +
+                    "FROM `PRODUCT` NATURAL JOIN `AUCTION` " +
+                    "WHERE " +
+                    "auctionID = ?";
+
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1, auction.getAuctionID());
+
+            ResultSet resultSet = ps.executeQuery();
+
+            if(resultSet.next()){
+                product = read(resultSet);
+            }
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return product;
+    }
+
     public Product read(ResultSet rs){
         Product product = new Product();
         Category category = new Category();
@@ -247,6 +278,7 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
             product.setStarting_price(rs.getFloat("starting_price"));
             product.setCurrent_price(rs.getFloat("current_price"));
             product.setImage(rs.getBlob("image"));
+            product.setDeleted(rs.getString("deleted").equals("Y"));
             product.getCategory().setCategoryID(rs.getLong("categoryID"));
             product.getOwner().setUserID(rs.getLong("ownerID"));
         }

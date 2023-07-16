@@ -111,7 +111,7 @@
             </section>
 
             <form name="buyForm" method="post" action="Dispatcher">
-                <input type="hidden" name="auctionID"/> <!-- TODO: qua ho tolto l'id, se qualcosa si rompe nelle aste guarda qua -->
+                <input type="hidden" name="auctionID"/>
                 <input type="hidden" name="controllerAction" value="AuctionManagement.buyProductAuctioned"/>
             </form>
 

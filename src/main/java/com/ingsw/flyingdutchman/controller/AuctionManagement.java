@@ -123,7 +123,7 @@ public class AuctionManagement {
             }
 
             // Trovo tutti i prodotti dell'utente
-            Product[] products = daoFactory.getProductDAO().findByOwner(loggedUser);
+            Product[] products = daoFactory.getProductDAO().findByOwnerNotDeleted(loggedUser);
 
             // Rimuovo dai prodotti totali quelli in comune con i prodotti venduti all'asta
             boolean contains = false;

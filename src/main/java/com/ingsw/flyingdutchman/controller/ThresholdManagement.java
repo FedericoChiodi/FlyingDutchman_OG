@@ -45,6 +45,12 @@ public class ThresholdManagement {
             loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
 
             Threshold[] thresholds = daoFactory.getThresholdDAO().findByUser(loggedUser);
+            for (int i = 0; i < thresholds.length; i++){
+                Auction auction = daoFactory.getAuctionDAO().findAuctionByID(thresholds[i].getAuction().getAuctionID());
+                Product product = daoFactory.getProductDAO().findByProductID(auction.getProduct_auctioned().getProductID());
+                auction.setProduct_auctioned(product);
+                thresholds[i].setAuction(auction);
+            }
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
@@ -93,9 +99,9 @@ public class ThresholdManagement {
             daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
             daoFactory.beginTransaction();
 
-            Long thresholdID = Long.parseLong(request.getParameter("thresholdID"));
+            loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
 
-            Threshold threshold = daoFactory.getThresholdDAO().findByID(thresholdID);
+            Threshold threshold = daoFactory.getThresholdDAO().findByID(Long.parseLong(request.getParameter("thresholdID")));
 
             try {
                 daoFactory.getThresholdDAO().delete(threshold);
@@ -108,6 +114,12 @@ public class ThresholdManagement {
             applicationMessage = "Prenotazione eliminata correttamente";
 
             Threshold[] thresholds = daoFactory.getThresholdDAO().findByUser(loggedUser);
+            for (int i = 0; i < thresholds.length; i++){
+                Auction auction1 = daoFactory.getAuctionDAO().findAuctionByID(thresholds[i].getAuction().getAuctionID());
+                Product product = daoFactory.getProductDAO().findByProductID(auction1.getProduct_auctioned().getProductID());
+                auction1.setProduct_auctioned(product);
+                thresholds[i].setAuction(auction1);
+            }
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
@@ -177,6 +189,12 @@ public class ThresholdManagement {
             }
 
             Threshold[] thresholds = daoFactory.getThresholdDAO().findByUser(loggedUser);
+            for (int i = 0; i < thresholds.length; i++){
+                Auction auction1 = daoFactory.getAuctionDAO().findAuctionByID(thresholds[i].getAuction().getAuctionID());
+                Product product = daoFactory.getProductDAO().findByProductID(auction1.getProduct_auctioned().getProductID());
+                auction1.setProduct_auctioned(product);
+                thresholds[i].setAuction(auction1);
+            }
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
@@ -228,6 +246,8 @@ public class ThresholdManagement {
             loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
 
             Auction auction = daoFactory.getAuctionDAO().findAuctionByID(Long.parseLong(request.getParameter("auctionID")));
+            Product product = daoFactory.getProductDAO().findByAuction(auction);
+            auction.setProduct_auctioned(product);
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
@@ -239,7 +259,7 @@ public class ThresholdManagement {
             request.setAttribute("viewUrl","thresholdManagement/insModView");
         }
         catch (Exception e){
-            logger.log(Level.SEVERE, "Controller Error - ThresholdManagement/insert --" + e);
+            logger.log(Level.SEVERE, "Controller Error - ThresholdManagement/insertView --" + e);
             try {
                 if(daoFactory != null) daoFactory.rollbackTransaction();
                 if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();
@@ -284,17 +304,24 @@ public class ThresholdManagement {
 
             Threshold threshold = daoFactory.getThresholdDAO().findByID(Long.parseLong(request.getParameter("thresholdID")));
 
-            threshold.setPrice(Integer.parseInt(request.getParameter("price")));
+            threshold.setPrice(Float.parseFloat(request.getParameter("price")));
             threshold.setReservation_date(timestamp);
 
             try {
                 daoFactory.getThresholdDAO().update(threshold);
             }
             catch (Exception e){
-                applicationMessage = "Errore nella creazione della prenotazione!";
+                applicationMessage = "Errore nella modifica della prenotazione!";
+                logger.log(Level.SEVERE, "Errore nella modifica della prenotazione! -- " + e);
             }
 
             Threshold[] thresholds = daoFactory.getThresholdDAO().findByUser(loggedUser);
+            for (int i = 0; i < thresholds.length; i++){
+                Auction auction1 = daoFactory.getAuctionDAO().findAuctionByID(thresholds[i].getAuction().getAuctionID());
+                Product product = daoFactory.getProductDAO().findByProductID(auction1.getProduct_auctioned().getProductID());
+                auction1.setProduct_auctioned(product);
+                thresholds[i].setAuction(auction1);
+            }
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
@@ -306,7 +333,7 @@ public class ThresholdManagement {
             request.setAttribute("viewUrl","thresholdManagement/view");
         }
         catch (Exception e){
-            logger.log(Level.SEVERE, "Controller Error - ThresholdManagement/insert --" + e);
+            logger.log(Level.SEVERE, "Controller Error - ThresholdManagement/modify --" + e);
             try {
                 if(daoFactory != null) daoFactory.rollbackTransaction();
                 if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();
@@ -346,6 +373,11 @@ public class ThresholdManagement {
             loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
 
             Threshold threshold = daoFactory.getThresholdDAO().findByID(Long.parseLong(request.getParameter("thresholdID")));
+            Auction auction = daoFactory.getAuctionDAO().findAuctionByID(threshold.getAuction().getAuctionID());
+            Product product = daoFactory.getProductDAO().findByAuction(auction);
+
+            auction.setProduct_auctioned(product);
+            threshold.setAuction(auction);
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
