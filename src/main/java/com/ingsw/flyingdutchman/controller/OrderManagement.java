@@ -46,6 +46,8 @@ public class OrderManagement {
             Order[] orders = daoFactory.getOrderDAO().findByUser(loggedUser);
             for(int i = 0; i < orders.length; i++){
                 Product product = daoFactory.getProductDAO().findByProductID(orders[i].getProduct().getProductID());
+                User productOwner = daoFactory.getUserDAO().findByUserID(product.getOwner().getUserID());
+                product.setOwner(productOwner);
                 User user = daoFactory.getUserDAO().findByUserID(orders[i].getBuyer().getUserID());
                 orders[i].setProduct(product);
                 orders[i].setBuyer(user);

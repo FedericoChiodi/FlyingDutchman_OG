@@ -82,16 +82,25 @@
         let f;
         f = document.insModForm;
         f.controllerAction.value = "ThresholdManagement."+status;
-        <%if(action.equals("modify"))%>
+        <%if(action.equals("modify")){%>
             f.thresholdID.value = <%=threshold.getThresholdID()%>;
-        <%%>
+        <%}%>
+        <%if(action.equals("insert")){%>
+            f.auctionID.value = <%=auction.getAuctionID()%>;
+        <%}%>
     }
     function goBack(){
-        document.backForm.auctionID = <%=threshold.getAuction().getAuctionID()%>;
+        <%if(action.equals("modify")){%>
+            document.backForm.controllerAction.value = "ThresholdManagement.view";
+        <%}%>
+        <%if(action.equals("insert")){%>
+            document.backForm.auctionID.value = <%=auction.getAuctionID()%>;
+            document.backForm.controllerAction.value = "AuctionManagement.inspectAuction";
+        <%}%>
         document.backForm.submit();
     }
     function mainOnLoadHandler(){
-        document.insModForm.addEventListener("submit",submitUser);
+        document.insModForm.addEventListener("submit",submitThreshold);
         document.insModForm.backButton.addEventListener("click", goBack);
     }
 </script>
@@ -108,10 +117,11 @@
         <form name="insModForm" action="Dispatcher" method="post">
 
             <div class="field clearfix">
-                <label for="price">Prezzo</label>
+                <label for="price">Prezzo(&euro;)</label>
                 <input type="number" id="price" name="price"
                        value="<%=(action.equals("modify")) ? threshold.getPrice() : ""%>"
-                       required size="20" maxlength="40"/>
+                       required size="20" maxlength="40" max="<%=(action.equals("modify")) ? threshold.getAuction().getProduct_auctioned().getCurrent_price() : auction.getProduct_auctioned().getCurrent_price()%>"
+                       min="0" oninvalid="this.setCustomValidity('Il prezzo deve essere valido e minore-uguale del prezzo corrente!')"/>
             </div>
 
             <div class="field clearfix">
@@ -127,7 +137,7 @@
     </section>
 
     <form name="backForm" method="post" action="Dispatcher">
-        <input type="hidden" name="controllerAction" value="AuctionManagement.inspectAuction">
+        <input type="hidden" name="controllerAction">
         <input type="hidden" name="auctionID"/>
     </form>
 

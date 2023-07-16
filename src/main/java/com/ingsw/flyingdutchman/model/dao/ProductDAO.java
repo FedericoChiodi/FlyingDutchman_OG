@@ -7,9 +7,9 @@ import java.sql.Blob;
 public interface ProductDAO {
     public Product create(
             String description,
-            Integer min_price,
-            Integer starting_price,
-            Integer current_price,
+            Float min_price,
+            Float starting_price,
+            Float current_price,
             Blob image,
             Boolean deleted,
             Category category,

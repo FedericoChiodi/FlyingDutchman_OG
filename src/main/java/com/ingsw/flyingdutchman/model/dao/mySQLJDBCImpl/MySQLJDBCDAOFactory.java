@@ -76,11 +76,6 @@ public class MySQLJDBCDAOFactory extends DAOFactory {
     }
 
     @Override
-    public BidDAO getBidDAO() {
-        return new BidDAOMySQLJDBCImpl(connection);
-    }
-
-    @Override
     public CategoryDAO getCategoryDAO() {
         return new CategoryDAOMySQLJDBCImpl(connection);
     }

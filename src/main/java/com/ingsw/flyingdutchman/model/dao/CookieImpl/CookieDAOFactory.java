@@ -49,11 +49,6 @@ public class CookieDAOFactory extends DAOFactory {
     }
 
     @Override
-    public BidDAO getBidDAO() {
-        return null;
-    }
-
-    @Override
     public CategoryDAO getCategoryDAO() {
         return null;
     }

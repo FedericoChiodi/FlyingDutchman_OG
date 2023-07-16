@@ -12,7 +12,7 @@ public class OrderDAOMySQLJDBCImpl implements OrderDAO {
     public OrderDAOMySQLJDBCImpl(Connection conn){this.conn = conn;}
 
     @Override
-    public Order create(Timestamp order_time, Integer selling_price, User buyer, Product product) {
+    public Order create(Timestamp order_time, Float selling_price, User buyer, Product product) {
         PreparedStatement ps;
         String sql;
         Order order = new Order();
@@ -33,7 +33,7 @@ public class OrderDAOMySQLJDBCImpl implements OrderDAO {
 
             int i = 1;
             ps.setTimestamp(i++,order_time);
-            ps.setInt(i++,selling_price);
+            ps.setFloat(i++,selling_price);
             ps.setLong(i++,buyer.getUserID());
             ps.setLong(i++,product.getProductID());
 
@@ -154,7 +154,7 @@ public class OrderDAOMySQLJDBCImpl implements OrderDAO {
         try{
             order.setOrderID(rs.getLong("orderID"));
             order.setOrder_time(rs.getTimestamp("order_time"));
-            order.setSelling_price(rs.getInt("selling_price"));
+            order.setSelling_price(rs.getFloat("selling_price"));
             order.getBuyer().setUserID(rs.getLong("userID"));
             order.getProduct().setProductID(rs.getLong("productID"));
         }

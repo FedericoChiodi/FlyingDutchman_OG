@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 
 public interface ThresholdDAO {
     public Threshold create(
-            Integer price,
+            Float price,
             Timestamp reservation_date,
             User buyer,
             Auction auction

@@ -12,7 +12,7 @@ public class ThresholdDAOMySQLJDBCImpl implements ThresholdDAO {
     public ThresholdDAOMySQLJDBCImpl(Connection conn){this.conn = conn;}
 
     @Override
-    public Threshold create(Integer price, Timestamp reservation_date, User buyer, Auction auction) {
+    public Threshold create(Float price, Timestamp reservation_date, User buyer, Auction auction) {
         PreparedStatement ps;
         Threshold threshold = new Threshold();
         try {
@@ -23,7 +23,7 @@ public class ThresholdDAOMySQLJDBCImpl implements ThresholdDAO {
             ps = conn.prepareStatement(sql);
 
             int i = 1;
-            ps.setInt(i++, price);
+            ps.setFloat(i++, price);
             ps.setTimestamp(i++, reservation_date);
             ps.setLong(i++, buyer.getUserID());
             ps.setLong(i++, auction.getAuctionID());
@@ -74,7 +74,7 @@ public class ThresholdDAOMySQLJDBCImpl implements ThresholdDAO {
             ps = conn.prepareStatement(sql);
 
             int i = 1;
-            ps.setLong(i++, threshold.getPrice());
+            ps.setFloat(i++, threshold.getPrice());
             ps.setTimestamp(i++, threshold.getReservation_date());
             ps.setLong(i++, threshold.getUser().getUserID());
             ps.setLong(i++, threshold.getAuction().getAuctionID());
@@ -153,7 +153,7 @@ public class ThresholdDAOMySQLJDBCImpl implements ThresholdDAO {
         threshold.setAuction(auction);
         try {
             threshold.setThresholdID(rs.getLong("thresholdID"));
-            threshold.setPrice(rs.getInt("price"));
+            threshold.setPrice(rs.getFloat("price"));
             threshold.setReservation_date(rs.getTimestamp("reservation_date"));
             threshold.getUser().setUserID(rs.getLong("userID"));
             threshold.getAuction().setAuctionID(rs.getLong("auctionID"));

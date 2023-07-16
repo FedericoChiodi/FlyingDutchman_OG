@@ -19,7 +19,6 @@ public abstract class DAOFactory {
     public abstract UserDAO getUserDAO();
     public abstract ProductDAO getProductDAO();
     public abstract AuctionDAO getAuctionDAO();
-    public abstract BidDAO getBidDAO();
     public abstract CategoryDAO getCategoryDAO();
     public abstract OrderDAO getOrderDAO();
     public abstract ThresholdDAO getThresholdDAO();
