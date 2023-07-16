@@ -4,6 +4,7 @@ import com.ingsw.flyingdutchman.model.dao.OrderDAO;
 import com.ingsw.flyingdutchman.model.mo.*;
 
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,9 @@ public class OrderDAOMySQLJDBCImpl implements OrderDAO {
                     +"productID) "
                     +"VALUES (?,?,?,?)";
             ps = conn.prepareStatement(sql);
+
+            // Arrotondamento a 2 decimali prima di inserire nel db
+            selling_price = (Math.round(selling_price * 100.0) / 100.0f);
 
             int i = 1;
             ps.setTimestamp(i++,order_time);

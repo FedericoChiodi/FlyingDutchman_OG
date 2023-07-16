@@ -13,5 +13,31 @@
     try { mainOnLoadHandler(); } catch (e) {}
     if (applicationMessage!=undefined) alert(applicationMessage);
   }
+
   window.addEventListener("load", onLoadHandler);
+
+  function formatFloat(value) {
+      var number = parseFloat(value);
+      if (!isNaN(number)) {
+          return '\u20AC' + number.toFixed(2);
+      } else {
+          return value;
+      }
+  }
+
+  // Funzione per formattare tutti i numeri float nella pagina
+  function formatAllFloats() {
+      var floatElements = document.getElementsByClassName('float-value');
+      for (var i = 0; i < floatElements.length; i++) {
+          var element = floatElements[i];
+          var value = element.textContent;
+          element.textContent = formatFloat(value);
+    }
+  }
+
+  // Chiamata alla funzione formatAllFloats al caricamento della pagina
+      window.onload = function() {
+      formatAllFloats();
+  };
+
 </script>

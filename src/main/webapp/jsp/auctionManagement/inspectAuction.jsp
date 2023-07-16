@@ -100,7 +100,7 @@
                     <br/>
                     <span id="productSeller">Venduto da: <%=auction.getProduct_auctioned().getOwner().getUsername()%></span>
                     <br/><br/>
-                    <span id="productPrice">&euro;<%=auction.getProduct_auctioned().getCurrent_price()%></span>
+                    <span id="productPrice" class="float-value"><%=auction.getProduct_auctioned().getCurrent_price()%></span>
                     <br/>
                     <button id="buyProductButton" onclick="buyProduct(<%=auction.getAuctionID()%>)">Compra questo Prodotto</button>
                     <%if(!loggedUser.getRole().equals("Default")){%>

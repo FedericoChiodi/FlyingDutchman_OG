@@ -131,10 +131,12 @@
                         <b><span class="description"><%=products[i].getDescription()%></span></b>
                         <br/>
                         <%if(soldProductsAction){%>
-                            <span class="current_price">Venduto a: &euro;<%=products[i].getCurrent_price()%></span>
+                            <label for="current_price_sold">Venduto a: </label>
+                            <span id="current_price_sold" class="float-value"><%=products[i].getCurrent_price()%></span>
                         <%}%>
                         <%if(!soldProductsAction){%>
-                            <span class="current_price">Attualmente costa: &euro;<%=products[i].getCurrent_price()%></span>
+                        <label for="current_price">Attualmente costa: </label>
+                            <span id="current_price" class="float-value"><%=products[i].getCurrent_price()%></span>
                         <%}%>
                     </article>
                 <%}%>

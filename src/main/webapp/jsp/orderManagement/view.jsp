@@ -58,7 +58,7 @@
                             <span id="order_time" class="order_time"><%=orders[i].getOrder_time().toString().substring(0,10)%> -
                                 <%=orders[i].getOrder_time().toString().substring(10, 16)%>
                             </span><br/>
-                            <span id="productPrice" class="price">&euro;<%=orders[i].getSelling_price()%></span><br/>
+                            <span id="productPrice" class="float-value"><%=orders[i].getSelling_price()%></span><br/>
                             <span id="seller" class="seller">Comprato da: <%=orders[i].getProduct().getOwner().getUsername()%></span><br/>
                             <span id="separator" class="separator">---</span>
                         </article>

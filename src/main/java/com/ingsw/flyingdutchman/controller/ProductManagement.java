@@ -89,7 +89,7 @@ public class ProductManagement {
             request.setAttribute("loggedUser",loggedUser);
             request.setAttribute("applicationMessage",applicationMessage);
             request.setAttribute("products", results.toArray(new Product[results.size()]));
-            request.setAttribute("soldProductsAction", Boolean.FALSE);
+            request.setAttribute("soldProductsAction", false);
             request.setAttribute("viewUrl","productManagement/view");
         }
         catch (Exception e){
@@ -183,9 +183,9 @@ public class ProductManagement {
             try {
                 productDAO.create(
                         request.getParameter("description"),
-                        Integer.parseInt(request.getParameter("min_price")),
-                        Integer.parseInt(request.getParameter("starting_price")),
-                        Integer.parseInt(request.getParameter("current_price")),
+                        Float.parseFloat(request.getParameter("min_price")),
+                        Float.parseFloat(request.getParameter("starting_price")),
+                        Float.parseFloat(request.getParameter("current_price")),
                         null, // TODO: se ho tempo implementare lettura immagini
                         false,
                         categoryDAO.findByCategoryID(Long.parseLong(request.getParameter("categoryID"))),
@@ -215,8 +215,8 @@ public class ProductManagement {
                 }
             }
 
-            // Trovo tutti i prodotti dell'utente
-            Product[] products = daoFactory.getProductDAO().findByOwner(loggedUser);
+            // Trovo tutti i prodotti dell'utente non cancellati
+            Product[] products = daoFactory.getProductDAO().findByOwnerNotDeleted(loggedUser);
 
             // Rimuovo dai prodotti totali quelli in comune con i prodotti venduti all'asta
             boolean contains = false;
@@ -244,6 +244,7 @@ public class ProductManagement {
             request.setAttribute("loggedOn",loggedUser!=null);
             request.setAttribute("loggedUser", loggedUser);
             request.setAttribute("products", results.toArray(new Product[results.size()]));
+            request.setAttribute("soldProductsAction",false);
             request.setAttribute("applicationMessage",applicationMessage);
             request.setAttribute("viewUrl","productManagement/view");
         }
@@ -325,7 +326,7 @@ public class ProductManagement {
             }
 
             // Trovo tutti i prodotti dell'utente
-            Product[] products = daoFactory.getProductDAO().findByOwner(loggedUser);
+            Product[] products = daoFactory.getProductDAO().findByOwnerNotDeleted(loggedUser);
 
             // Rimuovo dai prodotti totali quelli in comune con i prodotti venduti all'asta
             boolean contains = false;
@@ -353,6 +354,7 @@ public class ProductManagement {
             request.setAttribute("loggedOn",loggedUser!=null);
             request.setAttribute("loggedUser",loggedUser);
             request.setAttribute("products", results.toArray(new Product[results.size()]));
+            request.setAttribute("soldProductsAction",false);
             request.setAttribute("applicationMessage",applicationMessage);
             request.setAttribute("viewUrl","productManagement/view");
         }
@@ -419,7 +421,7 @@ public class ProductManagement {
             request.setAttribute("loggedUser",loggedUser);
             request.setAttribute("applicationMessage",applicationMessage);
             request.setAttribute("products", productsList.toArray(new Product[productsList.size()]));
-            request.setAttribute("soldProductsAction", Boolean.TRUE);
+            request.setAttribute("soldProductsAction", true);
             request.setAttribute("viewUrl","productManagement/view");
         }
         catch (Exception e){

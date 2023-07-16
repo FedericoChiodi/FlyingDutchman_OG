@@ -98,7 +98,7 @@
             </a>
             <b><span class="description"><%=thresholds[i].getAuction().getProduct_auctioned().getDescription()%></span></b>
             <br/>
-            <span class="current_price">&euro;<%=thresholds[i].getPrice()%></span>
+            <span class="float-value"><%=thresholds[i].getPrice()%></span>
         </article>
         <%}%>
     </section>

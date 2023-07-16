@@ -108,7 +108,7 @@
                     <%if((auctions[i].getClosing_timestamp() == null) && (!auctions[i].getProduct_auctioned().getOwner().getUserID().equals(loggedUser.getUserID()))){%>
                         <button id="auctionButton" onclick="inspectAuction(<%=auctions[i].getAuctionID()%>)">
                             <b><span id="productDescription" class="description"><%=auctions[i].getProduct_auctioned().getDescription()%></span></b>
-                            <span id="productPrice" class="current_price">&euro;<%=auctions[i].getProduct_auctioned().getCurrent_price()%></span>
+                            <span id="productPrice" class="float-value"><%=auctions[i].getProduct_auctioned().getCurrent_price()%></span>
                             <br/>
                             <img id="productImg" src="images/trashcan.png" alt="Immagine del Prodotto">
                         </button>

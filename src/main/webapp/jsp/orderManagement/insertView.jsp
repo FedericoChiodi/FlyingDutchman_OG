@@ -91,7 +91,7 @@
                 <h2>Stai per acquistare: </h2><br/>
                 <span><%=auction.getProduct_auctioned().getDescription()%></span><br/>
                 <h2>Pagherai: </h2>
-                <span>&euro;<%=auction.getProduct_auctioned().getCurrent_price()%></span><br/>
+                <span class="float-value"><%=auction.getProduct_auctioned().getCurrent_price()%></span><br/>
 
                 <h2>Il tuo articolo verr&agrave; spedito a: </h2><br/>
                 <span><%=loggedUser.getFirstname()%> <%=loggedUser.getSurname()%></span><br/>

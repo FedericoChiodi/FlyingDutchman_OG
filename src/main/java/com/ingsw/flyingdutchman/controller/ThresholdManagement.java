@@ -166,7 +166,7 @@ public class ThresholdManagement {
 
             try {
                 daoFactory.getThresholdDAO().create(
-                        Integer.parseInt(request.getParameter("price")),
+                        Float.parseFloat(request.getParameter("price")),
                         timestamp,
                         loggedUser,
                         auction

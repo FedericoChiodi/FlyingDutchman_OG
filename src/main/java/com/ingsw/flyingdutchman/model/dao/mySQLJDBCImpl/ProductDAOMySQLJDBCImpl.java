@@ -41,6 +41,11 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
                     +"VALUES (?,?,?,?,?,?,?,?)";
             ps = conn.prepareStatement(sql);
 
+            //Arrotondamento
+            min_price = Math.round(min_price * 100.0) / 100.0f;
+            starting_price = Math.round(starting_price * 100.0) / 100.0f;
+            current_price = Math.round(current_price * 100.0) / 100.0f;
+
             int i = 1;
             ps.setString(i++,description);
             ps.setFloat(i++,min_price);

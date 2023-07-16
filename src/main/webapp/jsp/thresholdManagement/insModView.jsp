@@ -121,7 +121,7 @@
                 <input type="number" id="price" name="price"
                        value="<%=(action.equals("modify")) ? threshold.getPrice() : ""%>"
                        required size="20" maxlength="40" max="<%=(action.equals("modify")) ? threshold.getAuction().getProduct_auctioned().getCurrent_price() : auction.getProduct_auctioned().getCurrent_price()%>"
-                       min="0" oninvalid="this.setCustomValidity('Il prezzo deve essere valido e minore-uguale del prezzo corrente!')"/>
+                       min="0" oninvalid="this.setCustomValidity('Il prezzo deve essere valido e minore-uguale del prezzo corrente!')" step="0.01"/>
             </div>
 
             <div class="field clearfix">

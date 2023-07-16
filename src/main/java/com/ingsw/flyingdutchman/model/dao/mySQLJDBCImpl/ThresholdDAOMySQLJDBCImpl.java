@@ -22,6 +22,9 @@ public class ThresholdDAOMySQLJDBCImpl implements ThresholdDAO {
                     + "VALUES (?,?,?,?)";
             ps = conn.prepareStatement(sql);
 
+            //Arrotondamento a 2 decimali
+            price = Math.round(price * 100.0) / 100.0f;
+
             int i = 1;
             ps.setFloat(i++, price);
             ps.setTimestamp(i++, reservation_date);
