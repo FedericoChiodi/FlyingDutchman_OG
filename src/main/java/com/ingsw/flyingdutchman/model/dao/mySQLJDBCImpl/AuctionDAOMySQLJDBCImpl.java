@@ -143,7 +143,7 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
 
         try {
             sql
-                    = "SELECT auctionID, opening_timestamp, closing_timestamp, is_product_sold, productID "
+                    = "SELECT auctionID, opening_timestamp, closing_timestamp, is_product_sold, AUCTION.deleted, productID "
                     + "FROM `AUCTION` NATURAl JOIN `PRODUCT` "
                     + "WHERE "
                     + "ownerID = ?";
@@ -175,7 +175,7 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
 
         try {
             sql
-                    = "SELECT auctionID, opening_timestamp, closing_timestamp, is_product_sold, productID "
+                    = "SELECT auctionID, opening_timestamp, closing_timestamp, is_product_sold, AUCTION.deleted, productID "
                     + "FROM `AUCTION` NATURAl JOIN `PRODUCT` "
                     + "WHERE "
                     + "ownerID = ?";
@@ -241,7 +241,8 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
             auction.getProduct_auctioned().setProductID(rs.getLong("productID"));
         }
         catch (SQLException e){
-            System.err.println("Error. During read rs - Auction");
+            System.err.println("Error. During read rs - Auction" + e);
+
         }
 
         return auction;
