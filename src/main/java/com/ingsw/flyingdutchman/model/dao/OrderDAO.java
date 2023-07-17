@@ -10,6 +10,7 @@ public interface OrderDAO {
     public Order create(
             Timestamp order_time,
             Float selling_price,
+            Boolean bought_from_threshold,
             User buyer,
             Product product
     );

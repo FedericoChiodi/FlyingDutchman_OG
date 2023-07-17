@@ -3,10 +3,7 @@ package com.ingsw.flyingdutchman.controller;
 import com.ingsw.flyingdutchman.model.dao.DAOFactory;
 import com.ingsw.flyingdutchman.model.dao.ProductDAO;
 import com.ingsw.flyingdutchman.model.dao.UserDAO;
-import com.ingsw.flyingdutchman.model.mo.Auction;
-import com.ingsw.flyingdutchman.model.mo.Product;
-import com.ingsw.flyingdutchman.model.mo.Threshold;
-import com.ingsw.flyingdutchman.model.mo.User;
+import com.ingsw.flyingdutchman.model.mo.*;
 import com.ingsw.flyingdutchman.services.config.Configuration;
 import com.ingsw.flyingdutchman.services.logservice.LogService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,7 +11,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -390,6 +389,173 @@ public class ThresholdManagement {
         }
         catch (Exception e){
             logger.log(Level.SEVERE, "Controller Error - ThresholdManagement/insert --" + e);
+            try {
+                if(daoFactory != null) daoFactory.rollbackTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();
+            }
+            catch (Throwable t){}
+            throw new RuntimeException(e);
+        }
+        finally {
+            try {
+                if (daoFactory != null) daoFactory.closeTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.closeTransaction();
+            }
+            catch (Throwable t){}
+        }
+    }
+
+    public static void checkOnUpdate(HttpServletRequest request, HttpServletResponse response){
+        DAOFactory sessionDAOFactory = null;
+        DAOFactory daoFactory = null;
+        User loggedUser;
+        String applicationMessage = null;
+        Logger logger = LogService.getApplicationLogger();
+
+        try {
+            Map sessionFactoryParameters = new HashMap<String, Object>();
+            sessionFactoryParameters.put("request",request);
+            sessionFactoryParameters.put("response",response);
+            sessionDAOFactory = DAOFactory.getDAOFactory(Configuration.COOKIE_IMPL, sessionFactoryParameters);
+            sessionDAOFactory.beginTransaction();
+            // prendo il dao dei cookies e trovo il loggedUser
+            UserDAO sessionUserDAO = sessionDAOFactory.getUserDAO();
+            loggedUser = sessionUserDAO.findLoggedUser();
+            // prendo il dao del db
+            daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
+            daoFactory.beginTransaction();
+
+            loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
+
+            //Preparo la pagina a cui devo ritornare dopo i controlli
+            String pageToReturn = request.getParameter("pageToReturn");
+
+            //Trovo l'asta aggiornata e inserisco il prodotto
+            Auction auction = daoFactory.getAuctionDAO().findAuctionByID(Long.parseLong(request.getParameter("auctionID")));
+            Product product = daoFactory.getProductDAO().findByProductID(auction.getProduct_auctioned().getProductID());
+            auction.setProduct_auctioned(product);
+
+            //Prima di tutto aggiorno l'asta sul db se sono chiamato da un aggiornamento di un prezzo di un'asta
+            if(pageToReturn.equals("auctionManagement/view")){
+                try{
+                    auction.getProduct_auctioned().setCurrent_price(Float.parseFloat(request.getParameter("price")));
+                    daoFactory.getProductDAO().update(auction.getProduct_auctioned());
+                    applicationMessage = "Prezzo abbassato correttamente!";
+                }
+                catch (Exception e){
+                    logger.log(Level.SEVERE, "Non ho potuto aggiornare il prezzo dell'asta." + e);
+                    throw new RuntimeException(e);
+                }
+            }
+
+            //Trovo tutte le prenotazioni associate alla'asta aggiornata
+            Threshold[] thresholds = daoFactory.getThresholdDAO().findThresholdsByAuction(auction);
+
+            //Trovo tutte quelle che hanno prezzo superiore o uguale all'asta e le aggiungo ad una lista
+            if(thresholds.length > 0){
+                List<Threshold> validThresholds = new ArrayList<>();
+                for (int i = 0; i < thresholds.length; i++){
+                    if(thresholds[i].getPrice() >= auction.getProduct_auctioned().getCurrent_price()){
+                        validThresholds.add(thresholds[i]);
+                    }
+                }
+                //Tra tutte quelle aggiunte controllo quella aggiunta prima cronologicamente
+                //e faccio l'ordine. Elimino poi tutte le altre
+                if(validThresholds.size() > 0){
+                    Threshold toOrder = validThresholds.get(0);
+                    int toRemoveIndex = 0;
+                    for (int i = 1; i < validThresholds.size(); i++){
+                        if(validThresholds.get(i).getReservation_date().compareTo(toOrder.getReservation_date()) < 0){
+                            toOrder = validThresholds.get(i);
+                            toRemoveIndex = i;
+                        }
+                    }
+                    validThresholds.remove(toRemoveIndex);
+                    //Elimino dal db tutte le prenotazioni non andate a buon fine
+                    for (int i = 1; i < validThresholds.size(); i++){
+                        try {
+                            daoFactory.getThresholdDAO().delete(validThresholds.get(i));
+                        }
+                        catch (Exception e){
+                            logger.log(Level.SEVERE, "Could not remove an unlucky Threshold -- " + e);
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+                    //toOrder contiene la prenotazione da ordinare, quindi aggiorno i dati per creare un nuovo ordine
+
+                    //Ottenere il timestamp corrente
+                    LocalDateTime currentDateTime = LocalDateTime.now();
+                    Timestamp timestamp = Timestamp.valueOf(currentDateTime);
+
+                    //Setto il timestamp di chiusura
+                    auction.setClosing_timestamp(timestamp);
+
+                    //Setto prodotto venduto = true
+                    auction.setProduct_sold(true);
+
+                    //Update dei dati dell'asta anche  sul db
+                    try {
+                        daoFactory.getAuctionDAO().update(auction);
+                    }
+                    catch (Exception e){
+                        logger.log(Level.SEVERE, "Update dell'asta fallito - ThresholdCheck." + e);
+                        throw new RuntimeException(e);
+                    }
+
+                    //Creo un nuovo ordine e inserisco i dati
+                    /*Order order = new Order();
+                    order.setOrder_time(timestamp);
+                    order.setSelling_price(toOrder.getPrice());
+                    order.setBought_from_threshold(true);
+                    order.setBuyer(loggedUser);
+                    order.setProduct(product);*/
+
+                    //Inserisco l'ordine sul db
+                    try {
+                        daoFactory.getOrderDAO().create(
+                                timestamp,
+                                toOrder.getPrice(),
+                                true,
+                                loggedUser,
+                                product
+                        );
+                    }
+                    catch (Exception e){
+                        logger.log(Level.SEVERE, "Creazione ordine fallita - ThresholdUpdateCheck." + e);
+                        throw new RuntimeException(e);
+                    }
+
+                    //Elimino infine la prenotazione effettuata
+                    try {
+                        daoFactory.getThresholdDAO().delete(toOrder);
+                    }
+                    catch (Exception e){
+                        logger.log(Level.SEVERE, "Non ho potuto eliminare la prenotazione valida." + e);
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+
+            daoFactory.commitTransaction();
+            sessionDAOFactory.commitTransaction();
+
+            request.setAttribute("loggedOn",loggedUser!=null);
+            request.setAttribute("loggedUser",loggedUser);
+            request.setAttribute("applicationMessage",applicationMessage);
+            request.setAttribute("viewUrl",pageToReturn);
+            if(pageToReturn.equals("auctionManagement/view")){
+                Auction[] auctions = daoFactory.getAuctionDAO().findOpenAuctionsByOwnerNotDeleted(loggedUser);
+                for(int i = 0; i < auctions.length; i++){
+                    Product product1 = daoFactory.getProductDAO().findByProductID(auctions[i].getProduct_auctioned().getProductID());
+                    auctions[i].setProduct_auctioned(product1);
+                }
+                request.setAttribute("canEdit",true);
+                request.setAttribute("auctions",auctions);
+            }
+        }
+        catch (Exception e){
+            logger.log(Level.SEVERE, "Controller Error - ThresholdManagement/checkUpdate --" + e);
             try {
                 if(daoFactory != null) daoFactory.rollbackTransaction();
                 if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();

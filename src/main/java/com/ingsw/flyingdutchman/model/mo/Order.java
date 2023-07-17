@@ -6,6 +6,7 @@ public class Order {
     private Long orderID;
     private Float selling_price;
     private Timestamp order_time;
+    private Boolean bought_from_threshold;
     private User buyer;
     private Product product;
 
@@ -19,4 +20,6 @@ public class Order {
     public void setSelling_price(float selling_price){this.selling_price = selling_price;}
     public Timestamp getOrder_time(){return order_time;}
     public void setOrder_time(Timestamp orderTime){this.order_time = orderTime;}
+    public Boolean isBoughtFromThreshold(){return bought_from_threshold;}
+    public void setBought_from_threshold(Boolean boughtFromThreshold){this.bought_from_threshold = boughtFromThreshold;}
 }

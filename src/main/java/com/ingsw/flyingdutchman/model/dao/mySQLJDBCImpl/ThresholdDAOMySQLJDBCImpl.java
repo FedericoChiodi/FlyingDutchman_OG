@@ -148,6 +148,61 @@ public class ThresholdDAOMySQLJDBCImpl implements ThresholdDAO {
         return thresholds.toArray(new Threshold[0]);
     }
 
+    @Override
+    public Threshold[] findThresholdsByAuction(Auction auction) {
+        PreparedStatement ps;
+        List<Threshold> thresholds = new ArrayList<>();
+
+        try {
+            String sql
+                    ="SELECT * "
+                    +"FROM `THRESHOLD` "
+                    +"WHERE "
+                    +"auctionID = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1, auction.getAuctionID());
+
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()){
+                Threshold threshold = read(resultSet);
+                thresholds.add(threshold);
+            }
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return thresholds.toArray(new Threshold[0]);
+    }
+
+    @Override
+    public Threshold[] findAllThresholds() {
+        PreparedStatement ps;
+        List<Threshold> thresholds = new ArrayList<>();
+
+        try {
+            String sql
+                    ="SELECT * "
+                    +"FROM `THRESHOLD`";
+            ps = conn.prepareStatement(sql);
+
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()){
+                Threshold threshold = read(resultSet);
+                thresholds.add(threshold);
+            }
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return thresholds.toArray(new Threshold[0]);
+    }
+
     private Threshold read(ResultSet rs){
         Threshold threshold = new Threshold();
         User user = new User();

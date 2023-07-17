@@ -200,6 +200,73 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
     }
 
     @Override
+    public Auction[] findOpenAuctionsByOwnerNotDeleted(User user) {
+        PreparedStatement ps;
+        List<Auction> auctions = new ArrayList<>();
+        String sql;
+
+        try {
+            sql
+                    = "SELECT auctionID, opening_timestamp, closing_timestamp, is_product_sold, AUCTION.deleted, productID "
+                    + "FROM `AUCTION` NATURAl JOIN `PRODUCT` "
+                    + "WHERE "
+                    + "ownerID = ? AND AUCTION.deleted = ? AND (closing_timestamp IS NULL) AND is_product_sold = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1,user.getUserID());
+            ps.setString(2,"N");
+            ps.setString(3,"N");
+
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()){
+                Auction auction = read(resultSet);
+                auctions.add(auction);
+            }
+
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return auctions.toArray(new Auction[0]);
+    }
+
+    @Override
+    public Auction[] findAllOpenAuctionsExceptUser(User user) {
+        PreparedStatement ps;
+        List<Auction> auctions = new ArrayList<>();
+        String sql;
+
+        try {
+            sql
+                    = "SELECT auctionID, opening_timestamp, closing_timestamp, is_product_sold, AUCTION.deleted, productID "
+                    + "FROM `AUCTION` NATURAl JOIN `PRODUCT` "
+                    + "WHERE "
+                    + "ownerID <> ? AND (closing_timestamp IS NULL) AND is_product_sold = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1,user.getUserID());
+            ps.setString(2,"N");
+
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()){
+                Auction auction = read(resultSet);
+                auctions.add(auction);
+            }
+
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return auctions.toArray(new Auction[0]);
+    }
+
+    @Override
     public Auction[] findAllAuctions() {
         PreparedStatement ps;
         List<Auction> auctions = new ArrayList<>();

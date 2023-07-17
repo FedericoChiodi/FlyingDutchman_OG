@@ -299,7 +299,12 @@ public class UserManagement {
             user.setRole(request.getParameter("role"));
             user.setDeleted(request.getParameter("deleted").equals("Y"));
 
-            userDAO.update(user);
+            try {
+                userDAO.update(user);
+            }
+            catch (Exception e){
+                applicationMessage = "Errore nell'aggiornamento dei dati utente";
+            }
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();

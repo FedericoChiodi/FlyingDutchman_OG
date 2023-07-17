@@ -36,6 +36,10 @@
                 height: auto;
                 margin-bottom: 10px;
             }
+
+            #boughtFromThreshold{
+                color: #39ce29;
+            }
         </style>
     </head>
     <body>
@@ -60,6 +64,9 @@
                             </span><br/>
                             <span id="productPrice" class="float-value"><%=orders[i].getSelling_price()%></span><br/>
                             <span id="seller" class="seller">Comprato da: <%=orders[i].getProduct().getOwner().getUsername()%></span><br/>
+                            <%if(orders[i].isBoughtFromThreshold()){%>
+                                <span id="boughtFromThreshold" class="boughtFromThreshold">Questo Ordine &egrave; stato comprato da una Prenotazione!</span><br/>
+                            <%}%>
                             <span id="separator" class="separator">---</span>
                         </article>
                     <%}%>

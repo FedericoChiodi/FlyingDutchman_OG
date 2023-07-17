@@ -21,6 +21,10 @@
             function goBack(){
                 document.backForm.submit();
             }
+            function lowerPrice(auctionID){
+                document.lowerPriceForm.auctionID.value = auctionID;
+                document.lowerPriceForm.submit();
+            }
             function insertThreshold(auctionID){
                 document.insertThresholdForm.auctionID.value = auctionID;
                 document.insertThresholdForm.submit();
@@ -74,7 +78,6 @@
                 border: none;
                 border-radius: 5px;
                 cursor: pointer;
-                margin-right: 10px;
             }
             #thresholdButton{
                 padding: 10px 20px;
@@ -83,9 +86,16 @@
                 border: none;
                 border-radius: 5px;
                 cursor: pointer;
-                margin-right: 10px;
             }
-
+            #lowerPriceButton{
+                padding: 10px 20px;
+                background-color: #39ce29;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-top: 15px;
+            }
         </style>
     </head>
     <body>
@@ -102,9 +112,14 @@
                     <br/><br/>
                     <span id="productPrice" class="float-value"><%=auction.getProduct_auctioned().getCurrent_price()%></span>
                     <br/>
-                    <button id="buyProductButton" onclick="buyProduct(<%=auction.getAuctionID()%>)">Compra questo Prodotto</button>
-                    <%if(!loggedUser.getRole().equals("Default")){%>
+                    <%if(!auction.getProduct_auctioned().getOwner().getUsername().equals(loggedUser.getUsername())){%>
+                        <button id="buyProductButton" onclick="buyProduct(<%=auction.getAuctionID()%>)">Compra questo Prodotto</button>
+                        <%if(!loggedUser.getRole().equals("Default")){%>
                         <button id="thresholdButton" onclick="insertThreshold(<%=auction.getAuctionID()%>)">Prenota</button>
+                        <%}%>
+                    <%}%>
+                    <%if(auction.getProduct_auctioned().getOwner().getUsername().equals(loggedUser.getUsername())){%>
+                        <button id="lowerPriceButton" onclick="lowerPrice(<%=auction.getAuctionID()%>)">Abbassa il Prezzo</button>
                     <%}%>
                     <button id="backButton" onclick="goBack()">Torna Indietro</button>
                 </article>
@@ -120,8 +135,13 @@
                 <input type="hidden" name="controllerAction" value="ThresholdManagement.insertView"/>
             </form>
 
+            <form name="lowerPriceForm" method="post" action="Dispatcher">
+                <input type="hidden" name="auctionID"/>
+                <input type="hidden" name="controllerAction" value="AuctionManagement.updateView"/>
+            </form>
+
             <form name="backForm" method="post" action="Dispatcher">
-                <input type="hidden" name="controllerAction" value="AuctionManagement.view">
+                <input type="hidden" name="controllerAction" value="<%=auction.getProduct_auctioned().getOwner().getUsername().equals(loggedUser.getUsername()) ? "AuctionManagement.viewMyAuctions" : "AuctionManagement.view"%>">
             </form>
         </main>
         <%@include file="/include/footer.inc"%>

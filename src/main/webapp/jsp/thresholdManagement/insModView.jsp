@@ -32,18 +32,6 @@
         font-weight: bold;
     }
 
-    /* Stile degli input */
-    .field input[type="text"],
-    .field input[type="password"],
-    .field input[type="date"],
-    .field input[type="email"],
-    .field input[type="tel"] {
-        padding: 5px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 14px;
-    }
-
     /* Stile dei pulsanti */
     .field input[type="submit"],
     .field input[type="button"] {

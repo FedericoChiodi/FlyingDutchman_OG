@@ -76,7 +76,7 @@
     var status  = "<%=action%>";
     
     function submitUser(){
-      var f;
+      let f;
       f = document.insModForm;
       f.controllerAction.value = "UserManagement."+status;
     }
@@ -180,21 +180,16 @@
                  value="<%=(action.equals("modify")) ? loggedUser.getCel_number() : ""%>"
                  required size="20" maxlength="40"/>
         </div>
-        <div class="field clearfix">
-          <input type="hidden" id="role" name="role"
-                 value="Default"/>
-        </div>
-        <div class="field clearfix">
-          <input type="hidden" id="deleted" name="deleted"
-                 value="N"/>
-        </div>
+
+        <input type="hidden" id="role" name="role" value="<%=(action.equals("modify")) ? loggedUser.getRole() : "Default"%>"/>
+        <input type="hidden" id="deleted" name="deleted" value="<%=(action.equals("modify")) ? loggedUser.isDeleted() : "N"%>"/>
+
         <div class="field clearfix">
           <label>&#160;</label>
           <input type="submit" class="button" value="Invia"/>
           <input type="button" name="backButton" class="button" value="Annulla"/>
         </div>
 
-        <input type="hidden" name="userID"/>
         <input type="hidden" name="controllerAction"/>
       </form>
     </section>

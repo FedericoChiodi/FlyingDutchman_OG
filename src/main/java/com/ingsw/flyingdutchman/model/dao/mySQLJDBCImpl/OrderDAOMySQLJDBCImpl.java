@@ -13,12 +13,13 @@ public class OrderDAOMySQLJDBCImpl implements OrderDAO {
     public OrderDAOMySQLJDBCImpl(Connection conn){this.conn = conn;}
 
     @Override
-    public Order create(Timestamp order_time, Float selling_price, User buyer, Product product) {
+    public Order create(Timestamp order_time, Float selling_price,Boolean bought_from_threshold, User buyer, Product product) {
         PreparedStatement ps;
         String sql;
         Order order = new Order();
         order.setOrder_time(order_time);
         order.setSelling_price(selling_price);
+        order.setBought_from_threshold(bought_from_threshold);
         order.setBuyer(buyer);
         order.setProduct(product);
 
@@ -27,9 +28,10 @@ public class OrderDAOMySQLJDBCImpl implements OrderDAO {
                     ="INSERT INTO `ORDER` "
                     +"(order_time,"
                     +"selling_price,"
+                    +"bought_from_threshold,"
                     +"userID,"
                     +"productID) "
-                    +"VALUES (?,?,?,?)";
+                    +"VALUES (?,?,?,?,?)";
             ps = conn.prepareStatement(sql);
 
             // Arrotondamento a 2 decimali prima di inserire nel db
@@ -38,6 +40,7 @@ public class OrderDAOMySQLJDBCImpl implements OrderDAO {
             int i = 1;
             ps.setTimestamp(i++,order_time);
             ps.setFloat(i++,selling_price);
+            ps.setString(i++,bought_from_threshold ? "Y" : "N");
             ps.setLong(i++,buyer.getUserID());
             ps.setLong(i++,product.getProductID());
 
@@ -97,7 +100,7 @@ public class OrderDAOMySQLJDBCImpl implements OrderDAO {
 
         try {
             sql
-                    = "SELECT orderID, order_time, selling_price, userID, productID "
+                    = "SELECT orderID, order_time, selling_price, bought_from_threshold, userID, productID "
                     + "FROM `ORDER` NATURAL JOIN `PRODUCT` "
                     + "WHERE "
                     + "productID = ?";
@@ -159,6 +162,7 @@ public class OrderDAOMySQLJDBCImpl implements OrderDAO {
             order.setOrderID(rs.getLong("orderID"));
             order.setOrder_time(rs.getTimestamp("order_time"));
             order.setSelling_price(rs.getFloat("selling_price"));
+            order.setBought_from_threshold(rs.getString("bought_from_threshold").equals("Y"));
             order.getBuyer().setUserID(rs.getLong("userID"));
             order.getProduct().setProductID(rs.getLong("productID"));
         }

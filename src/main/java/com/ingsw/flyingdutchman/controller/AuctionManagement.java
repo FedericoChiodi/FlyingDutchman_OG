@@ -45,7 +45,7 @@ public class AuctionManagement {
 
             loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
 
-            Auction[] auctions = daoFactory.getAuctionDAO().findAllAuctions();
+            Auction[] auctions = daoFactory.getAuctionDAO().findAllOpenAuctionsExceptUser(loggedUser);
 
             ProductDAO productDAO = daoFactory.getProductDAO();
 
@@ -55,7 +55,64 @@ public class AuctionManagement {
                 auctions[i].setProduct_auctioned(product);
             }
 
-            // Tolgo le aste dell'utente
+            daoFactory.commitTransaction();
+            sessionDAOFactory.commitTransaction();
+
+            request.setAttribute("loggedOn",loggedUser!=null);
+            request.setAttribute("loggedUser",loggedUser);
+            request.setAttribute("applicationMessage",applicationMessage);
+            request.setAttribute("auctions", auctions);
+            request.setAttribute("viewUrl","auctionManagement/view");
+        }
+        catch (Exception e){
+            logger.log(Level.SEVERE, "Auction Controller Error / view -- " + e);
+            try {
+                if(daoFactory != null) daoFactory.rollbackTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();
+            }
+            catch (Throwable t){}
+            throw new RuntimeException(e);
+        }
+        finally {
+            try {
+                if(daoFactory != null) daoFactory.closeTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.closeTransaction();
+            }
+            catch (Throwable t){}
+        }
+    }
+
+    public static void viewMyAuctions(HttpServletRequest request, HttpServletResponse response){
+        DAOFactory sessionDAOFactory = null;
+        DAOFactory daoFactory = null;
+        User loggedUser;
+        String applicationMessage = null;
+        Logger logger = LogService.getApplicationLogger();
+
+        try {
+            Map sessionFactoryParameters = new HashMap<String, Object>();
+            sessionFactoryParameters.put("request",request);
+            sessionFactoryParameters.put("response",response);
+            sessionDAOFactory = DAOFactory.getDAOFactory(Configuration.COOKIE_IMPL, sessionFactoryParameters);
+            sessionDAOFactory.beginTransaction();
+
+            UserDAO sessionUserDAO = sessionDAOFactory.getUserDAO();
+            loggedUser = sessionUserDAO.findLoggedUser();
+
+            daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
+            daoFactory.beginTransaction();
+
+            loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
+
+            Auction[] auctions = daoFactory.getAuctionDAO().findOpenAuctionsByOwnerNotDeleted(loggedUser);
+
+            ProductDAO productDAO = daoFactory.getProductDAO();
+
+            // Riempimento dei campi delle varie auctions
+            for(int i = 0; i < auctions.length; i++){
+                Product product = productDAO.findByProductID(auctions[i].getProduct_auctioned().getProductID());
+                auctions[i].setProduct_auctioned(product);
+            }
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
@@ -64,6 +121,7 @@ public class AuctionManagement {
             request.setAttribute("loggedUser",loggedUser);
             request.setAttribute("applicationMessage",applicationMessage);
             request.setAttribute("auctions", auctions);
+            request.setAttribute("canEdit",true);
             request.setAttribute("viewUrl","auctionManagement/view");
         }
         catch (Exception e){
@@ -218,7 +276,7 @@ public class AuctionManagement {
                 }
             }
 
-            Auction[] auctions = daoFactory.getAuctionDAO().findAllAuctions();
+            Auction[] auctions = daoFactory.getAuctionDAO().findAllOpenAuctionsExceptUser(loggedUser);
 
             // Riempimento dei campi delle varie auctions
             for(int i = 0; i < auctions.length; i++){
@@ -370,4 +428,138 @@ public class AuctionManagement {
             catch (Throwable t){}
         }
     }
+
+    public static void updateView(HttpServletRequest request, HttpServletResponse response){
+        DAOFactory sessionDAOFactory = null;
+        DAOFactory daoFactory = null;
+        User loggedUser;
+        String applicationMessage = null;
+        Logger logger = LogService.getApplicationLogger();
+
+        try {
+            Map sessionFactoryParameters = new HashMap<String, Object>();
+            sessionFactoryParameters.put("request",request);
+            sessionFactoryParameters.put("response",response);
+            sessionDAOFactory = DAOFactory.getDAOFactory(Configuration.COOKIE_IMPL, sessionFactoryParameters);
+            sessionDAOFactory.beginTransaction();
+
+            UserDAO sessionUserDAO = sessionDAOFactory.getUserDAO();
+            loggedUser = sessionUserDAO.findLoggedUser();
+
+            daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
+            daoFactory.beginTransaction();
+
+            AuctionDAO auctionDAO = daoFactory.getAuctionDAO();
+            ProductDAO productDAO = daoFactory.getProductDAO();
+
+            loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
+
+            Auction auction = daoFactory.getAuctionDAO().findAuctionByID(Long.parseLong(request.getParameter("auctionID")));
+            Product product = daoFactory.getProductDAO().findByProductID(auction.getProduct_auctioned().getProductID());
+            User owner = daoFactory.getUserDAO().findByUserID(product.getOwner().getUserID());
+
+            product.setOwner(owner);
+            auction.setProduct_auctioned(product);
+
+            daoFactory.commitTransaction();
+            sessionDAOFactory.commitTransaction();
+
+            request.setAttribute("loggedOn",loggedUser!=null);
+            request.setAttribute("loggedUser",loggedUser);
+            request.setAttribute("auction",auction);
+            request.setAttribute("applicationMessage",applicationMessage);
+            request.setAttribute("viewUrl","auctionManagement/modifyPriceView");
+        }
+        catch (Exception e){
+            logger.log(Level.SEVERE, "Auction Controller Error / modifyPriceView", e);
+            try {
+                if(daoFactory != null) daoFactory.rollbackTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();
+            }
+            catch (Throwable t){}
+            throw new RuntimeException(e);
+        }
+        finally {
+            try {
+                if(daoFactory != null) daoFactory.closeTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.closeTransaction();
+            }
+            catch (Throwable t){}
+        }
+    }
+
+    public static void update(HttpServletRequest request, HttpServletResponse response){
+        DAOFactory sessionDAOFactory = null;
+        DAOFactory daoFactory = null;
+        User loggedUser;
+        String applicationMessage = null;
+        Logger logger = LogService.getApplicationLogger();
+
+        try {
+            Map sessionFactoryParameters = new HashMap<String, Object>();
+            sessionFactoryParameters.put("request",request);
+            sessionFactoryParameters.put("response",response);
+            sessionDAOFactory = DAOFactory.getDAOFactory(Configuration.COOKIE_IMPL, sessionFactoryParameters);
+            sessionDAOFactory.beginTransaction();
+
+            UserDAO sessionUserDAO = sessionDAOFactory.getUserDAO();
+            loggedUser = sessionUserDAO.findLoggedUser();
+
+            daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
+            daoFactory.beginTransaction();
+
+            loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
+
+            Auction auction = daoFactory.getAuctionDAO().findAuctionByID(Long.parseLong(request.getParameter("auctionID")));
+
+            // Trovo il prodotto nell'asta e aggiorno il prezzo
+            Product product = daoFactory.getProductDAO().findByProductID(auction.getProduct_auctioned().getProductID());
+            product.setCurrent_price(Float.parseFloat(request.getParameter("price")));
+
+            auction.setProduct_auctioned(product);
+
+            try {
+                daoFactory.getProductDAO().update(product);
+            }
+            catch (Exception e){
+                logger.log(Level.SEVERE, "Errore nell'update dell prezzo dell'asta! -- " + e);
+                throw new RuntimeException(e);
+            }
+
+            Auction[] auctions = daoFactory.getAuctionDAO().findOpenAuctionsByOwnerNotDeleted(loggedUser);
+            ProductDAO productDAO = daoFactory.getProductDAO();
+            // Riempimento dei campi delle varie auctions
+            for(int i = 0; i < auctions.length; i++){
+                Product product1 = productDAO.findByProductID(auctions[i].getProduct_auctioned().getProductID());
+                auctions[i].setProduct_auctioned(product1);
+            }
+
+            daoFactory.commitTransaction();
+            sessionDAOFactory.commitTransaction();
+
+            request.setAttribute("loggedOn",loggedUser!=null);
+            request.setAttribute("loggedUser",loggedUser);
+            request.setAttribute("canEdit",true);
+            request.setAttribute("auctions",auctions);
+            request.setAttribute("applicationMessage",applicationMessage);
+            request.setAttribute("viewUrl","auctionManagement/view");
+        }
+        catch (Exception e){
+            logger.log(Level.SEVERE, "Auction Controller Error / update", e);
+            try {
+                if(daoFactory != null) daoFactory.rollbackTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();
+            }
+            catch (Throwable t){}
+            throw new RuntimeException(e);
+        }
+        finally {
+            try {
+                if(daoFactory != null) daoFactory.closeTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.closeTransaction();
+            }
+            catch (Throwable t){}
+        }
+    }
+
 }

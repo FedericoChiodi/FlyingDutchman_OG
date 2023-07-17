@@ -106,6 +106,7 @@ public class OrderManagement {
 
             //Riempio i dati del prodotto
             Product product = daoFactory.getProductDAO().findByProductID(auction.getProduct_auctioned().getProductID());
+            auction.setProduct_auctioned(product);
 
             //Ottenere il timestamp corrente
             LocalDateTime currentDateTime = LocalDateTime.now();
@@ -127,17 +128,19 @@ public class OrderManagement {
             }
 
             //Creo un nuovo ordine e inserisco i dati
-            Order order = new Order();
+            /*Order order = new Order();
             order.setOrder_time(timestamp);
             order.setSelling_price(product.getCurrent_price());
+            order.setBought_from_threshold(false);
             order.setBuyer(loggedUser);
-            order.setProduct(product);
+            order.setProduct(product);*/
 
             //Inserisco l'ordine sul db
             try {
                 daoFactory.getOrderDAO().create(
                         timestamp,
                         product.getCurrent_price(),
+                        false,
                         loggedUser,
                         product
                 );
@@ -207,17 +210,18 @@ public class OrderManagement {
             Timestamp timestamp = Timestamp.valueOf(currentDateTime);
 
             //Settare il prodotto e altri dati nell'ordine
-            Order premiumOrder = new Order();
+            /*Order premiumOrder = new Order();
             premiumOrder.setBuyer(loggedUser);
             premiumOrder.setProduct(premium);
             premiumOrder.setSelling_price(premium.getCurrent_price());
-            premiumOrder.setOrder_time(timestamp);
+            premiumOrder.setOrder_time(timestamp);*/
 
             //Inserire l'ordine sul db
             try {
                 daoFactory.getOrderDAO().create(
                         timestamp,
                         premium.getCurrent_price(),
+                        false,
                         loggedUser,
                         premium
                 );

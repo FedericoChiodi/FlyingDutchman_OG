@@ -25,6 +25,7 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
         product.setStarting_price(starting_price);
         product.setCurrent_price(current_price);
         product.setImage(image);
+        product.setDeleted(false);
         product.setCategory(category);
         product.setOwner(owner);
 

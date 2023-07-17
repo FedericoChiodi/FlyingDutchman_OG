@@ -8,6 +8,8 @@
     String applicationMessage = (String) request.getAttribute("applicationMessage");
     String menuActiveLink = "Aste";
     Auction[] auctions = (Auction[]) request.getAttribute("auctions");
+    Boolean canEdit = (Boolean) request.getAttribute("canEdit");
+    if(canEdit == null) canEdit = false;
 %>
 <!DOCTYPE html>
 <html>
@@ -16,6 +18,16 @@
         <script>
             function insertAuction(){
                 document.insertForm.submit();
+            }
+            function viewMyAuctions(){
+                document.viewMyAuctionsForm.submit();
+            }
+            function viewAllAuctions(){
+                document.viewAllAuctionsForm.submit();
+            }
+            function editAuction(auctionID){
+                document.editForm.auctionID.value = auctionID;
+                document.editForm.submit();
             }
             function mainOnLoadHandler(){
                 document.querySelector("#insertAuctionButton").addEventListener("click",insertAuction);
@@ -40,9 +52,6 @@
                 cursor: pointer;
                 transition: background-color 0.3s ease;
                 background-color: #28a745;
-            }
-            #insertAuctionButtonSelection{
-                margin: 12px 0;
             }
             #auctions{
                 margin: 12px 0;
@@ -84,6 +93,14 @@
             #productPrice{
                 font-size: x-large;
             }
+            #buttons{
+                display: flex;
+                flex-direction: row;
+                margin-bottom: 12px;
+            }
+            #insertAuctionButtonSelection{
+                margin-right: 12px;
+            }
         </style>
     </head>
     <body>
@@ -93,9 +110,24 @@
             <h1>Aste in Corso</h1>
         </section>
 
-        <section id="insertAuctionButtonSelection">
-            <input type="button" id="insertAuctionButton" name="insertAuctionButton"
-                   class="button" value="Metti in asta un Prodotto" onclick="insertAuction()"/>
+        <section id="buttons">
+            <article id="insertAuctionButtonSelection">
+                <input type="button" id="insertAuctionButton" name="insertAuctionButton"
+                       class="button" value="Metti in asta un Prodotto" onclick="insertAuction()"/>
+            </article>
+
+            <%if(!canEdit){%>
+            <article id="viewMyAuctionsButtonSelection">
+                <input type="button" id="viewMyAuctionsButton" name="viewAuctionsButton"
+                       class="button" value="Visualizza le tue Aste" onclick="viewMyAuctions()"/>
+            </article>
+            <%}%>
+            <%if(canEdit){%>
+            <article id="viewAuctionsButtonSelection">
+                <input type="button" id="viewAuctionsButton" name="viewAuctionsButton"
+                       class="button" value="Visualizza tutte le aste" onclick="viewAllAuctions()"/>
+            </article>
+            <%}%>
         </section>
 
         <section id="auctionListBreak">
@@ -105,22 +137,27 @@
         <%if(auctions.length > 0){%>
             <section id="auctions" class="clearfix">
                 <%for (i = 0; i < auctions.length; i++){%>
-                    <%if((auctions[i].getClosing_timestamp() == null) && (!auctions[i].getProduct_auctioned().getOwner().getUserID().equals(loggedUser.getUserID()))){%>
                         <button id="auctionButton" onclick="inspectAuction(<%=auctions[i].getAuctionID()%>)">
-                            <b><span id="productDescription" class="description"><%=auctions[i].getProduct_auctioned().getDescription()%></span></b>
-                            <span id="productPrice" class="float-value"><%=auctions[i].getProduct_auctioned().getCurrent_price()%></span>
+                            <b><span id="productDescription" class="description"><%=auctions[i].getProduct_auctioned().getDescription()%></span></b><br/>
+                            <span id="productPrice" class="float-value"><%=auctions[i].getProduct_auctioned().getCurrent_price()%></span><br/>
                             <br/>
                             <img id="productImg" src="images/trashcan.png" alt="Immagine del Prodotto">
                         </button>
-                    <%}%>
                 <%}%>
             </section>
         <%}%>
         <%if(auctions.length == 0){%>
             <section id="noAuctions">
-                <h2>
-                    Al momento non sono presenti aste in corso! :((
-                </h2>
+                <%if(canEdit){%>
+                    <h2>
+                        Non hai ancora inserito nessun'asta!
+                    </h2>
+                <%}%>
+                <%if(!canEdit){%>
+                    <h2>
+                        Al momento non sono presenti aste in corso! :((
+                    </h2>
+                <%}%>
             </section>
         <%}%>
 
@@ -131,6 +168,19 @@
         <form name="inspectForm" method="post" action="Dispatcher">
             <input type="hidden" name="auctionID"/>
             <input type="hidden" name="controllerAction" value="AuctionManagement.inspectAuction"/>
+        </form>
+
+        <form name="viewMyAuctionsForm" method="post" action="Dispatcher">
+            <input type="hidden" name="controllerAction" value="AuctionManagement.viewMyAuctions"/>
+        </form>
+
+        <form name="viewAllAuctionsForm" method="post" action="Dispatcher">
+            <input type="hidden" name="controllerAction" value="AuctionManagement.view"/>
+        </form>
+
+        <form name="editForm" method="post" action="Dispatcher">
+            <input type="hidden" name="auctionID"/>
+            <input type="hidden" name="controllerAction" value="AuctionManagement.editView"/>
         </form>
 
         <form name="deleteForm" method="post" action="Dispatcher">
