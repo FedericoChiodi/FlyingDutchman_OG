@@ -494,6 +494,17 @@ public class ThresholdManagement {
                     //Setto prodotto venduto = true
                     auction.setProduct_sold(true);
 
+                    //Aggiorno i dati del prodotto
+                    Product productSold = daoFactory.getProductDAO().findByProductID(auction.getProduct_auctioned().getProductID());
+                    productSold.setCurrent_price(toOrder.getPrice());
+                    try {
+                        daoFactory.getProductDAO().update(productSold);
+                    }
+                    catch (Exception e){
+                        logger.log(Level.SEVERE, "Update del prodotto fallito - ThresholdCheck." + e);
+                        throw new RuntimeException(e);
+                    }
+
                     //Update dei dati dell'asta anche  sul db
                     try {
                         daoFactory.getAuctionDAO().update(auction);
@@ -503,21 +514,14 @@ public class ThresholdManagement {
                         throw new RuntimeException(e);
                     }
 
-                    //Creo un nuovo ordine e inserisco i dati
-                    /*Order order = new Order();
-                    order.setOrder_time(timestamp);
-                    order.setSelling_price(toOrder.getPrice());
-                    order.setBought_from_threshold(true);
-                    order.setBuyer(loggedUser);
-                    order.setProduct(product);*/
-
                     //Inserisco l'ordine sul db
+                    User buyer = daoFactory.getUserDAO().findByUserID(toOrder.getUser().getUserID());
                     try {
                         daoFactory.getOrderDAO().create(
                                 timestamp,
                                 toOrder.getPrice(),
                                 true,
-                                loggedUser,
+                                buyer,
                                 product
                         );
                     }
