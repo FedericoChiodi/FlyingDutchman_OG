@@ -10,10 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -108,8 +105,6 @@ public class ThresholdManagement {
                 logger.log(Level.SEVERE, "Errore eliminazione prenotazione " + e);
                 throw new RuntimeException(e);
             }
-
-            applicationMessage = "Prenotazione eliminata correttamente";
 
             Threshold[] thresholds = daoFactory.getThresholdDAO().findByUser(loggedUser);
             for (int i = 0; i < thresholds.length; i++){
@@ -458,30 +453,31 @@ public class ThresholdManagement {
                         validThresholds.add(thresholds[i]);
                     }
                 }
-                //Tra tutte quelle aggiunte controllo quella aggiunta prima cronologicamente
-                //e faccio l'ordine. Elimino poi tutte le altre
+
                 if(validThresholds.size() > 0){
+                    //Tra tutte quelle aggiunte controllo quella con prezzo > e aggiunta prima cronologicamente
+                    //e faccio l'ordine. Elimino poi tutte le altre
                     Threshold toOrder = validThresholds.get(0);
-                    int toRemoveIndex = 0;
                     for (int i = 1; i < validThresholds.size(); i++){
-                        if(validThresholds.get(i).getReservation_date().compareTo(toOrder.getReservation_date()) < 0){
+                        if(validThresholds.get(i).getPrice() > toOrder.getPrice()){
                             toOrder = validThresholds.get(i);
-                            toRemoveIndex = i;
+                        }
+                        else if(validThresholds.get(i).getPrice() == toOrder.getPrice()){
+                            if(validThresholds.get(i).getReservation_date().compareTo(toOrder.getReservation_date()) < 0){
+                                toOrder = validThresholds.get(i);
+                            }
                         }
                     }
-                    validThresholds.remove(toRemoveIndex);
-                    //Elimino dal db tutte le prenotazioni non andate a buon fine
-                    for (int i = 1; i < validThresholds.size(); i++){
+                    //Elimino dal db tutte le prenotazioni
+                    for (int i = 0; i < validThresholds.size(); i++){
                         try {
                             daoFactory.getThresholdDAO().delete(validThresholds.get(i));
                         }
                         catch (Exception e){
-                            logger.log(Level.SEVERE, "Could not remove an unlucky Threshold -- " + e);
+                            logger.log(Level.SEVERE, "Could not remove Thresholds -- " + e);
                             throw new RuntimeException(e);
                         }
                     }
-
-                    //toOrder contiene la prenotazione da ordinare, quindi aggiorno i dati per creare un nuovo ordine
 
                     //Ottenere il timestamp corrente
                     LocalDateTime currentDateTime = LocalDateTime.now();

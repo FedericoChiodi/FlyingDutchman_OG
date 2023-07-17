@@ -244,10 +244,11 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
                     = "SELECT auctionID, opening_timestamp, closing_timestamp, is_product_sold, AUCTION.deleted, productID "
                     + "FROM `AUCTION` NATURAl JOIN `PRODUCT` "
                     + "WHERE "
-                    + "ownerID <> ? AND (closing_timestamp IS NULL) AND is_product_sold = ?";
+                    + "ownerID <> ? AND (closing_timestamp IS NULL) AND is_product_sold = ? AND AUCTION.deleted = ?";
             ps = conn.prepareStatement(sql);
             ps.setLong(1,user.getUserID());
             ps.setString(2,"N");
+            ps.setString(3,"N");
 
             ResultSet resultSet = ps.executeQuery();
 
