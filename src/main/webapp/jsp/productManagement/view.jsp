@@ -10,6 +10,7 @@
     String menuActiveLink = "Prodotti";
     Product[] products = (Product[]) request.getAttribute("products");
     Boolean soldProductsAction = (Boolean) request.getAttribute("soldProductsAction");
+    User[] buyers = (User[]) request.getAttribute("buyers");
 %>
 
 <!DOCTYPE html>
@@ -131,7 +132,9 @@
                         <b><span class="description"><%=products[i].getDescription()%></span></b>
                         <br/>
                         <%if(soldProductsAction){%>
-                            <label for="current_price_sold">Venduto a: </label>
+                            <label for="who_sold">Venduto a: </label>
+                            <span id="who_sold"><%=buyers[i].getUsername()%></span><br/>
+                            <label for="current_price_sold">Venduto per: </label>
                             <span id="current_price_sold" class="float-value"><%=products[i].getCurrent_price()%></span>
                         <%}%>
                         <%if(!soldProductsAction){%>

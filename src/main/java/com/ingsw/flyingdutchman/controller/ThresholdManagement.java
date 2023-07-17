@@ -533,6 +533,8 @@ public class ThresholdManagement {
                         logger.log(Level.SEVERE, "Non ho potuto eliminare la prenotazione valida." + e);
                         throw new RuntimeException(e);
                     }
+
+                    applicationMessage = buyer.getUsername() + " ha comprato questo prodotto con una Prenotazione!";
                 }
             }
 

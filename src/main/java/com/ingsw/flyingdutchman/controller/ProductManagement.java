@@ -1,13 +1,7 @@
 package com.ingsw.flyingdutchman.controller;
 
-import com.ingsw.flyingdutchman.model.dao.CategoryDAO;
-import com.ingsw.flyingdutchman.model.dao.DAOFactory;
-import com.ingsw.flyingdutchman.model.dao.ProductDAO;
-import com.ingsw.flyingdutchman.model.dao.UserDAO;
-import com.ingsw.flyingdutchman.model.mo.Auction;
-import com.ingsw.flyingdutchman.model.mo.Category;
-import com.ingsw.flyingdutchman.model.mo.Product;
-import com.ingsw.flyingdutchman.model.mo.User;
+import com.ingsw.flyingdutchman.model.dao.*;
+import com.ingsw.flyingdutchman.model.mo.*;
 import com.ingsw.flyingdutchman.services.config.Configuration;
 import com.ingsw.flyingdutchman.services.logservice.LogService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -401,6 +395,8 @@ public class ProductManagement {
             Auction[] auctions = daoFactory.getAuctionDAO().findByOwner(loggedUser);
             for(int i = 0; i < auctions.length ; i++){
                 Product product = daoFactory.getProductDAO().findByProductID(auctions[i].getProduct_auctioned().getProductID());
+                User user = daoFactory.getUserDAO().findByUserID(product.getOwner().getUserID());
+                product.setOwner(user);
                 auctions[i].setProduct_auctioned(product);
             }
 
@@ -414,13 +410,23 @@ public class ProductManagement {
                 }
             }
 
+            Product[] products = productsList.toArray(new Product[productsList.size()]);
+            OrderDAO orderDAO = daoFactory.getOrderDAO();
+            List<User> buyerList = new ArrayList<>();
+
+            for (Product product : products){
+                Order order = orderDAO.findByProduct(product);
+                buyerList.add(daoFactory.getUserDAO().findByUserID(order.getBuyer().getUserID()));
+            }
+
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
 
             request.setAttribute("loggedOn",loggedUser!=null);
             request.setAttribute("loggedUser",loggedUser);
             request.setAttribute("applicationMessage",applicationMessage);
-            request.setAttribute("products", productsList.toArray(new Product[productsList.size()]));
+            request.setAttribute("products", products);
+            request.setAttribute("buyers", buyerList.toArray(new User[0]));
             request.setAttribute("soldProductsAction", true);
             request.setAttribute("viewUrl","productManagement/view");
         }
