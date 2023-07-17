@@ -108,6 +108,13 @@ public class UserDAOCookieImpl implements UserDAO {
     public User[] findByRole(String role) {
         throw new UnsupportedOperationException("Not supported.");
     }
+
+    @Override
+    public User[] findAllUsers() { throw new UnsupportedOperationException("Not supported."); }
+
+    @Override
+    public User[] findAllUsersExceptMeAndDeleted(User user) { throw new UnsupportedOperationException("Not supported."); }
+
     @Override
     public User findByUserID(Long userID) {
         throw new UnsupportedOperationException("Not supported.");

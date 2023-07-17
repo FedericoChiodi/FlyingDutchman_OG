@@ -113,6 +113,7 @@ public class UserManagement {
 
             request.setAttribute("loggedOn",false);
             request.setAttribute("loggedUser",null);
+            request.setAttribute("applicationMessage","Account correttamente eliminato. Arrivederci!");
             request.setAttribute("viewUrl","homeManagement/view");
         }
         catch (Exception e){
@@ -352,5 +353,138 @@ public class UserManagement {
             catch (Throwable t){}
         }
     }
+    public static void banView(HttpServletRequest request, HttpServletResponse response){
+        DAOFactory sessionDAOFactory = null;
+        DAOFactory daoFactory = null;
+        User loggedUser;
+        String applicationMessage = null;
+        Logger logger = LogService.getApplicationLogger();
+
+        try {
+            Map sessionFactoryParameters = new HashMap<String, Object>();
+            sessionFactoryParameters.put("request", request);
+            sessionFactoryParameters.put("response", response);
+            sessionDAOFactory = DAOFactory.getDAOFactory(Configuration.COOKIE_IMPL, sessionFactoryParameters);
+            sessionDAOFactory.beginTransaction();
+
+            UserDAO sessionUserDAO = sessionDAOFactory.getUserDAO();
+            loggedUser = sessionUserDAO.findLoggedUser();
+
+            daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
+            daoFactory.beginTransaction();
+
+            UserDAO userDAO = daoFactory.getUserDAO();
+            loggedUser = userDAO.findByUsername(loggedUser.getUsername());
+
+            User[] usernames = userDAO.findAllUsersExceptMeAndDeleted(loggedUser);
+
+            daoFactory.commitTransaction();
+            sessionDAOFactory.commitTransaction();
+
+            request.setAttribute("loggedOn", loggedUser!=null);
+            request.setAttribute("loggedUser",loggedUser);
+            request.setAttribute("usernames",usernames);
+            request.setAttribute("applicationMessage",applicationMessage);
+            request.setAttribute("viewUrl","userManagement/banView");
+        }
+        catch (Exception e){
+            logger.log(Level.SEVERE, "User Controller Error / modify", e);
+            try {
+                if(daoFactory != null) daoFactory.rollbackTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();
+            }
+            catch (Throwable t){}
+            throw new RuntimeException(e);
+        }
+        finally {
+            try {
+                if(daoFactory != null) daoFactory.closeTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.closeTransaction();
+            }
+            catch (Throwable t){}
+        }
+    }
+    public static void ban(HttpServletRequest request, HttpServletResponse response){
+        DAOFactory sessionDAOFactory = null;
+        DAOFactory daoFactory = null;
+        User loggedUser;
+        String applicationMessage = null;
+        Logger logger = LogService.getApplicationLogger();
+
+        try {
+            Map sessionFactoryParameters = new HashMap<String, Object>();
+            sessionFactoryParameters.put("request",request);
+            sessionFactoryParameters.put("response",response);
+            sessionDAOFactory = DAOFactory.getDAOFactory(Configuration.COOKIE_IMPL, sessionFactoryParameters);
+            sessionDAOFactory.beginTransaction();
+
+            UserDAO sessionUserDAO = sessionDAOFactory.getUserDAO();
+            loggedUser = sessionUserDAO.findLoggedUser();
+
+            daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
+            daoFactory.beginTransaction();
+
+            UserDAO userDAO = daoFactory.getUserDAO();
+            loggedUser = userDAO.findByUsername(loggedUser.getUsername());
+
+            User toBan = userDAO.findByUsername(request.getParameter("username"));
+
+            if(toBan.getUserID() != null){
+                Product[] products = daoFactory.getProductDAO().findByOwner(toBan);
+                Auction[] auctions = daoFactory.getAuctionDAO().findByOwner(toBan);
+                Threshold[] thresholds = daoFactory.getThresholdDAO().findByUser(toBan);
+
+                try {
+                    userDAO.delete(toBan);
+                    for (Product product : products) {
+                        daoFactory.getProductDAO().delete(product);
+                    }
+                    for (Auction auction : auctions){
+                        daoFactory.getAuctionDAO().delete(auction);
+                    }
+                    for (Threshold threshold : thresholds){
+                        daoFactory.getThresholdDAO().delete(threshold);
+                    }
+                }
+                catch (Exception e){
+                    logger.log(Level.SEVERE, "Errore cancellazione utente e relativi dati collegati. " + e);
+                    throw new RuntimeException(e);
+                }
+
+                applicationMessage = "Utente bannato correttamente";
+            }
+            else {
+                applicationMessage = "Username inserito non trovato!";
+            }
+
+            User[] usernames = userDAO.findAllUsersExceptMeAndDeleted(loggedUser);
+
+            daoFactory.commitTransaction();
+            sessionDAOFactory.commitTransaction();
+
+            request.setAttribute("loggedOn",loggedUser!=null);
+            request.setAttribute("loggedUser",loggedUser);
+            request.setAttribute("usernames",usernames);
+            request.setAttribute("applicationMessage",applicationMessage);
+            request.setAttribute("viewUrl","userManagement/banView");
+        }
+        catch (Exception e){
+            logger.log(Level.SEVERE, "User Controller Error / ban", e);
+            try {
+                if(daoFactory != null) daoFactory.rollbackTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();
+            }
+            catch (Throwable t){}
+            throw new RuntimeException(e);
+        }
+        finally {
+            try {
+                if(daoFactory != null) daoFactory.closeTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.closeTransaction();
+            }
+            catch (Throwable t){}
+        }
+    }
+
 
 }

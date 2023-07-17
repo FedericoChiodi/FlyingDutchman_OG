@@ -178,7 +178,6 @@ public class UserDAOMySQLJDBCImpl implements UserDAO {
 
     @Override
     public User findByUsername(String username) {
-
         PreparedStatement ps;
         User user = new User();
 
@@ -209,7 +208,6 @@ public class UserDAOMySQLJDBCImpl implements UserDAO {
 
     @Override
     public User[] findByRole(String role) {
-
         PreparedStatement ps;
         List<User> users = new ArrayList<>();
 
@@ -228,6 +226,66 @@ public class UserDAOMySQLJDBCImpl implements UserDAO {
             while(resultSet.next()){
                 User user = read(resultSet);
                 users.add(user);
+            }
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return users.toArray(new User[0]);
+    }
+
+    @Override
+    public User[] findAllUsers() {
+        PreparedStatement ps;
+        List<User> users = new ArrayList<>();
+
+        try {
+            String sql =
+                    "SELECT * " +
+                    "FROM `USER`";
+
+            ps = conn.prepareStatement(sql);
+
+            ResultSet resultSet = ps.executeQuery();
+
+            while(resultSet.next()){
+                User user = read(resultSet);
+                users.add(user);
+            }
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return users.toArray(new User[0]);
+    }
+
+    @Override
+    public User[] findAllUsersExceptMeAndDeleted(User user) {
+        PreparedStatement ps;
+        List<User> users = new ArrayList<>();
+
+        try {
+            String sql =
+                    "SELECT * " +
+                    "FROM `USER` " +
+                    "WHERE " +
+                    "userID <> ? AND deleted = ?";
+
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1, user.getUserID());
+            ps.setString(2, "N");
+
+            ResultSet resultSet = ps.executeQuery();
+
+            while(resultSet.next()){
+                User user1 = read(resultSet);
+                users.add(user1);
             }
             resultSet.close();
             ps.close();

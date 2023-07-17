@@ -58,7 +58,7 @@
       <%}%>
       <%if(role.equals("Admin") || role.equals("SuperAdmin")){%>
       <li <%=menuActiveLink.equals("Banna")?"class=\"active\"":""%>>
-        <a href="Dispatcher?controllerAction=UserManagement.view">Banna</a>
+        <a href="Dispatcher?controllerAction=UserManagement.banView">Banna</a>
       </li>
       <%}%>
       <%if(role.equals("SuperAdmin")){%>

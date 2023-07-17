@@ -27,5 +27,7 @@ public interface UserDAO {
     public User findByUserID(Long userID);
     public User findByUsername(String username);
     public User[] findByRole(String role);
+    public User[] findAllUsers();
+    public User[] findAllUsersExceptMeAndDeleted(User user);
 
 }

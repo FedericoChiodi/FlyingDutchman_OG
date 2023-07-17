@@ -6,9 +6,9 @@
   int i = 0;
   boolean loggedOn = (Boolean) request.getAttribute("loggedOn");
   String applicationMessage = (String) request.getAttribute("applicationMessage");
-  String menuActiveLink = "Utente";
   User loggedUser = (User) request.getAttribute("loggedUser");
   String auctionID = (String) request.getAttribute("auctionID");
+  String menuActiveLink = (loggedUser !=null) ? "Utente" : "Registrati";
   String action = (loggedUser !=null) ? "modify" : "insert";
 %>
 <!DOCTYPE html>
