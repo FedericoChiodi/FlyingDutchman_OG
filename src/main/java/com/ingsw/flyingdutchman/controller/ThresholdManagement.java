@@ -1,7 +1,6 @@
 package com.ingsw.flyingdutchman.controller;
 
 import com.ingsw.flyingdutchman.model.dao.DAOFactory;
-import com.ingsw.flyingdutchman.model.dao.ProductDAO;
 import com.ingsw.flyingdutchman.model.dao.UserDAO;
 import com.ingsw.flyingdutchman.model.mo.*;
 import com.ingsw.flyingdutchman.services.config.Configuration;
@@ -451,7 +450,7 @@ public class ThresholdManagement {
             //Trovo tutte le prenotazioni associate alla'asta aggiornata
             Threshold[] thresholds = daoFactory.getThresholdDAO().findThresholdsByAuction(auction);
 
-            //Trovo tutte quelle che hanno prezzo superiore o uguale all'asta e le aggiungo ad una lista
+            //Trovo tutte quelle che hanno prezzo superiore o uguale all'asta e le aggiungo a una lista
             if(thresholds.length > 0){
                 List<Threshold> validThresholds = new ArrayList<>();
                 for (int i = 0; i < thresholds.length; i++){
@@ -505,7 +504,7 @@ public class ThresholdManagement {
                         throw new RuntimeException(e);
                     }
 
-                    //Update dei dati dell'asta anche  sul db
+                    //Update dei dati dell'asta anche sul db
                     try {
                         daoFactory.getAuctionDAO().update(auction);
                     }

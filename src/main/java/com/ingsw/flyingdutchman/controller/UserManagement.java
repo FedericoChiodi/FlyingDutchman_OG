@@ -2,6 +2,9 @@ package com.ingsw.flyingdutchman.controller;
 
 import com.ingsw.flyingdutchman.model.dao.DAOFactory;
 import com.ingsw.flyingdutchman.model.dao.UserDAO;
+import com.ingsw.flyingdutchman.model.mo.Auction;
+import com.ingsw.flyingdutchman.model.mo.Product;
+import com.ingsw.flyingdutchman.model.mo.Threshold;
 import com.ingsw.flyingdutchman.model.mo.User;
 import com.ingsw.flyingdutchman.services.config.Configuration;
 import com.ingsw.flyingdutchman.services.logservice.LogService;
@@ -82,10 +85,28 @@ public class UserManagement {
             daoFactory.beginTransaction();
 
             UserDAO userDAO = daoFactory.getUserDAO();
-            User user = userDAO.findByUsername(loggedUser.getUsername());
+            loggedUser = userDAO.findByUsername(loggedUser.getUsername());
 
-            sessionUserDAO.delete(user);
-            userDAO.delete(user);
+            Product[] products = daoFactory.getProductDAO().findByOwner(loggedUser);
+            Auction[] auctions = daoFactory.getAuctionDAO().findByOwner(loggedUser);
+            Threshold[] thresholds = daoFactory.getThresholdDAO().findByUser(loggedUser);
+
+            try {
+                sessionUserDAO.delete(loggedUser);
+                userDAO.delete(loggedUser);
+                for (Product product : products) {
+                    daoFactory.getProductDAO().delete(product);
+                }
+                for (Auction auction : auctions){
+                    daoFactory.getAuctionDAO().delete(auction);
+                }
+                for (Threshold threshold : thresholds){
+                    daoFactory.getThresholdDAO().delete(threshold);
+                }
+            }
+            catch (Exception e){
+                logger.log(Level.SEVERE, "Errore cancellazione utente e relativi dati collegati. " + e);
+            }
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
