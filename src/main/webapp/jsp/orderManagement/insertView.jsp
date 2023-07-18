@@ -9,6 +9,10 @@
     String applicationMessage = (String) request.getAttribute("applicationMessage");
     String menuActiveLink = "Ordini";
     Auction auction = (Auction) request.getAttribute("auction");
+    Boolean isPremium = (Boolean) request.getAttribute("isPremium");
+    if(isPremium == null){
+        isPremium = false;
+    }
 %>
 <!DOCTYPE html>
 <html>
@@ -19,7 +23,12 @@
         function submitOrder(){
             let f;
             f = document.insertForm;
-            f.controllerAction.value = "OrderManagement.pay";
+            <%if(isPremium){%>
+                f.controllerAction.value = "OrderManagement.buyPremium";
+            <%}%>
+            <%if(!isPremium){%>
+                f.controllerAction.value = "OrderManagement.pay";
+            <%}%>
             f.auctionID.value = <%=auction.getAuctionID()%>;
         }
         function goBack(){

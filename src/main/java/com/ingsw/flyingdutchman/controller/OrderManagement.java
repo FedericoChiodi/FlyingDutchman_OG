@@ -118,7 +118,7 @@ public class OrderManagement {
             //Setto prodotto venduto = true
             auction.setProduct_sold(true);
 
-            //Update dei dati dell'asta anche  sul db
+            //Update dei dati dell'asta anche sul db
             try {
                 daoFactory.getAuctionDAO().update(auction);
             }
@@ -202,19 +202,16 @@ public class OrderManagement {
 
             loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
 
+            //Modifico il ruolo sul cookie per far vedere subito i changes
+            sessionUserDAO.delete(null);
+            sessionUserDAO.create(loggedUser.getUsername(), null, loggedUser.getFirstname(), loggedUser.getSurname(), null, null, null, null, null, null,null,null,"Premium",null);
+
             //Creazione prodotto premium membership - ID SEMPRE 1
             Product premium = daoFactory.getProductDAO().findByProductID(Long.parseLong("1"));
 
             //Ottenere il timestamp corrente
             LocalDateTime currentDateTime = LocalDateTime.now();
             Timestamp timestamp = Timestamp.valueOf(currentDateTime);
-
-            //Settare il prodotto e altri dati nell'ordine
-            /*Order premiumOrder = new Order();
-            premiumOrder.setBuyer(loggedUser);
-            premiumOrder.setProduct(premium);
-            premiumOrder.setSelling_price(premium.getCurrent_price());
-            premiumOrder.setOrder_time(timestamp);*/
 
             //Inserire l'ordine sul db
             try {
@@ -231,8 +228,6 @@ public class OrderManagement {
                 throw new RuntimeException(e);
             }
 
-            applicationMessage = "Iscrizione a Premium confermata! Da ora puoi usufruire di nuovi benefici!";
-
             //Settare il nuovo role dell'utente loggato e aggiornare il db
             loggedUser.setRole("Premium");
             daoFactory.getUserDAO().update(loggedUser);
@@ -246,7 +241,7 @@ public class OrderManagement {
             request.setAttribute("viewUrl","orderManagement/premium");
         }
         catch (Exception e){
-            logger.log(Level.SEVERE, "Order Controller Error / pay -- " + e);
+            logger.log(Level.SEVERE, "Order Controller Error / buyPremium -- " + e);
             try {
                 if(daoFactory != null) daoFactory.rollbackTransaction();
                 if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();
@@ -262,4 +257,68 @@ public class OrderManagement {
             catch (Throwable t){}
         }
     }
+
+    public static void buyPremiumView(HttpServletRequest request, HttpServletResponse response){
+        DAOFactory sessionDAOFactory = null;
+        DAOFactory daoFactory = null;
+        User loggedUser;
+
+        Logger logger = LogService.getApplicationLogger();
+        try {
+            Map sessionFactoryParameters = new HashMap<String, Object>();
+            sessionFactoryParameters.put("request",request);
+            sessionFactoryParameters.put("response",response);
+
+            sessionDAOFactory = DAOFactory.getDAOFactory(Configuration.COOKIE_IMPL, sessionFactoryParameters);
+            sessionDAOFactory.beginTransaction();
+
+            UserDAO sessionUserDAO = sessionDAOFactory.getUserDAO();
+            loggedUser = sessionUserDAO.findLoggedUser();
+
+            daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
+            daoFactory.beginTransaction();
+
+            loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
+
+            //Trovo l'asta che voglio comprare
+            Auction auction = daoFactory.getAuctionDAO().findAuctionByID(Long.parseLong("1")); //Fisso
+            //Associo il prodotto all'asta
+            Product product = daoFactory.getProductDAO().findByProductID(auction.getProduct_auctioned().getProductID());
+            //Setto il prodotto con tutti i suoi campi
+            auction.setProduct_auctioned(product);
+
+            //Trovo l'utente associato al prodotto in asta
+            User owner = daoFactory.getUserDAO().findByUserID(product.getOwner().getUserID());
+            //Setto l'owner con tutti i suoi campi nel prodotto
+            auction.getProduct_auctioned().setOwner(owner);
+
+            //Passo tutto al controller degli ordini per piazzare un nuovo ordine.
+            //Non chiudo ancora niente perché può succedere che l'ordine venga annullato.
+
+            daoFactory.commitTransaction();
+            sessionDAOFactory.commitTransaction();
+
+            request.setAttribute("loggedOn",loggedUser!=null);
+            request.setAttribute("loggedUser",loggedUser);
+            request.setAttribute("auction",auction);
+            request.setAttribute("isPremium", true);
+            request.setAttribute("viewUrl","orderManagement/insertView");
+        }
+        catch (Exception e){
+            logger.log(Level.SEVERE, "Auction Controller Error / buyProductAuctioned --" + e);
+            try {
+                if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();
+            }
+            catch (Throwable t){}
+            throw new RuntimeException(e);
+        }
+        finally {
+            try {
+                if(sessionDAOFactory != null) sessionDAOFactory.closeTransaction();
+            }
+            catch (Throwable t){}
+        }
+    }
+
+
 }

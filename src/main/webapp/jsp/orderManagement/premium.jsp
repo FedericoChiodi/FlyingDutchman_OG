@@ -20,33 +20,49 @@
     </script>
     <style>
         #tryButton{
-            padding: 10px 20px;
             color: #fff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin-right: 10px;
+            margin-top: 10px;
+            padding: 12px 24px;
+            transition: background-color 0.3s ease;
+            background-color: #28a745;
             font-size: larger;
         }
 
         main{
+            display: flex;
+            flex-direction: row;
+            font-size: larger;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #contentSection{
+            display: flex;
             flex-direction: column;
             align-items: center;
-            font-size: x-large;
         }
+
     </style>
 </head>
 <body>
     <%@include file="/include/header.jsp"%>
     <main>
-        <section id="pageTitle">
-            <h1>Grazie, <%=loggedUser.getUsername()%>!</h1>
+        <section id="confettiSectionLeft">
+            <img src="images/confetti.png" width="300px" height="550px" alt="Image containing Confetti">
         </section>
 
-        <section id="buttonContainer">
+        <section id="contentSection">
+            <h1>Grazie, <%=loggedUser.getUsername()%>!</h1><br/>
             <button id="tryButton" onclick="tryThresholds()">
-                Prova subito la nuova funzionalit&agrave; che hai sbloccato!
+                Prova subito le Prenotazioni!
             </button>
+        </section>
+
+        <section id="confettiSectionRight">
+            <img src="images/confetti.png" width="300px" height="550px" alt="Image containing Confetti">
         </section>
 
         <form name="tryForm" method="post" action="Dispatcher">

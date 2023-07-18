@@ -69,12 +69,9 @@
             <%}%>
           </datalist>
         </div>
-
         <div class="field clearfix">
-          <label>&#160;</label>
           <input type="submit" class="button" value="Banna"/>
         </div>
-
         <input type="hidden" name="controllerAction"/>
       </form>
     </section>

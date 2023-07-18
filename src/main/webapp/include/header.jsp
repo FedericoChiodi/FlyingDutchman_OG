@@ -62,8 +62,8 @@
       </li>
       <%}%>
       <%if(role.equals("SuperAdmin")){%>
-      <li <%=menuActiveLink.equals("Abbassa!")?"class=\"active\"":""%>>
-        <a href="Dispatcher?controllerAction=ProductManagement.view">Abbassa!</a>
+      <li <%=menuActiveLink.equals("Abbassa")?"class=\"active\"":""%>>
+        <a href="Dispatcher?controllerAction=AuctionManagement.lowerAllView">Abbassa</a>
       </li>
       <%}%>
       <li><a href="javascript:logoutForm.submit()">Logout</a></li>

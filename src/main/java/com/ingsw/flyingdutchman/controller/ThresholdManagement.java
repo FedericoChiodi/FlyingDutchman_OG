@@ -15,6 +15,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ThresholdManagement {
+    private static final int max = 20;
+    private static final int min = 5;
     private ThresholdManagement(){}
 
     public static void view(HttpServletRequest request, HttpServletResponse response){
@@ -424,118 +426,266 @@ public class ThresholdManagement {
             //Preparo la pagina a cui devo ritornare dopo i controlli
             String pageToReturn = request.getParameter("pageToReturn");
 
-            //Trovo l'asta aggiornata e inserisco il prodotto
-            Auction auction = daoFactory.getAuctionDAO().findAuctionByID(Long.parseLong(request.getParameter("auctionID")));
-            Product product = daoFactory.getProductDAO().findByProductID(auction.getProduct_auctioned().getProductID());
-            auction.setProduct_auctioned(product);
+            if(pageToReturn.equals("auctionManagement/view")) {
+                //Trovo l'asta aggiornata e inserisco il prodotto
+                Auction auction = daoFactory.getAuctionDAO().findAuctionByID(Long.parseLong(request.getParameter("auctionID")));
+                Product product = daoFactory.getProductDAO().findByProductID(auction.getProduct_auctioned().getProductID());
+                auction.setProduct_auctioned(product);
 
-            //Prima di tutto aggiorno l'asta sul db se sono chiamato da un aggiornamento di un prezzo di un'asta
-            if(pageToReturn.equals("auctionManagement/view")){
-                try{
+                //Prima di tutto aggiorno l'asta sul db se sono chiamato da un aggiornamento di un prezzo di un'asta
+                try {
                     auction.getProduct_auctioned().setCurrent_price(Float.parseFloat(request.getParameter("price")));
                     daoFactory.getProductDAO().update(auction.getProduct_auctioned());
                     applicationMessage = "Prezzo abbassato correttamente!";
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     logger.log(Level.SEVERE, "Non ho potuto aggiornare il prezzo dell'asta." + e);
                     throw new RuntimeException(e);
                 }
-            }
 
-            //Trovo tutte le prenotazioni associate alla'asta aggiornata
-            Threshold[] thresholds = daoFactory.getThresholdDAO().findThresholdsByAuction(auction);
+                //Trovo tutte le prenotazioni associate alla'asta aggiornata
+                Threshold[] thresholds = daoFactory.getThresholdDAO().findThresholdsByAuction(auction);
 
-            //Trovo tutte quelle che hanno prezzo superiore o uguale all'asta e le aggiungo a una lista
-            if(thresholds.length > 0){
-                List<Threshold> validThresholds = new ArrayList<>();
-                for (int i = 0; i < thresholds.length; i++){
-                    if(thresholds[i].getPrice() >= auction.getProduct_auctioned().getCurrent_price()){
-                        validThresholds.add(thresholds[i]);
-                    }
-                }
-
-                if(validThresholds.size() > 0){
-                    //Tra tutte quelle aggiunte controllo quella con prezzo > e aggiunta prima cronologicamente
-                    //e faccio l'ordine. Elimino poi tutte le altre
-                    Threshold toOrder = validThresholds.get(0);
-                    for (int i = 1; i < validThresholds.size(); i++){
-                        if(validThresholds.get(i).getPrice() > toOrder.getPrice()){
-                            toOrder = validThresholds.get(i);
+                //Trovo tutte quelle che hanno prezzo superiore o uguale all'asta e le aggiungo a una lista
+                if (thresholds.length > 0) {
+                    List<Threshold> validThresholds = new ArrayList<>();
+                    for (int i = 0; i < thresholds.length; i++) {
+                        if (thresholds[i].getPrice() >= auction.getProduct_auctioned().getCurrent_price()) {
+                            validThresholds.add(thresholds[i]);
                         }
-                        else if(validThresholds.get(i).getPrice() == toOrder.getPrice()){
-                            if(validThresholds.get(i).getReservation_date().compareTo(toOrder.getReservation_date()) < 0){
+                    }
+
+                    if (validThresholds.size() > 0) {
+                        //Tra tutte quelle aggiunte controllo quella con prezzo > e aggiunta prima cronologicamente
+                        //e faccio l'ordine. Elimino poi tutte le altre
+                        Threshold toOrder = validThresholds.get(0);
+                        for (int i = 1; i < validThresholds.size(); i++) {
+                            if (validThresholds.get(i).getPrice() > toOrder.getPrice()) {
                                 toOrder = validThresholds.get(i);
+                            } else if (validThresholds.get(i).getPrice() == toOrder.getPrice()) {
+                                if (validThresholds.get(i).getReservation_date().compareTo(toOrder.getReservation_date()) < 0) {
+                                    toOrder = validThresholds.get(i);
+                                }
                             }
                         }
-                    }
-                    //Elimino dal db tutte le prenotazioni
-                    for (int i = 0; i < validThresholds.size(); i++){
-                        try {
-                            daoFactory.getThresholdDAO().delete(validThresholds.get(i));
+                        //Elimino dal db tutte le prenotazioni
+                        for (int i = 0; i < validThresholds.size(); i++) {
+                            try {
+                                daoFactory.getThresholdDAO().delete(validThresholds.get(i));
+                            } catch (Exception e) {
+                                logger.log(Level.SEVERE, "Could not remove Thresholds -- " + e);
+                                throw new RuntimeException(e);
+                            }
                         }
-                        catch (Exception e){
-                            logger.log(Level.SEVERE, "Could not remove Thresholds -- " + e);
+
+                        //Ottenere il timestamp corrente
+                        LocalDateTime currentDateTime = LocalDateTime.now();
+                        Timestamp timestamp = Timestamp.valueOf(currentDateTime);
+
+                        //Setto il timestamp di chiusura
+                        auction.setClosing_timestamp(timestamp);
+
+                        //Setto prodotto venduto = true
+                        auction.setProduct_sold(true);
+
+                        //Aggiorno i dati del prodotto
+                        Product productSold = daoFactory.getProductDAO().findByProductID(auction.getProduct_auctioned().getProductID());
+                        productSold.setCurrent_price(toOrder.getPrice());
+                        try {
+                            daoFactory.getProductDAO().update(productSold);
+                        } catch (Exception e) {
+                            logger.log(Level.SEVERE, "Update del prodotto fallito - ThresholdCheck." + e);
                             throw new RuntimeException(e);
                         }
-                    }
 
-                    //Ottenere il timestamp corrente
-                    LocalDateTime currentDateTime = LocalDateTime.now();
-                    Timestamp timestamp = Timestamp.valueOf(currentDateTime);
+                        //Update dei dati dell'asta anche sul db
+                        try {
+                            daoFactory.getAuctionDAO().update(auction);
+                        } catch (Exception e) {
+                            logger.log(Level.SEVERE, "Update dell'asta fallito - ThresholdCheck." + e);
+                            throw new RuntimeException(e);
+                        }
 
-                    //Setto il timestamp di chiusura
-                    auction.setClosing_timestamp(timestamp);
+                        //Inserisco l'ordine sul db
+                        User buyer = daoFactory.getUserDAO().findByUserID(toOrder.getUser().getUserID());
+                        try {
+                            daoFactory.getOrderDAO().create(
+                                    timestamp,
+                                    toOrder.getPrice(),
+                                    true,
+                                    buyer,
+                                    product
+                            );
+                        } catch (Exception e) {
+                            logger.log(Level.SEVERE, "Creazione ordine fallita - ThresholdUpdateCheck." + e);
+                            throw new RuntimeException(e);
+                        }
 
-                    //Setto prodotto venduto = true
-                    auction.setProduct_sold(true);
+                        //Elimino infine la prenotazione effettuata
+                        try {
+                            daoFactory.getThresholdDAO().delete(toOrder);
+                        } catch (Exception e) {
+                            logger.log(Level.SEVERE, "Non ho potuto eliminare la prenotazione valida." + e);
+                            throw new RuntimeException(e);
+                        }
 
-                    //Aggiorno i dati del prodotto
-                    Product productSold = daoFactory.getProductDAO().findByProductID(auction.getProduct_auctioned().getProductID());
-                    productSold.setCurrent_price(toOrder.getPrice());
-                    try {
-                        daoFactory.getProductDAO().update(productSold);
+                        applicationMessage = buyer.getUsername() + " ha comprato questo prodotto con una Prenotazione!";
                     }
-                    catch (Exception e){
-                        logger.log(Level.SEVERE, "Update del prodotto fallito - ThresholdCheck." + e);
-                        throw new RuntimeException(e);
-                    }
-
-                    //Update dei dati dell'asta anche sul db
-                    try {
-                        daoFactory.getAuctionDAO().update(auction);
-                    }
-                    catch (Exception e){
-                        logger.log(Level.SEVERE, "Update dell'asta fallito - ThresholdCheck." + e);
-                        throw new RuntimeException(e);
-                    }
-
-                    //Inserisco l'ordine sul db
-                    User buyer = daoFactory.getUserDAO().findByUserID(toOrder.getUser().getUserID());
-                    try {
-                        daoFactory.getOrderDAO().create(
-                                timestamp,
-                                toOrder.getPrice(),
-                                true,
-                                buyer,
-                                product
-                        );
-                    }
-                    catch (Exception e){
-                        logger.log(Level.SEVERE, "Creazione ordine fallita - ThresholdUpdateCheck." + e);
-                        throw new RuntimeException(e);
-                    }
-
-                    //Elimino infine la prenotazione effettuata
-                    try {
-                        daoFactory.getThresholdDAO().delete(toOrder);
-                    }
-                    catch (Exception e){
-                        logger.log(Level.SEVERE, "Non ho potuto eliminare la prenotazione valida." + e);
-                        throw new RuntimeException(e);
-                    }
-
-                    applicationMessage = buyer.getUsername() + " ha comprato questo prodotto con una Prenotazione!";
                 }
+            }
+
+            if(pageToReturn.equals("auctionManagement/lowerAllView")){
+                //Trovo tutte le aste aperte non eliminate usando un dummy User
+                User nullUser = new User();
+                nullUser.setUserID(Long.parseLong("-1"));
+                Auction[] auctions = daoFactory.getAuctionDAO().findAllOpenAuctionsExceptUser(nullUser);
+
+                //Riempio i prodotti di tutte le aste
+                for (Auction auction : auctions){
+                    Product product = daoFactory.getProductDAO().findByProductID(auction.getProduct_auctioned().getProductID());
+                    auction.setProduct_auctioned(product);
+                }
+
+                //Aggiorno i dati di ogni asta e li scrivo sul db
+                for(Auction auction : auctions){
+                    //Genero un numero casuale tra max e min compresi
+                    int randomNumber = (int) (Math.random() * (max - min + 1)) + min;
+                    //Genero la percentuale di ribasso
+                    float percentageToLower = randomNumber / 100f;
+
+                    Product product = daoFactory.getProductDAO().findByAuction(auction);
+
+                    float currentPrice = product.getCurrent_price();
+                    float minPrice = product.getMin_price();
+
+                    if(currentPrice - (currentPrice * percentageToLower) > minPrice){
+                        product.setCurrent_price(currentPrice - (currentPrice * percentageToLower));
+                    }
+                    else {
+                        product.setCurrent_price(minPrice);
+                    }
+
+                    try {
+                        daoFactory.getProductDAO().update(product);
+                    }
+                    catch (Exception e){
+                        logger.log(Level.SEVERE, "Non sono riuscito ad aggiornare i prezzi di un prodotto all'asta dopo il lower! - " + e);
+                        throw new RuntimeException(e);
+                    }
+
+                    //Aggiorno il nuovo prodotto per poter essere subito ordinato
+                    auction.setProduct_auctioned(product);
+                }
+
+                applicationMessage = "Prezzi correttamente abbassati in " + auctions.length + " aste!";
+
+                //Importante! Aggiorno i cambiamenti
+                try {
+                    daoFactory.commitTransaction();
+                }
+                catch (Exception e){
+                   try {
+                       daoFactory.rollbackTransaction();
+                   }
+                   catch (Throwable t){}
+                    logger.log(Level.SEVERE, "Errore nella commit!");
+                    throw new RuntimeException(e);
+                }
+                finally {
+                    daoFactory.closeTransaction();
+                }
+
+                daoFactory.beginTransaction();
+                //Ora per ogni asta controllo se ci sono prenotazioni
+                for(Auction auction : auctions){
+                    Threshold[] thresholds = daoFactory.getThresholdDAO().findThresholdsByAuction(auction);
+
+                    //Se ce ne sono inizio a fare i controlli
+                    if (thresholds.length > 0) {
+                        List<Threshold> validThresholds = new ArrayList<>();
+                        for (int i = 0; i < thresholds.length; i++) {
+                            if (thresholds[i].getPrice() >= auction.getProduct_auctioned().getCurrent_price()) {
+                                validThresholds.add(thresholds[i]);
+                            }
+                        }
+
+                        if (validThresholds.size() > 0) {
+                            //Tra tutte quelle aggiunte controllo quella con prezzo > e aggiunta prima cronologicamente
+                            //e faccio l'ordine. Elimino poi tutte le altre
+                            Threshold toOrder = validThresholds.get(0);
+                            for (int i = 1; i < validThresholds.size(); i++) {
+                                if (validThresholds.get(i).getPrice() > toOrder.getPrice()) {
+                                    toOrder = validThresholds.get(i);
+                                } else if (validThresholds.get(i).getPrice() == toOrder.getPrice()) {
+                                    if (validThresholds.get(i).getReservation_date().compareTo(toOrder.getReservation_date()) < 0) {
+                                        toOrder = validThresholds.get(i);
+                                    }
+                                }
+                            }
+                            //Elimino dal db tutte le prenotazioni
+                            for (int i = 0; i < validThresholds.size(); i++) {
+                                try {
+                                    daoFactory.getThresholdDAO().delete(validThresholds.get(i));
+                                } catch (Exception e) {
+                                    logger.log(Level.SEVERE, "Could not remove Thresholds -- " + e);
+                                    throw new RuntimeException(e);
+                                }
+                            }
+
+                            //Ottenere il timestamp corrente
+                            LocalDateTime currentDateTime = LocalDateTime.now();
+                            Timestamp timestamp = Timestamp.valueOf(currentDateTime);
+
+                            //Setto il timestamp di chiusura
+                            auction.setClosing_timestamp(timestamp);
+
+                            //Setto prodotto venduto = true
+                            auction.setProduct_sold(true);
+
+                            //Aggiorno i dati del prodotto
+                            Product productSold = daoFactory.getProductDAO().findByProductID(auction.getProduct_auctioned().getProductID());
+                            productSold.setCurrent_price(toOrder.getPrice());
+                            try {
+                                daoFactory.getProductDAO().update(productSold);
+                            } catch (Exception e) {
+                                logger.log(Level.SEVERE, "Update del prodotto fallito - ThresholdCheck." + e);
+                                throw new RuntimeException(e);
+                            }
+
+                            //Update dei dati dell'asta anche sul db
+                            try {
+                                daoFactory.getAuctionDAO().update(auction);
+                            } catch (Exception e) {
+                                logger.log(Level.SEVERE, "Update dell'asta fallito - ThresholdCheck." + e);
+                                throw new RuntimeException(e);
+                            }
+
+                            //Inserisco l'ordine sul db
+                            User buyer = daoFactory.getUserDAO().findByUserID(toOrder.getUser().getUserID());
+                            try {
+                                daoFactory.getOrderDAO().create(
+                                        timestamp,
+                                        toOrder.getPrice(),
+                                        true,
+                                        buyer,
+                                        productSold
+                                );
+                            } catch (Exception e) {
+                                logger.log(Level.SEVERE, "Creazione ordine fallita - ThresholdUpdateCheck." + e);
+                                throw new RuntimeException(e);
+                            }
+
+                            //Elimino infine la prenotazione effettuata
+                            try {
+                                daoFactory.getThresholdDAO().delete(toOrder);
+                            } catch (Exception e) {
+                                logger.log(Level.SEVERE, "Non ho potuto eliminare la prenotazione valida." + e);
+                                throw new RuntimeException(e);
+                            }
+                            System.out.println(buyer.getUsername() + " ha comprato con una Prenotazione!");
+                        }
+                    }
+                }
+
             }
 
             daoFactory.commitTransaction();

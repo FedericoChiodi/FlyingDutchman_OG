@@ -63,9 +63,11 @@
                                 <%=orders[i].getOrder_time().toString().substring(10, 16)%>
                             </span><br/>
                             <span id="productPrice" class="float-value"><%=orders[i].getSelling_price()%></span><br/>
-                            <span id="seller" class="seller">Comprato da: <%=orders[i].getProduct().getOwner().getUsername()%></span><br/>
-                            <%if(orders[i].isBoughtFromThreshold()){%>
-                                <span id="boughtFromThreshold" class="boughtFromThreshold">Questo Ordine &egrave; stato comprato da una Prenotazione!</span><br/>
+                            <%if(orders[i].getProduct().getProductID() != 1){%> <!-- Premium -->
+                                <span id="seller" class="seller">Comprato da: <%=orders[i].getProduct().getOwner().getUsername()%></span><br/>
+                                <%if(orders[i].isBoughtFromThreshold()){%>
+                                    <span id="boughtFromThreshold" class="boughtFromThreshold">Questo Prodotto &egrave; stato comprato da una Prenotazione!</span><br/>
+                                <%}%>
                             <%}%>
                             <span id="separator" class="separator">---</span>
                         </article>
