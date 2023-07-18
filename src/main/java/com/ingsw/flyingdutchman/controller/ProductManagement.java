@@ -391,8 +391,8 @@ public class ProductManagement {
 
             loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
 
-            // Prendo tutte le aste con prodotti dell'utente e le riempio
-            Auction[] auctions = daoFactory.getAuctionDAO().findByOwner(loggedUser);
+            // Prendo tutte le aste con prodotti dell'utente e le riempio (tranne premium)
+            Auction[] auctions = daoFactory.getAuctionDAO().findByOwnerNotPremium(loggedUser);
             for(int i = 0; i < auctions.length ; i++){
                 Product product = daoFactory.getProductDAO().findByProductID(auctions[i].getProduct_auctioned().getProductID());
                 User user = daoFactory.getUserDAO().findByUserID(product.getOwner().getUserID());
@@ -431,7 +431,7 @@ public class ProductManagement {
             request.setAttribute("viewUrl","productManagement/view");
         }
         catch (Exception e){
-            logger.log(Level.SEVERE, "Product Controller Error / view -- " + e);
+            logger.log(Level.SEVERE, "Product Controller Error / viewSoldProducts -- " + e);
             try {
                 if(daoFactory != null) daoFactory.rollbackTransaction();
                 if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();

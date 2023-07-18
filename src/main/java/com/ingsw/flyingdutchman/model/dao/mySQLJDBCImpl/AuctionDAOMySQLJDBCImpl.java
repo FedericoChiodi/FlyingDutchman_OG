@@ -200,6 +200,39 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
     }
 
     @Override
+    public Auction[] findByOwnerNotPremium(User user) {
+        PreparedStatement ps;
+        List<Auction> auctions = new ArrayList<>();
+        String sql;
+
+        try {
+            sql
+                    = "SELECT auctionID, opening_timestamp, closing_timestamp, is_product_sold, AUCTION.deleted, productID "
+                    + "FROM `AUCTION` NATURAl JOIN `PRODUCT` "
+                    + "WHERE "
+                    + "ownerID = ? AND PRODUCT.productID <> ?";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1,user.getUserID());
+            ps.setLong(2,1);
+
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()){
+                Auction auction = read(resultSet);
+                auctions.add(auction);
+            }
+
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return auctions.toArray(new Auction[0]);
+    }
+
+    @Override
     public Auction[] findOpenAuctionsByOwnerNotDeleted(User user) {
         PreparedStatement ps;
         List<Auction> auctions = new ArrayList<>();
@@ -278,6 +311,37 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
                     = "SELECT * "
                     + "FROM `AUCTION`";
             ps = conn.prepareStatement(sql);
+
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()){
+                Auction auction = read(resultSet);
+                auctions.add(auction);
+            }
+
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return auctions.toArray(new Auction[0]);
+    }
+
+    @Override
+    public Auction[] findAllAuctionsExceptPremium() {
+        PreparedStatement ps;
+        List<Auction> auctions = new ArrayList<>();
+        String sql;
+
+        try {
+            sql
+                    = "SELECT * "
+                    + "FROM `AUCTION` "
+                    + "WHERE productID <> ?";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1,1);
 
             ResultSet resultSet = ps.executeQuery();
 

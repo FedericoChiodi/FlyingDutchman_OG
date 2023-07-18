@@ -100,8 +100,8 @@ public class OrderDAOMySQLJDBCImpl implements OrderDAO {
 
         try {
             sql
-                    = "SELECT orderID, order_time, selling_price, bought_from_threshold, userID, productID "
-                    + "FROM `ORDER` NATURAL JOIN `PRODUCT` "
+                    = "SELECT * "
+                    + "FROM `ORDER` "
                     + "WHERE "
                     + "productID = ?";
             ps = conn.prepareStatement(sql);

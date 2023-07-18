@@ -123,7 +123,7 @@
             <%if(products.length == 0){%>
                 <section id="noProducts">
                     <h1>
-                        Prima di iniziare un'asta devi inserire almeno un prodotto!
+                        Non ci sono prodotti nel tuo account o sono tutti gi&aacute; all'asta!
                     </h1>
                 </section>
             <%}%>

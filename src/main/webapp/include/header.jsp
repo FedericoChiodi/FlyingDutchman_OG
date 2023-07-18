@@ -1,3 +1,5 @@
+<%response.setHeader("Cache-Control", "no-cache");%>
+
 <script>
   function headerOnLoadHandler() {
     var usernameTextField = document.querySelector("#username");
@@ -17,11 +19,24 @@
     }
   }
 </script>
+<style>
+  #logoContainer{
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+  }
+  #logoImage{
+    margin-left: 25px;
+    filter: drop-shadow(10px 14px 10px #58e34a);
+  }
+</style>
+
 <header class="clearfix">
 
-  <h1 class="logo">
-    Flying Dutchman
-  </h1>
+  <section id="logoContainer">
+    <h1 class="logo">Flying Dutchman</h1>
+    <img id="logoImage" src="images/logoSimple.png" height="115" width="115" loading="eager" alt="Immagine Logo del Sito">
+  </section>
 
   <form name="logoutForm" action="Dispatcher" method="post">
     <input type="hidden" name="controllerAction" value="HomeManagement.logout"/>

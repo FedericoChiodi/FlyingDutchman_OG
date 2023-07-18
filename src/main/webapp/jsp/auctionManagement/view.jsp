@@ -54,7 +54,9 @@
                 background-color: #28a745;
             }
             #auctions{
-                margin: 12px 0;
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                justify-items: center;
             }
             #auctions button{
                 float: left;
