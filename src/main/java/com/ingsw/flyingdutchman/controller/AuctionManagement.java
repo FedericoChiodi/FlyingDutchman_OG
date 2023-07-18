@@ -180,6 +180,12 @@ public class AuctionManagement {
                 }
             }
 
+            // Per ogni asta controllo se il prodotto è attualmente all'asta
+            Auction[] auctions1 = daoFactory.getAuctionDAO().findOpenAuctionsByOwnerNotDeleted(loggedUser);
+            for (Auction auction : auctions1){
+                productsList.add(auction.getProduct_auctioned());
+            }
+
             // Trovo tutti i prodotti dell'utente
             Product[] products = daoFactory.getProductDAO().findByOwnerNotDeleted(loggedUser);
 

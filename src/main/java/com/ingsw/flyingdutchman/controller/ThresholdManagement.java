@@ -576,7 +576,7 @@ public class ThresholdManagement {
                     auction.setProduct_auctioned(product);
                 }
 
-                applicationMessage = "Prezzi correttamente abbassati in " + auctions.length + " aste!";
+                applicationMessage = "Prezzi aggiornati in " + auctions.length + " aste!";
 
                 //Importante! Aggiorno i cambiamenti
                 try {
