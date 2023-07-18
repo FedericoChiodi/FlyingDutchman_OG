@@ -87,6 +87,8 @@
     function mainOnLoadHandler(){
         document.insertForm.addEventListener("submit",submitProduct);
         document.insertForm.backButton.addEventListener("click", goBack);
+        document.getElementById("min_price").addEventListener("input", validateForm);
+        document.getElementById("starting_price").addEventListener("input", validateForm);
     }
     function previewFile() {
         var preview = document.querySelector('img');
@@ -100,6 +102,19 @@
             reader.readAsDataURL(file);
         } else {
             preview.src = "";
+        }
+    }
+
+    function validateForm() {
+        var minPriceInput = document.getElementById("min_price");
+        var startingPriceInput = document.getElementById("starting_price");
+        var minPrice = parseFloat(minPriceInput.value);
+        var startingPrice = parseFloat(startingPriceInput.value);
+
+        if (startingPrice < minPrice) {
+            startingPriceInput.setCustomValidity("Il Prezzo di Partenza non può essere minore del Prezzo Minimo!");
+        } else {
+            startingPriceInput.setCustomValidity("");
         }
     }
 </script>
