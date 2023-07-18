@@ -328,13 +328,27 @@ public class UserManagement {
                 applicationMessage = "Errore nell'aggiornamento dei dati utente";
             }
 
+            //Ricordo a che asta devo tornare
+            String auctionID = request.getParameter("auctionID");
+
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
 
             request.setAttribute("loggedOn", loggedUser!=null);
             request.setAttribute("loggedUser",user);
             request.setAttribute("applicationMessage",applicationMessage);
-            request.setAttribute("viewUrl","userManagement/view");
+            if(Long.parseLong(auctionID) < 1){
+                request.setAttribute("viewUrl","userManagement/view");
+            }
+            else {
+                Auction auction = daoFactory.getAuctionDAO().findAuctionByID(Long.parseLong(auctionID));
+                Product product = daoFactory.getProductDAO().findByProductID(auction.getProduct_auctioned().getProductID());
+                User owner = daoFactory.getUserDAO().findByUserID(product.getOwner().getUserID());
+                product.setOwner(owner);
+                auction.setProduct_auctioned(product);
+                request.setAttribute("auction",auction);
+                request.setAttribute("viewUrl","auctionManagement/inspectAuction");
+            }
         }
         catch (Exception e){
             logger.log(Level.SEVERE, "User Controller Error / modify", e);

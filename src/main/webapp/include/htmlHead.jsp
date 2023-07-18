@@ -1,7 +1,7 @@
 <meta charset="utf-8"/>
 
 <!-- Linking styles -->
-<link rel="stylesheet" href="css/flyingdutchman_v0.7.css" type="text/css" media="screen">
+<link rel="stylesheet" href="css/flyingdutchman_v0.8.css" type="text/css" media="screen">
 <title>Flying Dutchman: <%=menuActiveLink%></title>
 <script>
   var applicationMessage;

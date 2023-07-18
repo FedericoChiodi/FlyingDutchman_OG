@@ -78,7 +78,16 @@
     function submitUser(){
       let f;
       f = document.insModForm;
-      f.controllerAction.value = "UserManagement."+status;
+
+      let auctionID = <%=auctionID%>;
+      if (auctionID == null){
+        f.controllerAction.value = "UserManagement."+status;
+      }
+      else {
+        f.auctionID.value = auctionID;
+        f.controllerAction.value = "UserManagement."+status;
+      }
+
     }
     function goBack(){
       let auctionID = <%=auctionID%>;
@@ -91,6 +100,7 @@
         document.backForm.submit();
       }
     }
+
     function mainOnLoadHandler(){
       document.insModForm.addEventListener("submit",submitUser);
       document.insModForm.backButton.addEventListener("click", goBack);
@@ -191,6 +201,7 @@
         </div>
 
         <input type="hidden" name="controllerAction"/>
+        <input type="hidden" name="auctionID" value="-1">
       </form>
     </section>
     
