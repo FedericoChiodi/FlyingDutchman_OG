@@ -91,7 +91,7 @@
         document.getElementById("starting_price").addEventListener("input", validateForm);
     }
     function previewFile() {
-        var preview = document.querySelector('img');
+        var preview = document.querySelector('#preview');
         var file    = document.querySelector('input[type=file]').files[0];
         var reader  = new FileReader();
 
@@ -128,8 +128,7 @@
     </section>
 
     <section id="insertFormSection">
-        <form id="insertForm" name="insertForm" action="Dispatcher" method="post">
-
+        <form id="insertForm" name="insertForm" action="Upload" method="post" enctype="multipart/form-data">
             <div class="field clearfix">
                 <label for="description">Descrizione</label>
                 <input type="text" id="description" name="description"
@@ -164,19 +163,13 @@
             </div>
 
             <div class="field clearfix">
-                <input type="hidden" id="current_price" name="current_price"/>
-            </div>
-
-            <div class="field clearfix">
-                <input type="hidden" id="ownerID" name="ownerID"/>
-            </div>
-
-            <div class="field clearfix">
                 <label>&#160;</label>
                 <input type="submit" class="button" value="Invia"/>
                 <input type="button" name="backButton" class="button" value="Annulla"/>
             </div>
 
+            <input type="hidden" id="current_price" name="current_price"/>
+            <input type="hidden" id="ownerID" name="ownerID"/>
             <input type="hidden" name="controllerAction"/>
         </form>
     </section>
