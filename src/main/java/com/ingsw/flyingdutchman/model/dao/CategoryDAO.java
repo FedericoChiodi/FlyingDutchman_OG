@@ -11,4 +11,5 @@ public interface CategoryDAO {
     public Category findByCategoryID(Long categoryID);
     public Category findByName(String name);
     public Category[] getAllCategories();
+    public Category[] getAllCategoriesExceptPremium();
 }

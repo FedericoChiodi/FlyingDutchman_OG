@@ -163,6 +163,32 @@ public class CategoryDAOMySQLJDBCImpl implements CategoryDAO {
         return categories.toArray(new Category[0]);
     }
 
+    @Override
+    public Category[] getAllCategoriesExceptPremium() {
+        PreparedStatement ps;
+        List<Category> categories = new ArrayList<>();
+
+        try {
+            String sql = "SELECT * FROM `CATEGORY` WHERE categoryID <> 1";
+
+            ps = conn.prepareStatement(sql);
+
+            ResultSet resultSet = ps.executeQuery();
+
+            while(resultSet.next()){
+                Category category = read(resultSet);
+                categories.add(category);
+            }
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return categories.toArray(new Category[0]);
+    }
+
     public Category read(ResultSet rs){
         Category category = new Category();
         try {

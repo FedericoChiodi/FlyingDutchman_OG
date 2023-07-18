@@ -123,7 +123,7 @@ public class ProductManagement {
             daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
             daoFactory.beginTransaction();
 
-            Category[] categories = daoFactory.getCategoryDAO().getAllCategories();
+            Category[] categories = daoFactory.getCategoryDAO().getAllCategoriesExceptPremium();
             loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
 
             daoFactory.commitTransaction();

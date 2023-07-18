@@ -83,7 +83,7 @@ public class UploadServlet extends HttpServlet {
         }
 
         // Crea il percorso completo del file di destinazione
-        String[] tokens = fileName.split("\\.(?=[^\\.]+$)");
+        String[] tokens = fileName.split("\\.(?=[^\\.]+$)"); // regex magico che estrae il formato del file --> [nomeFile.a.b.c],[png]
         String filePath = uploadDirPath  +  File.separator  + description + "." + tokens[1];
 
         // Salva il file nel percorso specificato
