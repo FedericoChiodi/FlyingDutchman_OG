@@ -52,6 +52,8 @@ public class AuctionManagement {
             // Riempimento dei campi delle varie auctions
             for(int i = 0; i < auctions.length; i++){
                 Product product = productDAO.findByProductID(auctions[i].getProduct_auctioned().getProductID());
+                User owner = daoFactory.getUserDAO().findByUserID(product.getOwner().getUserID());
+                product.setOwner(owner);
                 auctions[i].setProduct_auctioned(product);
             }
 
@@ -111,6 +113,8 @@ public class AuctionManagement {
             // Riempimento dei campi delle varie auctions
             for(int i = 0; i < auctions.length; i++){
                 Product product = productDAO.findByProductID(auctions[i].getProduct_auctioned().getProductID());
+                User owner = daoFactory.getUserDAO().findByUserID(product.getOwner().getUserID());
+                product.setOwner(owner);
                 auctions[i].setProduct_auctioned(product);
             }
 
@@ -167,6 +171,8 @@ public class AuctionManagement {
             Auction[] auctions = daoFactory.getAuctionDAO().findByOwner(loggedUser);
             for(int i = 0; i < auctions.length ; i++){
                 Product product = daoFactory.getProductDAO().findByProductID(auctions[i].getProduct_auctioned().getProductID());
+                User owner = daoFactory.getUserDAO().findByUserID(product.getOwner().getUserID());
+                product.setOwner(owner);
                 auctions[i].setProduct_auctioned(product);
             }
 
@@ -287,6 +293,8 @@ public class AuctionManagement {
             // Riempimento dei campi delle varie auctions
             for(int i = 0; i < auctions.length; i++){
                 Product productToFill = productDAO.findByProductID(auctions[i].getProduct_auctioned().getProductID());
+                User owner = daoFactory.getUserDAO().findByUserID(productToFill.getOwner().getUserID());
+                productToFill.setOwner(owner);
                 auctions[i].setProduct_auctioned(productToFill);
             }
 
@@ -537,6 +545,8 @@ public class AuctionManagement {
             // Riempimento dei campi delle varie auctions
             for(int i = 0; i < auctions.length; i++){
                 Product product1 = productDAO.findByProductID(auctions[i].getProduct_auctioned().getProductID());
+                User owner = daoFactory.getUserDAO().findByUserID(product1.getOwner().getUserID());
+                product1.setOwner(owner);
                 auctions[i].setProduct_auctioned(product1);
             }
 
@@ -567,96 +577,6 @@ public class AuctionManagement {
             catch (Throwable t){}
         }
     }
-    /*public static void lowerAll(HttpServletRequest request, HttpServletResponse response){
-        DAOFactory sessionDAOFactory = null;
-        DAOFactory daoFactory = null;
-        User loggedUser;
-        String applicationMessage = null;
-        Logger logger = LogService.getApplicationLogger();
-
-        try {
-            Map sessionFactoryParameters = new HashMap<String, Object>();
-            sessionFactoryParameters.put("request",request);
-            sessionFactoryParameters.put("response",response);
-            sessionDAOFactory = DAOFactory.getDAOFactory(Configuration.COOKIE_IMPL, sessionFactoryParameters);
-            sessionDAOFactory.beginTransaction();
-
-            UserDAO sessionUserDAO = sessionDAOFactory.getUserDAO();
-            loggedUser = sessionUserDAO.findLoggedUser();
-
-            daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
-            daoFactory.beginTransaction();
-
-            loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
-
-            //Trovo tutte le aste aperte non eliminate usando un dummy User
-            User nullUser = new User();
-            nullUser.setUserID(Long.parseLong("-1"));
-            Auction[] auctions = daoFactory.getAuctionDAO().findAllOpenAuctionsExceptUser(nullUser);
-
-            //Riempio i prodotti di tutte le aste
-            for (Auction auction : auctions){
-                Product product = daoFactory.getProductDAO().findByProductID(auction.getProduct_auctioned().getProductID());
-                auction.setProduct_auctioned(product);
-            }
-
-            //Genero un numero casuale tra 5 e 20 compresi
-            int max = 20;
-            int min = 5;
-            int randomNumber = (int) (Math.random() * (max - min + 1)) + min;
-            //Genero la percentuale di ribasso
-            float percentageToLower = randomNumber / 100f;
-
-            //Aggiorno i dati di ogni asta e li scrivo sul db
-            for(Auction auction : auctions){
-                Product product = daoFactory.getProductDAO().findByAuction(auction);
-
-                float currentPrice = product.getCurrent_price();
-                float minPrice = product.getMin_price();
-
-                if(currentPrice - (currentPrice * percentageToLower) > minPrice){
-                    product.setCurrent_price(currentPrice - (currentPrice * percentageToLower));
-                }
-                else {
-                    product.setCurrent_price(minPrice);
-                }
-
-                try {
-                    daoFactory.getProductDAO().update(product);
-                }
-                catch (Exception e){
-                    logger.log(Level.SEVERE, "Non sono riuscito ad aggiornare i prezzi di un prodotto all'asta dopo il lower! - " + e);
-                    throw new RuntimeException(e);
-                }
-            }
-
-            applicationMessage = "Prezzi correttamente abbassati dello " + percentageToLower + " in " + auctions.length + " aste!";
-
-            daoFactory.commitTransaction();
-            sessionDAOFactory.commitTransaction();
-
-            request.setAttribute("loggedOn",loggedUser!=null);
-            request.setAttribute("loggedUser",loggedUser);
-            request.setAttribute("applicationMessage",applicationMessage);
-            request.setAttribute("viewUrl","auctionManagement/lowerAllView");
-        }
-        catch (Exception e){
-            logger.log(Level.SEVERE, "Auction Controller Error / lowerAll", e);
-            try {
-                if(daoFactory != null) daoFactory.rollbackTransaction();
-                if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();
-            }
-            catch (Throwable t){}
-            throw new RuntimeException(e);
-        }
-        finally {
-            try {
-                if(daoFactory != null) daoFactory.closeTransaction();
-                if(sessionDAOFactory != null) sessionDAOFactory.closeTransaction();
-            }
-            catch (Throwable t){}
-        }
-    }*/
     public static void lowerAllView(HttpServletRequest request, HttpServletResponse response){
         DAOFactory sessionDAOFactory = null;
         DAOFactory daoFactory = null;
@@ -704,6 +624,5 @@ public class AuctionManagement {
             catch (Throwable t){}
         }
     }
-
 
 }

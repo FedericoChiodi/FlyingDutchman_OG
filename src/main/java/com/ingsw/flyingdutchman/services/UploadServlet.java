@@ -22,6 +22,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.rmi.ServerException;
 import java.util.HashMap;
 import java.util.Map;
@@ -74,7 +75,7 @@ public class UploadServlet extends HttpServlet {
         InputStream fileContent = filePart.getInputStream();
 
         // Specifica il percorso della cartella in cui desideri salvare il file
-        String uploadDirPath = "/home/sanpc/Desktop/Uploads/" + loggedUser.getUsername();
+        String uploadDirPath = "/home/sanpc/tomcat/webapps/Uploads/" + loggedUser.getUsername();
 
         // Crea la cartella se non esiste
         File uploadDir = new File(uploadDirPath);
@@ -87,7 +88,7 @@ public class UploadServlet extends HttpServlet {
         String filePath = uploadDirPath  +  File.separator  + description + "." + tokens[1];
 
         // Salva il file nel percorso specificato
-        Files.copy(fileContent, Paths.get(filePath));
+        Files.copy(fileContent, Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
 
         try {
             sessionDAOFactory.commitTransaction();

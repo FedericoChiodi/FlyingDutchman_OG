@@ -1,6 +1,7 @@
 <%@page session="false"%>
 <%@page import="com.ingsw.flyingdutchman.model.mo.Auction"%>
 <%@page import="com.ingsw.flyingdutchman.model.mo.User"%>
+<%@ page import="java.io.File" %>
 <%
     int i = 0;
     boolean loggedOn = (Boolean) request.getAttribute("loggedOn");
@@ -56,8 +57,8 @@
                 margin-bottom: 10px;
             }
             #productImage {
-                width: 200px;
-                height: 200px;
+                width: 300px;
+                height: 300px;
                 margin-right: 20px;
                 margin-top: 25px;
             }
@@ -103,7 +104,15 @@
         <main>
             <section id="productContainer">
                 <article id="productImageContainer">
-                    <img id="productImage" src="images/trashcan.png" alt="Product_Image">
+                    <%
+                        String imgPath = "/Uploads/" + auction.getProduct_auctioned().getOwner().getUsername() + "/" + auction.getProduct_auctioned().getDescription() + ".png";
+                        String imgPathAbs = "/home/sanpc/tomcat/webapps" + imgPath;
+                        File file = new File(imgPathAbs);
+                        if (!file.exists()) {
+                            imgPath = "/Uploads/default.png";
+                        }
+                    %>
+                    <img id="productImage" src="<%=imgPath + "?nocache=" + System.currentTimeMillis()%>" alt="Product_Image">
                 </article>
                 <article id="productInfoContainer">
                     <span id="productDescription"><%=auction.getProduct_auctioned().getDescription()%></span>

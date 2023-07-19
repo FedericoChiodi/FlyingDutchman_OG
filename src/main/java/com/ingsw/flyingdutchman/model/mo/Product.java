@@ -9,7 +9,7 @@ public class Product {
     private Float min_price;
     private Float starting_price;
     private Float current_price;
-    private Blob image;
+    private String image;
     private Boolean deleted;
     private Category category;
     private User owner;
@@ -24,8 +24,8 @@ public class Product {
     public void setStarting_price(float starting_price){this.starting_price = starting_price;}
     public Float getCurrent_price(){return current_price;}
     public void setCurrent_price(float current_price){this.current_price = current_price;}
-    public Blob getImage(){return image;}
-    public void setImage(Blob image){this.image = image;}
+    public String getImage(){return image;}
+    public void setImage(String image){this.image = image;}
     public Category getCategory() {return category;}
     public void setCategory(Category category){this.category = category;}
     public User getOwner(){return owner;}

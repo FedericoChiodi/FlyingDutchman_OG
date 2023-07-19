@@ -7,6 +7,7 @@ import com.ingsw.flyingdutchman.services.logservice.LogService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.File;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.logging.Level;
@@ -174,13 +175,15 @@ public class ProductManagement {
 
             ProductDAO productDAO = daoFactory.getProductDAO();
             CategoryDAO categoryDAO = daoFactory.getCategoryDAO();
+
+            String imagePath = "/home/sanpc/tomcat/webapps/Uploads/" + loggedUser.getUsername() + File.separator + request.getParameter("description") + ".png";
             try {
                 productDAO.create(
                         request.getParameter("description"),
                         Float.parseFloat(request.getParameter("min_price")),
                         Float.parseFloat(request.getParameter("starting_price")),
                         Float.parseFloat(request.getParameter("current_price")),
-                        null, // TODO: se ho tempo implementare lettura immagini
+                        imagePath,
                         false,
                         categoryDAO.findByCategoryID(Long.parseLong(request.getParameter("categoryID"))),
                         user

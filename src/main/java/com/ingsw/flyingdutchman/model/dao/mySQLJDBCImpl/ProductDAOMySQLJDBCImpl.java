@@ -16,7 +16,7 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
     public ProductDAOMySQLJDBCImpl(Connection conn){this.conn = conn;}
 
     @Override
-    public Product create(String description, Float min_price, Float starting_price, Float current_price, Blob image, Boolean deleted, Category category, User owner) {
+    public Product create(String description, Float min_price, Float starting_price, Float current_price, String image, Boolean deleted, Category category, User owner) {
         PreparedStatement ps;
         String sql;
         Product product = new Product();
@@ -53,7 +53,7 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
             ps.setFloat(i++,min_price);
             ps.setFloat(i++,starting_price);
             ps.setFloat(i++,current_price);
-            ps.setBlob(i++,image);
+            ps.setString(i++,image);
             ps.setString(i++,"N");
             ps.setLong(i++,category.getCategoryID());
             ps.setLong(i++,owner.getUserID());
@@ -88,7 +88,7 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
             ps.setFloat(i++,product.getMin_price());
             ps.setFloat(i++,product.getStarting_price());
             ps.setFloat(i++,product.getCurrent_price());
-            ps.setBlob(i++,product.getImage());
+            ps.setString(i++,product.getImage());
             ps.setLong(i++,product.getCategory().getCategoryID());
             ps.setLong(i++,product.getOwner().getUserID());
             ps.setLong(i++,product.getProductID());
@@ -278,7 +278,7 @@ public class ProductDAOMySQLJDBCImpl implements ProductDAO {
             product.setMin_price(rs.getFloat("min_price"));
             product.setStarting_price(rs.getFloat("starting_price"));
             product.setCurrent_price(rs.getFloat("current_price"));
-            product.setImage(rs.getBlob("image"));
+            product.setImage(rs.getString("image"));
             product.setDeleted(rs.getString("deleted").equals("Y"));
             product.getCategory().setCategoryID(rs.getLong("categoryID"));
             product.getOwner().setUserID(rs.getLong("ownerID"));

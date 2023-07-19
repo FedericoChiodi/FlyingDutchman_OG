@@ -157,8 +157,8 @@
             </div>
 
             <div class="field clearfix">
-                <label for="image">Immagine del prodotto (facoltativa)</label>
-                <input type="file" id="image" name="image" onchange="previewFile()"/>
+                <label for="image">Immagine del prodotto</label>
+                <input type="file" id="image" name="image" onchange="previewFile()" required accept="image/x-png"/>
                 <img id="preview" src="">
             </div>
 

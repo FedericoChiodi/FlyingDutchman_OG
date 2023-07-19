@@ -10,7 +10,7 @@ public interface ProductDAO {
             Float min_price,
             Float starting_price,
             Float current_price,
-            Blob image,
+            String image,
             Boolean deleted,
             Category category,
             User owner
