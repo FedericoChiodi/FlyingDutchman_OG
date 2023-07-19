@@ -86,9 +86,9 @@
                 margin-bottom: 10px;
             }
             #productImg{
-                width: 70%;
-                height: 70%;
-                object-fit: contain;
+                width: 175px;
+                height: 175px;
+                object-fit: scale-down;
                 border: 1px solid #3b3b37;
             }
             #productDescription{
