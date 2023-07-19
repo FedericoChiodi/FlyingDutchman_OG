@@ -699,6 +699,8 @@ public class ThresholdManagement {
                 Auction[] auctions = daoFactory.getAuctionDAO().findOpenAuctionsByOwnerNotDeleted(loggedUser);
                 for(int i = 0; i < auctions.length; i++){
                     Product product1 = daoFactory.getProductDAO().findByProductID(auctions[i].getProduct_auctioned().getProductID());
+                    User owner = daoFactory.getUserDAO().findByUserID(product1.getOwner().getUserID());
+                    product1.setOwner(owner);
                     auctions[i].setProduct_auctioned(product1);
                 }
                 request.setAttribute("canEdit",true);
