@@ -61,6 +61,8 @@
                 height: 300px;
                 margin-right: 20px;
                 margin-top: 25px;
+                border: 1px solid #3b3b37;
+                box-shadow: 0 4px 4px 2px #888;
             }
             #buyProductButton{
                 padding: 10px 20px;

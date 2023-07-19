@@ -127,14 +127,6 @@ public class OrderManagement {
                 throw new RuntimeException(e);
             }
 
-            //Creo un nuovo ordine e inserisco i dati
-            /*Order order = new Order();
-            order.setOrder_time(timestamp);
-            order.setSelling_price(product.getCurrent_price());
-            order.setBought_from_threshold(false);
-            order.setBuyer(loggedUser);
-            order.setProduct(product);*/
-
             //Inserisco l'ordine sul db
             try {
                 daoFactory.getOrderDAO().create(
@@ -153,6 +145,14 @@ public class OrderManagement {
             applicationMessage = "Pagamento confermato! Il tuo ordine è stato inserito";
 
             Order[] orders = daoFactory.getOrderDAO().findByUser(loggedUser);
+            for(int i = 0; i < orders.length; i++){
+                Product product1 = daoFactory.getProductDAO().findByProductID(orders[i].getProduct().getProductID());
+                User productOwner = daoFactory.getUserDAO().findByUserID(product1.getOwner().getUserID());
+                product1.setOwner(productOwner);
+                User user = daoFactory.getUserDAO().findByUserID(orders[i].getBuyer().getUserID());
+                orders[i].setProduct(product1);
+                orders[i].setBuyer(user);
+            }
 
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();

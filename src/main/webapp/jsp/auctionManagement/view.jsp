@@ -89,6 +89,7 @@
                 width: 70%;
                 height: 70%;
                 object-fit: contain;
+                border: 1px solid #3b3b37;
             }
             #productDescription{
                 font-size: large;
