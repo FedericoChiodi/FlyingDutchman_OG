@@ -11,6 +11,7 @@ import com.ingsw.flyingdutchman.services.logservice.LogService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.File;
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -106,6 +107,22 @@ public class UserManagement {
             }
             catch (Exception e){
                 logger.log(Level.SEVERE, "Errore cancellazione utente e relativi dati collegati. " + e);
+            }
+
+            //Elimino tutte le immagini dell'utente
+            String directoryPath = "/home/sanpc/tomcat/webapps/Uploads/" + loggedUser.getUsername();
+            File directory = new File(directoryPath);
+
+            if (directory.isDirectory()) {
+                String[] entries = directory.list();
+                for(String s: entries){
+                    File currentFile = new File(directory.getPath(),s);
+                    currentFile.delete();
+                }
+                directory.delete();
+            }
+            else {
+                System.out.println("Non ho cancellato nulla al path: " + directoryPath);
             }
 
             daoFactory.commitTransaction();
@@ -469,6 +486,22 @@ public class UserManagement {
             }
             else {
                 applicationMessage = "Username inserito non trovato!";
+            }
+
+            //Elimino tutte le immagini dell'utente
+            String directoryPath = "/home/sanpc/tomcat/webapps/Uploads/" + toBan.getUsername();
+            File directory = new File(directoryPath);
+
+            if (directory.isDirectory()) {
+                String[] entries = directory.list();
+                for(String s: entries){
+                    File currentFile = new File(directory.getPath(),s);
+                    currentFile.delete();
+                }
+                directory.delete();
+            }
+            else {
+                System.out.println("Non ho cancellato nulla al path: " + directoryPath);
             }
 
             User[] usernames = userDAO.findAllUsersExceptMeAndDeleted(loggedUser);
