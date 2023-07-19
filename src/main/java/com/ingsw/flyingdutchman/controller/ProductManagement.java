@@ -285,24 +285,27 @@ public class ProductManagement {
 
             ProductDAO productDAO = daoFactory.getProductDAO();
             Product product1 = productDAO.findByProductID(Long.parseLong(request.getParameter("productID")));
+            User owner = daoFactory.getUserDAO().findByUserID(product1.getOwner().getUserID());
+            product1.setOwner(owner);
 
             loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
 
             //Cerco se il prodotto è attualmente in vendita all'asta
             //---
             //Cerco tutte le aste con quel prodotto all'interno
-            Auction[] auctionsToCheck = daoFactory.getAuctionDAO().findByProductOwner(product1);
+            Auction[] auctionsToCheck = daoFactory.getAuctionDAO().findByProductOwnerOpenNotDeleted(product1);
 
-            //Vedo se in quelle aste è presente quel prodotto ancora invenduto
-            boolean isCurrentlyAuctioned = false;
-            for(int i = 0; i < auctionsToCheck.length ; i++){
-                if(auctionsToCheck[i].getClosing_timestamp() == null){
-                    applicationMessage = "Non puoi eliminare un prodotto attualmente all'asta!";
-                    isCurrentlyAuctioned = true;
-                }
+            if(auctionsToCheck.length > 0){
+                applicationMessage = "Non puoi eliminare un prodotto attualmente all'asta!";
             }
-            if(!isCurrentlyAuctioned){
-                productDAO.delete(product1);
+            else {
+                try {
+                    productDAO.delete(product1);
+                }
+                catch (Exception e){
+                    logger.log(Level.SEVERE, "Error nella cancellazione di un prodotto -- " + e);
+                    throw new RuntimeException(e);
+                }
             }
 
             // Prendo tutte le aste con prodotti dell'utente e le riempio

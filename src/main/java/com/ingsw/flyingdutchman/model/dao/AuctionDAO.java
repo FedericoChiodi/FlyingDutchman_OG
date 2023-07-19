@@ -13,6 +13,7 @@ public interface AuctionDAO {
     public void update(Auction auction);
     public Auction findAuctionByID(Long auctionID);
     public Auction[] findByProductOwner(Product product);
+    public Auction[] findByProductOwnerOpenNotDeleted(Product product);
     public Auction[] findByOwner(User user);
     public Auction[] findByOwnerNotPremium(User user);
     public Auction[] findOpenAuctionsByOwnerNotDeleted(User user);

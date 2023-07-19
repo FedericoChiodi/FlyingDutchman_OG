@@ -6,6 +6,7 @@ import com.ingsw.flyingdutchman.model.dao.ProductDAO;
 import com.ingsw.flyingdutchman.model.dao.UserDAO;
 import com.ingsw.flyingdutchman.model.mo.Auction;
 import com.ingsw.flyingdutchman.model.mo.Product;
+import com.ingsw.flyingdutchman.model.mo.Threshold;
 import com.ingsw.flyingdutchman.model.mo.User;
 import com.ingsw.flyingdutchman.services.config.Configuration;
 import com.ingsw.flyingdutchman.services.logservice.LogService;
@@ -624,5 +625,87 @@ public class AuctionManagement {
             catch (Throwable t){}
         }
     }
+
+    public static void delete(HttpServletRequest request, HttpServletResponse response){
+        DAOFactory sessionDAOFactory = null;
+        DAOFactory daoFactory = null;
+        User loggedUser;
+        String applicationMessage = null;
+        Logger logger = LogService.getApplicationLogger();
+
+        try {
+            Map sessionFactoryParameters = new HashMap<String, Object>();
+            sessionFactoryParameters.put("request",request);
+            sessionFactoryParameters.put("response",response);
+            sessionDAOFactory = DAOFactory.getDAOFactory(Configuration.COOKIE_IMPL, sessionFactoryParameters);
+            sessionDAOFactory.beginTransaction();
+
+            UserDAO sessionUserDAO = sessionDAOFactory.getUserDAO();
+            loggedUser = sessionUserDAO.findLoggedUser();
+
+            daoFactory = DAOFactory.getDAOFactory(Configuration.DAO_IMPL, null);
+            daoFactory.beginTransaction();
+
+            loggedUser = daoFactory.getUserDAO().findByUsername(loggedUser.getUsername());
+
+            Auction auction = daoFactory.getAuctionDAO().findAuctionByID(Long.parseLong(request.getParameter("auctionID")));
+
+            Threshold[] thresholds = daoFactory.getThresholdDAO().findThresholdsByAuction(auction);
+            for (Threshold threshold : thresholds){
+                try {
+                    daoFactory.getThresholdDAO().delete(threshold);
+                }
+                catch (Exception e){
+                    logger.log(Level.SEVERE, "Non sono riuscito ad eliminare la prenotazione! -- " + e);
+                    throw new RuntimeException(e);
+                }
+            }
+
+            try {
+                daoFactory.getAuctionDAO().delete(auction);
+            }
+            catch (Exception e){
+                logger.log(Level.SEVERE, "Non sono riuscito ad eliminare l'asta! -- " + e);
+                throw new RuntimeException(e);
+            }
+
+            Auction[] auctions = daoFactory.getAuctionDAO().findOpenAuctionsByOwnerNotDeleted(loggedUser);
+            ProductDAO productDAO = daoFactory.getProductDAO();
+            // Riempimento dei campi delle varie auctions
+            for(int i = 0; i < auctions.length; i++){
+                Product product1 = productDAO.findByProductID(auctions[i].getProduct_auctioned().getProductID());
+                User owner = daoFactory.getUserDAO().findByUserID(product1.getOwner().getUserID());
+                product1.setOwner(owner);
+                auctions[i].setProduct_auctioned(product1);
+            }
+
+            daoFactory.commitTransaction();
+            sessionDAOFactory.commitTransaction();
+
+            request.setAttribute("loggedOn",loggedUser!=null);
+            request.setAttribute("loggedUser",loggedUser);
+            request.setAttribute("canEdit",true);
+            request.setAttribute("auctions",auctions);
+            request.setAttribute("applicationMessage",applicationMessage);
+            request.setAttribute("viewUrl","auctionManagement/view");
+        }
+        catch (Exception e){
+            logger.log(Level.SEVERE, "Auction Controller Error / update", e);
+            try {
+                if(daoFactory != null) daoFactory.rollbackTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.rollbackTransaction();
+            }
+            catch (Throwable t){}
+            throw new RuntimeException(e);
+        }
+        finally {
+            try {
+                if(daoFactory != null) daoFactory.closeTransaction();
+                if(sessionDAOFactory != null) sessionDAOFactory.closeTransaction();
+            }
+            catch (Throwable t){}
+        }
+    }
+
 
 }

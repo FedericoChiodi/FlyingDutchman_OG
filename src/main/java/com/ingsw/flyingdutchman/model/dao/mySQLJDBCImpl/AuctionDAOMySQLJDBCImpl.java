@@ -168,6 +168,39 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
     }
 
     @Override
+    public Auction[] findByProductOwnerOpenNotDeleted(Product product) {
+        PreparedStatement ps;
+        List<Auction> auctions = new ArrayList<>();
+        String sql;
+
+        try {
+            sql
+                    = "SELECT auctionID, opening_timestamp, closing_timestamp, is_product_sold, AUCTION.deleted, productID "
+                    + "FROM `AUCTION` NATURAl JOIN `PRODUCT` "
+                    + "WHERE "
+                    + "(ownerID = ?) AND (AUCTION.deleted = ?) AND (closing_timestamp IS NULL)";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1,product.getOwner().getUserID());
+            ps.setString(2,"N");
+
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()){
+                Auction auction = read(resultSet);
+                auctions.add(auction);
+            }
+
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return auctions.toArray(new Auction[0]);
+    }
+
+    @Override
     public Auction[] findByOwner(User user) {
         PreparedStatement ps;
         List<Auction> auctions = new ArrayList<>();

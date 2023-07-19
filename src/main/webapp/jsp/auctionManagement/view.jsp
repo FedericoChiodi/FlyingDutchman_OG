@@ -33,12 +33,6 @@
             function mainOnLoadHandler(){
                 document.querySelector("#insertAuctionButton").addEventListener("click",insertAuction);
             }
-            function deleteAuction(auctionID){
-                document.deleteForm.auctionID.value = auctionID;
-                if(confirm("Attenzione! Questa azione e' irreversibile. Vuoi procedere?")){
-                    document.deleteForm.submit();
-                }
-            }
             function inspectAuction(auctionID){
                 document.inspectForm.auctionID.value = auctionID;
                 document.inspectForm.submit();
@@ -193,11 +187,6 @@
         <form name="editForm" method="post" action="Dispatcher">
             <input type="hidden" name="auctionID"/>
             <input type="hidden" name="controllerAction" value="AuctionManagement.editView"/>
-        </form>
-
-        <form name="deleteForm" method="post" action="Dispatcher">
-            <input type="hidden" name="auctionID"/>
-            <input type="hidden" name="controllerAction" value="AuctionManagement.delete"/>
         </form>
     </main>
         <%@include file="/include/footer.inc"%>

@@ -30,6 +30,12 @@
                 document.insertThresholdForm.auctionID.value = auctionID;
                 document.insertThresholdForm.submit();
             }
+            function deleteAuction(auctionID){
+                document.deleteForm.auctionID.value = auctionID;
+                if(confirm("Attenzione! Questa azione e' irreversibile. Vuoi procedere?")){
+                    document.deleteForm.submit();
+                }
+            }
         </script>
         <style>
             #productContainer {
@@ -77,6 +83,14 @@
             #backButton{
                 padding: 10px 20px;
                 background-color: #dc3545;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            #deleteButton{
+                padding: 10px 20px;
+                background-color: #91101c;
                 color: #fff;
                 border: none;
                 border-radius: 5px;
@@ -131,6 +145,7 @@
                     <%}%>
                     <%if(auction.getProduct_auctioned().getOwner().getUsername().equals(loggedUser.getUsername())){%>
                         <button id="lowerPriceButton" onclick="lowerPrice(<%=auction.getAuctionID()%>)">Abbassa il Prezzo</button>
+                        <button id="deleteButton" onclick="deleteAuction(<%=auction.getAuctionID()%>)">Elimina</button>
                     <%}%>
                     <button id="backButton" onclick="goBack()">Torna Indietro</button>
                 </article>
@@ -153,6 +168,11 @@
 
             <form name="backForm" method="post" action="Dispatcher">
                 <input type="hidden" name="controllerAction" value="<%=auction.getProduct_auctioned().getOwner().getUsername().equals(loggedUser.getUsername()) ? "AuctionManagement.viewMyAuctions" : "AuctionManagement.view"%>">
+            </form>
+
+            <form name="deleteForm" method="post" action="Dispatcher">
+                <input type="hidden" name="auctionID"/>
+                <input type="hidden" name="controllerAction" value="AuctionManagement.delete"/>
             </form>
         </main>
         <%@include file="/include/footer.inc"%>
