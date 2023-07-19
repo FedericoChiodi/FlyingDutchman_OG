@@ -46,7 +46,7 @@
                 transition: background-color 0.3s ease;
                 background-color: #28a745;
             }
-            #buttons{
+            #headContainer{
                 display: flex;
                 flex-direction: row;
                 margin-bottom: 12px;

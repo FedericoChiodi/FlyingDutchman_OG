@@ -20,5 +20,7 @@ public interface AuctionDAO {
     public Auction[] findAllOpenAuctionsExceptUser(User user);
     public Auction[] findAllAuctions();
     public Auction[] findAllAuctionsExceptPremium();
+    public Auction[] findAuctionByProductDescription(String description);
+    public Auction[] findAuctionsByCategory(Category category);
 
 }

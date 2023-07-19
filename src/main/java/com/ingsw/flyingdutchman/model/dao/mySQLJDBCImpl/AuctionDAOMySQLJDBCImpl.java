@@ -2,6 +2,7 @@ package com.ingsw.flyingdutchman.model.dao.mySQLJDBCImpl;
 
 import com.ingsw.flyingdutchman.model.dao.AuctionDAO;
 import com.ingsw.flyingdutchman.model.mo.Auction;
+import com.ingsw.flyingdutchman.model.mo.Category;
 import com.ingsw.flyingdutchman.model.mo.Product;
 import com.ingsw.flyingdutchman.model.mo.User;
 
@@ -375,6 +376,74 @@ public class AuctionDAOMySQLJDBCImpl implements AuctionDAO{
                     + "WHERE productID <> ?";
             ps = conn.prepareStatement(sql);
             ps.setLong(1,1);
+
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()){
+                Auction auction = read(resultSet);
+                auctions.add(auction);
+            }
+
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return auctions.toArray(new Auction[0]);
+    }
+
+    @Override
+    public Auction[] findAuctionByProductDescription(String description) {
+        PreparedStatement ps;
+        List<Auction> auctions = new ArrayList<>();
+        String sql;
+
+        try {
+            sql
+                    = "SELECT auctionID, opening_timestamp, closing_timestamp, is_product_sold, AUCTION.deleted, productID "
+                    + "FROM `AUCTION` NATURAl JOIN `PRODUCT` "
+                    + "WHERE "
+                    + "description LIKE ? AND (closing_timestamp IS NULL) AND is_product_sold = ? AND AUCTION.deleted = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, "%" + description + "%");
+            ps.setString(2, "N");
+            ps.setString(3, "N");
+
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()){
+                Auction auction = read(resultSet);
+                auctions.add(auction);
+            }
+
+            resultSet.close();
+            ps.close();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        return auctions.toArray(new Auction[0]);
+    }
+
+    @Override
+    public Auction[] findAuctionsByCategory(Category category) {
+        PreparedStatement ps;
+        List<Auction> auctions = new ArrayList<>();
+        String sql;
+
+        try {
+            sql
+                    = "SELECT auctionID, opening_timestamp, closing_timestamp, is_product_sold, AUCTION.deleted, productID "
+                    + "FROM `AUCTION` NATURAl JOIN `PRODUCT` NATURAL JOIN `CATEGORY` "
+                    + "WHERE "
+                    + "CATEGORY.name = ? AND (closing_timestamp IS NULL) AND is_product_sold = ? AND AUCTION.deleted = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, category.getName());
+            ps.setString(2, "N");
+            ps.setString(3, "N");
 
             ResultSet resultSet = ps.executeQuery();
 

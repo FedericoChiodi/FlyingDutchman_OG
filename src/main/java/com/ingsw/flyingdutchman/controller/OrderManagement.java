@@ -257,7 +257,6 @@ public class OrderManagement {
             catch (Throwable t){}
         }
     }
-
     public static void buyPremiumView(HttpServletRequest request, HttpServletResponse response){
         DAOFactory sessionDAOFactory = null;
         DAOFactory daoFactory = null;

@@ -104,6 +104,7 @@ public class ProductManagement {
             catch (Throwable t){}
         }
     }
+
     public static void insertView(HttpServletRequest request, HttpServletResponse response){
         DAOFactory sessionDAOFactory = null;
         DAOFactory daoFactory = null;

@@ -270,7 +270,6 @@ public class ThresholdManagement {
             catch (Throwable t){}
         }
     }
-
     public static void modify(HttpServletRequest request, HttpServletResponse response){
         DAOFactory sessionDAOFactory = null;
         DAOFactory daoFactory = null;
@@ -344,7 +343,6 @@ public class ThresholdManagement {
             catch (Throwable t){}
         }
     }
-
     public static void modifyView(HttpServletRequest request, HttpServletResponse response){
         DAOFactory sessionDAOFactory = null;
         DAOFactory daoFactory = null;
@@ -400,7 +398,6 @@ public class ThresholdManagement {
             catch (Throwable t){}
         }
     }
-
     public static void checkOnUpdate(HttpServletRequest request, HttpServletResponse response){
         DAOFactory sessionDAOFactory = null;
         DAOFactory daoFactory = null;
@@ -703,8 +700,12 @@ public class ThresholdManagement {
                     product1.setOwner(owner);
                     auctions[i].setProduct_auctioned(product1);
                 }
+                // Preparo le categorie
+                Category[] categories = daoFactory.getCategoryDAO().getAllCategoriesExceptPremium();
+
                 request.setAttribute("canEdit",true);
                 request.setAttribute("auctions",auctions);
+                request.setAttribute("categories",categories);
             }
         }
         catch (Exception e){

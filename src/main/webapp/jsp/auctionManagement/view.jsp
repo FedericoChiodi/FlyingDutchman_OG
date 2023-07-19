@@ -2,6 +2,7 @@
 <%@page import="com.ingsw.flyingdutchman.model.mo.Auction"%>
 <%@page import="com.ingsw.flyingdutchman.model.mo.User"%>
 <%@ page import="java.io.File" %>
+<%@ page import="com.ingsw.flyingdutchman.model.mo.Category" %>
 <%
     int i = 0;
     boolean loggedOn = (Boolean) request.getAttribute("loggedOn");
@@ -11,6 +12,11 @@
     Auction[] auctions = (Auction[]) request.getAttribute("auctions");
     Boolean canEdit = (Boolean) request.getAttribute("canEdit");
     if(canEdit == null) canEdit = false;
+    Category[] categories = (Category[]) request.getAttribute("categories");
+    if (categories.length == 0){
+        categories[0] = new Category();
+        categories[0].setName("esempio...");
+    }
 %>
 <!DOCTYPE html>
 <html>
@@ -91,13 +97,23 @@
             #productPrice{
                 font-size: x-large;
             }
-            #buttons{
+            #headContainer{
                 display: flex;
                 flex-direction: row;
                 margin-bottom: 12px;
             }
             #insertAuctionButtonSelection{
                 margin-right: 12px;
+            }
+            #searchFormSection{
+                margin-left: auto;
+                align-self: end;
+                display: flex;
+                flex-direction: row;
+                align-items: start;
+            }
+            #searchCategoryForm{
+                margin-right: 25px;
             }
         </style>
     </head>
@@ -108,7 +124,7 @@
             <h1>Aste in Corso</h1>
         </section>
 
-        <section id="buttons">
+        <section id="headContainer">
             <article id="insertAuctionButtonSelection">
                 <input type="button" id="insertAuctionButton" name="insertAuctionButton"
                        class="button" value="Metti in asta un Prodotto" onclick="insertAuction()"/>
@@ -119,6 +135,26 @@
                 <input type="button" id="viewMyAuctionsButton" name="viewAuctionsButton"
                        class="button" value="Visualizza le tue Aste" onclick="viewMyAuctions()"/>
             </article>
+
+            <article id="searchFormSection">
+                <form id="searchCategoryForm" name="searchCategoryForm" action="Dispatcher" method="post">
+                    <select id="categoryID" name="categoryID">
+                        <%for(i = 0; i < categories.length ; i++){%>
+                        <option value="<%=categories[i].getCategoryID()%>"><%=categories[i].getName()%></option>
+                        <%}%>
+                    </select>
+                    <input type="submit" id="searchCategoryButton" name="searchCategoryButton" value="Cerca"/>
+                    <input type="hidden" name="controllerAction" value="AuctionManagement.searchCategory"/>
+                </form>
+
+                <form id="searchForm" name="searchForm" action="Dispatcher" method="post">
+                    <input type="text" id="auctionName" name="auctionName" required size="15" maxlength="200" minlength="5"
+                           placeholder="Cerca un'asta..." autocomplete="off"/>
+                    <input type="submit" id="searchButton" name="searchButton" value="Cerca"/>
+                    <input type="hidden" name="controllerAction" value="AuctionManagement.search"/>
+                </form>
+            </article>
+
             <%}%>
             <%if(canEdit){%>
             <article id="viewAuctionsButtonSelection">
@@ -126,6 +162,8 @@
                        class="button" value="Visualizza tutte le aste" onclick="viewAllAuctions()"/>
             </article>
             <%}%>
+
+
         </section>
 
         <section id="auctionListBreak">
