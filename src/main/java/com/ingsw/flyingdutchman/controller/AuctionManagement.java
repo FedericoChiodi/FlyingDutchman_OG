@@ -119,12 +119,16 @@ public class AuctionManagement {
                 auctions[i].setProduct_auctioned(product);
             }
 
+            // Preparo le categorie
+            Category[] categories = daoFactory.getCategoryDAO().getAllCategoriesExceptPremium();
+
             daoFactory.commitTransaction();
             sessionDAOFactory.commitTransaction();
 
             request.setAttribute("loggedOn",loggedUser!=null);
             request.setAttribute("loggedUser",loggedUser);
             request.setAttribute("applicationMessage",applicationMessage);
+            request.setAttribute("categories",categories);
             request.setAttribute("auctions", auctions);
             request.setAttribute("canEdit",true);
             request.setAttribute("viewUrl","auctionManagement/view");

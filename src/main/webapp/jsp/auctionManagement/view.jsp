@@ -199,7 +199,7 @@
                 <%}%>
                 <%if(!canEdit){%>
                     <h2>
-                        Al momento non sono presenti aste in corso! :((
+                        Non sono state trovate aste in corso!
                     </h2>
                 <%}%>
             </section>

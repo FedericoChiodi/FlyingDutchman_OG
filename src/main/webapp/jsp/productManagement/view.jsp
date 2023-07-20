@@ -46,11 +46,6 @@
                 transition: background-color 0.3s ease;
                 background-color: #28a745;
             }
-            #headContainer{
-                display: flex;
-                flex-direction: row;
-                margin-bottom: 12px;
-            }
             #insertProductButtonSelection{
                 margin-right: 12px;
             }
@@ -79,6 +74,11 @@
                 width: auto;
                 color: #39ce29;
                 height: auto;
+            }
+            #buttons{
+                display: flex;
+                flex-direction: row;
+                margin-bottom: 12px;
             }
         </style>
     </head>
