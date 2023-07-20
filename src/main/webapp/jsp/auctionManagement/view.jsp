@@ -115,6 +115,9 @@
             #searchCategoryForm{
                 margin-right: 25px;
             }
+            .hidden-label{
+                display: none;
+            }
         </style>
     </head>
     <body>
@@ -143,11 +146,13 @@
                         <option value="<%=categories[i].getCategoryID()%>"><%=categories[i].getName()%></option>
                         <%}%>
                     </select>
+                    <label for="searchCategoryButton" class="hidden-label">Cerca per Categoria:</label>
                     <input type="submit" id="searchCategoryButton" name="searchCategoryButton" value="Cerca"/>
                     <input type="hidden" name="controllerAction" value="AuctionManagement.searchCategory"/>
                 </form>
 
                 <form id="searchForm" name="searchForm" action="Dispatcher" method="post">
+                    <label for="auctionName" class="hidden-label">Cerca un'asta: </label>
                     <input type="text" id="auctionName" name="auctionName" required size="15" maxlength="200" minlength="5"
                            placeholder="Cerca un'asta..." autocomplete="off"/>
                     <input type="submit" id="searchButton" name="searchButton" value="Cerca"/>

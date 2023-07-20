@@ -71,7 +71,20 @@
         Non temere per&oacute;! Il prezzo dei tuoi articoli non andr&aacute; mai al di sotto del tuo prezzo minimo! <br>
       </p>
       <p>
-        Potrai inoltre osservare le aste aperte e decidere di fare un'offerta!
+        Potrai inoltre osservare le aste aperte e decidere di fare un'offerta! <br/>
+        Una volta confermato il pagamento l'articolo sar&agrave; tuo. Non resta che attendere <br/>
+        una email di conferma da parte nostra che ti informer&agrave; dei dettagli di spedizione e tracciamento. <br/>
+      </p>
+      <p>
+        Hai notato un articolo che desideri fortemente ma il prezzo &egrave; ancora troppo alto? <br/>
+        Non temere! Il nostro programma Premium ti consente di avere accesso alla funzionalit&agrave; <br/>
+        "Prenota", che ti permette di stabilire una soglia di prezzo. <br/>
+        Se il prezzo dell'articolo cala fino alla tua prenotazione (o al di sotto) l'articolo <br/>
+        verr&agrave; automaticamente acquistato per te! Ti accorgerai degli ordini effettuati in questo <br/>
+        modo da una descrizione aggiuntiva nella tua schermata "Ordini". <br/>
+      </p>
+      <p>
+        Buon divertimento su Flying Dutchman!
       </p>
     </article>
 
