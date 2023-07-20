@@ -158,7 +158,7 @@
 
             <div class="field clearfix">
                 <label for="image">Immagine del prodotto</label>
-                <input type="file" id="image" name="image" onchange="previewFile()" required accept="image/x-png"/>
+                <input type="file" id="image" name="image" onchange="previewFile()" required accept="image/png"/>
                 <img id="preview" src="">
             </div>
 
