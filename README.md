@@ -21,4 +21,3 @@ FlyingDutchman is a Java-based web application for managing online auctions. It 
 -   Git: Version control system for tracking changes to the project codebase.
 -   GitHub: The hosting platform for the project repository.
 > Realizzato per il corso di [Sistemi Web](https://www.unife.it/ing/informazione/sistemi-web) @ Unife AA 2022-23
-> da Federico Chiodi - Tutti i diritti riservati©
